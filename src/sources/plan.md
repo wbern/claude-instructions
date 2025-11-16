@@ -8,6 +8,9 @@ argument-hint: <feature/requirement description or GitHub issue URL/number>
 
 Create structured implementation plan that bridges product thinking (PRD) with test-driven development.
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 ## Input
 
 $ARGUMENTS

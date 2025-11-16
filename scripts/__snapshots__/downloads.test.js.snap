@@ -11,6 +11,13 @@ Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 ## Commit Message Rules
 
 Follows [Conventional Commits](https://www.conventionalcommits.org/) standard.
@@ -55,6 +62,13 @@ RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user 
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -124,7 +138,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -141,6 +155,13 @@ GREEN PHASE! Apply the below to the info given by user input here:
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -210,7 +231,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -224,6 +245,13 @@ argument-hint: [optional-issue-number]
 ---
 
 Analyze GitHub issue and create TDD implementation plan.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Process:
 
@@ -348,7 +376,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -364,6 +392,13 @@ argument-hint: <feature/requirement description or GitHub issue URL/number>
 # Plan: PRD-Informed Task Planning for TDD
 
 Create structured implementation plan that bridges product thinking (PRD) with test-driven development.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 ## Input
 
@@ -511,8 +546,8 @@ See https://github.com/steveyegge/beads for more information.
 
 ## Integration with Other Commands
 
-- **Before /my-plan**: Use \`/my-spike\` if you need technical exploration first
-- **After /my-plan**: Use \`/my-red\` to start TDD on first task
+- **Before /plan**: Use \`/spike\` if you need technical exploration first
+- **After /plan**: Use \`/red\` to start TDD on first task
 - **During work**: Use \`bd update\` to add notes/findings back to issues
 - **When stuck**: Check \`bd show ISSUE-ID\` to review acceptance criteria
 "
@@ -526,6 +561,13 @@ argument-hint: [optional-pr-title-and-description]
 ---
 
 # Create Pull Request
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Current branch status:
 !\`git status\`
@@ -580,6 +622,13 @@ $ARGUMENTS
 
 (If there was no info above, use info from the current context of conversation. If there was not enough info, ask for it.)
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 ## TDD Fundamentals
 
 ### The TDD Cycle
@@ -645,7 +694,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -659,6 +708,13 @@ argument-hint: <refactoring description>
 ---
 
 Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
@@ -729,7 +785,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -746,6 +802,13 @@ SPIKE PHASE! Apply the below to the info given by user input here:
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -815,7 +878,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -829,6 +892,13 @@ argument-hint: [optional-response-to-last-message]
 ---
 
 # TDD Reminder
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 ## TDD Fundamentals
 
@@ -895,7 +965,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
@@ -915,6 +985,13 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ---
 
 # Git Worktree Setup
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Create a new git worktree for branch: $ARGUMENTS
 
@@ -1174,6 +1251,13 @@ argument-hint: (no arguments)
 
 # Worktree Cleanup
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
 <current_state>
@@ -1398,6 +1482,13 @@ Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 ## Commit Message Rules
 
 Follows [Conventional Commits](https://www.conventionalcommits.org/) standard.
@@ -1442,6 +1533,13 @@ RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user 
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -1511,7 +1609,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -1528,6 +1626,13 @@ GREEN PHASE! Apply the below to the info given by user input here:
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -1597,7 +1702,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -1611,6 +1716,13 @@ argument-hint: [optional-issue-number]
 ---
 
 Analyze GitHub issue and create TDD implementation plan.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Process:
 
@@ -1727,7 +1839,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -1743,6 +1855,13 @@ argument-hint: <feature/requirement description or GitHub issue URL/number>
 # Plan: PRD-Informed Task Planning for TDD
 
 Create structured implementation plan that bridges product thinking (PRD) with test-driven development.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 ## Input
 
@@ -1832,8 +1951,8 @@ Understand the requirement by asking (use AskUserQuestion if needed):
 
 ## Integration with Other Commands
 
-- **Before /my-plan**: Use \`/my-spike\` if you need technical exploration first
-- **After /my-plan**: Use \`/my-red\` to start TDD on first task
+- **Before /plan**: Use \`/spike\` if you need technical exploration first
+- **After /plan**: Use \`/red\` to start TDD on first task
 "
 `;
 
@@ -1845,6 +1964,13 @@ argument-hint: [optional-pr-title-and-description]
 ---
 
 # Create Pull Request
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Current branch status:
 !\`git status\`
@@ -1891,6 +2017,13 @@ $ARGUMENTS
 
 (If there was no info above, use info from the current context of conversation. If there was not enough info, ask for it.)
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 ## TDD Fundamentals
 
 ### The TDD Cycle
@@ -1956,7 +2089,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -1970,6 +2103,13 @@ argument-hint: <refactoring description>
 ---
 
 Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
@@ -2040,7 +2180,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -2057,6 +2197,13 @@ SPIKE PHASE! Apply the below to the info given by user input here:
 
 $ARGUMENTS
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -2126,7 +2273,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 "
@@ -2140,6 +2287,13 @@ argument-hint: [optional-response-to-last-message]
 ---
 
 # TDD Reminder
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 ## TDD Fundamentals
 
@@ -2206,7 +2360,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 - Sometimes the test output shows as no tests have been run when a new test is failing due to a missing import or constructor. In such cases, allow the agent to create simple stubs. Ask them if they forgot to create a stub if they are stuck.
 - It is never allowed to introduce new logic without evidence of relevant failing tests. However, stubs and simple implementation to make imports and test infrastructure work is fine.
-- In the refactor phase, it is perfectly fine to refactor both teest and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
+- In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
@@ -2226,6 +2380,13 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ---
 
 # Git Worktree Setup
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Create a new git worktree for branch: $ARGUMENTS
 
@@ -2484,6 +2645,13 @@ argument-hint: (no arguments)
 ---
 
 # Worktree Cleanup
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 

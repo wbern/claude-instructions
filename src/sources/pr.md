@@ -6,6 +6,9 @@ argument-hint: [optional-pr-title-and-description]
 
 # Create Pull Request
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Current branch status:
 !`git status`
 

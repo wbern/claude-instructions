@@ -6,6 +6,9 @@ argument-hint: (no arguments)
 
 # Worktree Cleanup
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
 <current_state>

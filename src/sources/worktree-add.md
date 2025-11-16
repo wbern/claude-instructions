@@ -6,6 +6,9 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 
 # Git Worktree Setup
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Create a new git worktree for branch: $ARGUMENTS
 
 <current_state>

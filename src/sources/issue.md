@@ -6,6 +6,9 @@ argument-hint: [optional-issue-number]
 
 Analyze GitHub issue and create TDD implementation plan.
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Process:
 
 1. Get Issue Number

@@ -8,6 +8,9 @@ Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 <!-- docs INCLUDE path='src/fragments/commit-message-format.md' -->
 <!-- /docs -->
 
