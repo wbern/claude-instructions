@@ -1,5 +1,143 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`downloads/with-beads > should match snapshot for ask.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Ask - Request Review and Approval
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - ASK**
+
+> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
+
+Ask is for complex changes that need team discussion and approval. Examples:
+- Breaking API changes
+- New architecture decisions
+- Significant feature additions
+- Performance trade-offs
+- Security-sensitive changes
+
+## When to Ask
+
+Use **Ask** when:
+- Changes affect multiple systems
+- Breaking changes are needed
+- You need input on approach
+- Security implications exist
+- Performance trade-offs need discussion
+- Uncertain about the best solution
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**This is the traditional Pull Request workflow**, but with explicit intent that review and approval are required.
+
+**Process:**
+
+1. **Ensure Branch is Ready**:
+   !\`git status\`
+   - Commit all changes
+   - Push to remote: \`git push origin [branch-name]\`
+
+2. **Create Ask PR**: Create a PR that clearly needs review
+   
+   Title: conventional commits format, prefixed with \`[ASK]\`
+   
+   Description template:
+   \`\`\`markdown
+   ## 🤔 Ask - Review and Approval Needed
+
+   **This is an ASK PR**: These changes need team review and discussion.
+
+   <!--
+     References: [link to relevant issues]
+   -->
+
+   ### What changed
+   [Detailed description of changes]
+
+   ### Why
+   [Rationale and context]
+
+   ### Questions for reviewers
+   - [ ] Question 1
+   - [ ] Question 2
+
+   ### Concerns
+   - Potential concern 1
+   - Potential concern 2
+
+   ### Test Plan
+   - [ ] Unit tests
+   - [ ] Integration tests
+   - [ ] Manual testing steps
+
+   ### Alternatives considered
+   - Alternative 1: [why not chosen]
+   - Alternative 2: [why not chosen]
+   \`\`\`
+
+3. **Request Reviewers**: Assign specific reviewers who should weigh in
+
+4. **Add Labels**: 
+   - "needs-review"
+   - "breaking-change" (if applicable)
+   - "security" (if applicable)
+
+5. **Link Issues**: Reference related issues in the description
+
+6. **Monitor Discussion**: Be responsive to reviewer feedback and questions
+
+## Use GitHub MCP Tools
+
+1. Check current branch and ensure it's pushed
+2. Create a well-formatted pull request with [ASK] prefix
+3. Set reviewers
+4. Add appropriate labels
+5. Link related issues from commit messages
+
+## Decision Guide
+
+Use **Ask** when:
+- ✅ Change is complex or risky
+- ✅ Breaking changes involved
+- ✅ Need team input on approach
+- ✅ Multiple solutions possible
+- ✅ Security implications
+
+Use **/show** instead if: confident in approach, just want visibility
+
+Use **/ship** instead if: change is tiny, obvious, and safe
+
+### Beads Integration
+
+Use Beads MCP to:
+- Track work with \`bd ready\` to find next task
+- Create issues with \`bd create "description"\`
+- Track dependencies with \`bd dep add\`
+
+See https://github.com/steveyegge/beads for more information.
+
+"
+`;
+
 exports[`downloads/with-beads > should match snapshot for commit.md 1`] = `
 "---
 allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
@@ -553,64 +691,6 @@ See https://github.com/steveyegge/beads for more information.
 "
 `;
 
-exports[`downloads/with-beads > should match snapshot for pr.md 1`] = `
-"---
-allowed-tools: mcp__github__*, Bash(git:*)
-description: Creates a pull request using GitHub MCP
-argument-hint: [optional-pr-title-and-description]
----
-
-# Create Pull Request
-
-## General Guidelines
-
-### Output Style
-- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
-- Write natural, descriptive code without meta-commentary about the development process
-- The code should speak for itself - TDD is the process, not the product
-
-Current branch status:
-!\`git status\`
-
-Recent commits:
-!\`git log --oneline -5\`
-
-Create a pull request for the current branch. Use @CLAUDE.md for general guidelines on project.
-
-Arguments: $ARGUMENTS
-
-If nothing else specified:
-PR Title: conventional commits format, like \`feat(owner/repo#123): add user authentication to API endpoints\` or \`feat(#123)\` for local repo issues
-Description: Very simple description of the changes, prefixed with that the content is AI generated and approved by the PR author. Description should lead with the following
-
-\`\`\`
-<!--
-  Are there any relevant issues / PRs / mailing lists discussions?
-  Please reference them here.
--->
-References
-[links to github issues that were referenced in the scope of the commit messages]
--
-\`\`\`
-
-
-Use the GitHub MCP tools to:
-1. Check current branch and ensure it's pushed
-2. Create a well-formatted pull request with proper title and description
-3. Set the base branch (default: main)
-4. Include relevant issue references if found in commit messages
-
-### Beads Integration
-
-Use Beads MCP to:
-- Track work with \`bd ready\` to find next task
-- Create issues with \`bd create "description"\`
-- Track dependencies with \`bd dep add\`
-
-See https://github.com/steveyegge/beads for more information.
-"
-`;
-
 exports[`downloads/with-beads > should match snapshot for red.md 1`] = `
 "---
 description: Execute TDD Red Phase - write ONE failing test
@@ -788,6 +868,214 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
+"
+`;
+
+exports[`downloads/with-beads > should match snapshot for ship.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+argument-hint: [optional-commit-message]
+---
+
+# Ship - Direct Merge to Main
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - SHIP**
+
+> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
+
+Ship is for small, obvious changes that don't need code review. Examples:
+- Typo fixes
+- Formatting changes
+- Documentation updates
+- Obvious bug fixes
+- Dependency updates with passing tests
+
+## Prerequisites
+
+Before shipping directly to main:
+1. All tests must pass
+2. Linter must pass
+3. Changes must be small and low-risk
+4. CI must be green (if configured)
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Verify Change Size**: Check git diff to ensure changes are small and focused
+   !\`git diff --stat main\`
+
+2. **Run Tests**: Ensure all tests pass
+   !\`npm test\` or !\`yarn test\` or appropriate test command for the project
+
+3. **Run Linter**: Ensure code quality checks pass
+   !\`npm run lint\` or !\`yarn lint\` or appropriate lint command (if available)
+
+4. **Safety Check**: Confirm with user that this is truly a ship-worthy change:
+   - Is this a small, obvious change?
+   - Do all tests pass?
+   - Is CI green?
+   
+   If ANY of these are "no", suggest using \`/show\` or \`/ask\` instead.
+
+5. **Merge to Main**: If all checks pass and user confirms:
+   \`\`\`bash
+   git checkout main
+   git pull origin main
+   git merge --ff-only [feature-branch] || git merge [feature-branch]
+   git push origin main
+   \`\`\`
+
+6. **Cleanup**: Delete the feature branch
+   \`\`\`bash
+   git branch -d [feature-branch]
+   git push origin --delete [feature-branch]
+   \`\`\`
+
+7. **Notify**: Show summary of what was shipped
+
+## Safety Rails
+
+If tests fail, linter fails, or changes are large/complex, STOP and suggest:
+- Use \`/show\` for changes that should be seen but don't need approval
+- Use \`/ask\` (traditional PR) for complex changes needing discussion
+
+### Beads Integration
+
+Use Beads MCP to:
+- Track work with \`bd ready\` to find next task
+- Create issues with \`bd create "description"\`
+- Track dependencies with \`bd dep add\`
+
+See https://github.com/steveyegge/beads for more information.
+
+"
+`;
+
+exports[`downloads/with-beads > should match snapshot for show.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Show - Visible Merge with Optional Feedback
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - SHOW**
+
+> 🚀 **Cursor says**: Not every change needs a traditional review. Show your work, then merge.
+
+Show is for changes that teammates should see, but don't require approval. Examples:
+- Refactoring with test coverage
+- New features with comprehensive tests
+- Performance improvements
+- Non-breaking API changes
+
+## Prerequisites
+
+Before using show:
+1. All tests must pass
+2. Changes should have good test coverage
+3. Changes should be non-breaking or backward compatible
+4. CI must be green
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Verify Quality**: Check that changes meet show criteria
+   - Run tests: !\`npm test\` or !\`yarn test\` or appropriate test command
+   - Check coverage is maintained or improved
+   - Verify no breaking changes
+
+2. **Create Show PR**: Create a PR that will auto-merge after a short window
+   - Title: conventional commits format, prefixed with \`[SHOW]\`
+   - Description: Clear explanation of what changed and why
+   - Add label: "show" or "auto-merge"
+   - Set auto-merge if GitHub setting allows
+
+3. **Configure Auto-Merge**:
+   - If GitHub Actions is configured, set to auto-merge after CI passes
+   - If not, provide instructions to merge after 1-2 hours of visibility
+   - Add notice that feedback is welcome but not required
+
+4. **PR Description Template**:
+   \`\`\`markdown
+   ## 🚀 Show - Auto-merging after CI
+
+   **This is a SHOW PR**: Changes are ready to merge but shared for visibility.
+   Feedback welcome but not required. Will auto-merge when CI passes.
+
+   <!--
+     References: [link to relevant issues]
+   -->
+
+   ### What changed
+   [Brief description]
+
+   ### Why
+   [Rationale for change]
+
+   ### Test coverage
+   - [ ] All tests pass
+   - [ ] Coverage maintained/improved
+   - [ ] No breaking changes
+   \`\`\`
+
+5. **Monitoring**: Check PR status and auto-merge when ready
+
+## Decision Guide
+
+Use **Show** when:
+- ✅ Tests are comprehensive
+- ✅ Changes are non-breaking
+- ✅ You're confident in the approach
+- ✅ Team should be aware of the change
+
+Use **/ship** instead if: change is tiny and obvious (typo, formatting)
+
+Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncertain
+
+### Beads Integration
+
+Use Beads MCP to:
+- Track work with \`bd ready\` to find next task
+- Create issues with \`bd create "description"\`
+- Track dependencies with \`bd dep add\`
+
+See https://github.com/steveyegge/beads for more information.
+
 "
 `;
 
@@ -1471,6 +1759,136 @@ Current worktrees: !git worktree list\`
 </important_notes>"
 `;
 
+exports[`downloads/without-beads > should match snapshot for ask.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Ask - Request Review and Approval
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - ASK**
+
+> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
+
+Ask is for complex changes that need team discussion and approval. Examples:
+- Breaking API changes
+- New architecture decisions
+- Significant feature additions
+- Performance trade-offs
+- Security-sensitive changes
+
+## When to Ask
+
+Use **Ask** when:
+- Changes affect multiple systems
+- Breaking changes are needed
+- You need input on approach
+- Security implications exist
+- Performance trade-offs need discussion
+- Uncertain about the best solution
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**This is the traditional Pull Request workflow**, but with explicit intent that review and approval are required.
+
+**Process:**
+
+1. **Ensure Branch is Ready**:
+   !\`git status\`
+   - Commit all changes
+   - Push to remote: \`git push origin [branch-name]\`
+
+2. **Create Ask PR**: Create a PR that clearly needs review
+   
+   Title: conventional commits format, prefixed with \`[ASK]\`
+   
+   Description template:
+   \`\`\`markdown
+   ## 🤔 Ask - Review and Approval Needed
+
+   **This is an ASK PR**: These changes need team review and discussion.
+
+   <!--
+     References: [link to relevant issues]
+   -->
+
+   ### What changed
+   [Detailed description of changes]
+
+   ### Why
+   [Rationale and context]
+
+   ### Questions for reviewers
+   - [ ] Question 1
+   - [ ] Question 2
+
+   ### Concerns
+   - Potential concern 1
+   - Potential concern 2
+
+   ### Test Plan
+   - [ ] Unit tests
+   - [ ] Integration tests
+   - [ ] Manual testing steps
+
+   ### Alternatives considered
+   - Alternative 1: [why not chosen]
+   - Alternative 2: [why not chosen]
+   \`\`\`
+
+3. **Request Reviewers**: Assign specific reviewers who should weigh in
+
+4. **Add Labels**: 
+   - "needs-review"
+   - "breaking-change" (if applicable)
+   - "security" (if applicable)
+
+5. **Link Issues**: Reference related issues in the description
+
+6. **Monitor Discussion**: Be responsive to reviewer feedback and questions
+
+## Use GitHub MCP Tools
+
+1. Check current branch and ensure it's pushed
+2. Create a well-formatted pull request with [ASK] prefix
+3. Set reviewers
+4. Add appropriate labels
+5. Link related issues from commit messages
+
+## Decision Guide
+
+Use **Ask** when:
+- ✅ Change is complex or risky
+- ✅ Breaking changes involved
+- ✅ Need team input on approach
+- ✅ Multiple solutions possible
+- ✅ Security implications
+
+Use **/show** instead if: confident in approach, just want visibility
+
+Use **/ship** instead if: change is tiny, obvious, and safe
+
+
+"
+`;
+
 exports[`downloads/without-beads > should match snapshot for commit.md 1`] = `
 "---
 allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
@@ -1956,56 +2374,6 @@ Understand the requirement by asking (use AskUserQuestion if needed):
 "
 `;
 
-exports[`downloads/without-beads > should match snapshot for pr.md 1`] = `
-"---
-allowed-tools: mcp__github__*, Bash(git:*)
-description: Creates a pull request using GitHub MCP
-argument-hint: [optional-pr-title-and-description]
----
-
-# Create Pull Request
-
-## General Guidelines
-
-### Output Style
-- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
-- Write natural, descriptive code without meta-commentary about the development process
-- The code should speak for itself - TDD is the process, not the product
-
-Current branch status:
-!\`git status\`
-
-Recent commits:
-!\`git log --oneline -5\`
-
-Create a pull request for the current branch. Use @CLAUDE.md for general guidelines on project.
-
-Arguments: $ARGUMENTS
-
-If nothing else specified:
-PR Title: conventional commits format, like \`feat(owner/repo#123): add user authentication to API endpoints\` or \`feat(#123)\` for local repo issues
-Description: Very simple description of the changes, prefixed with that the content is AI generated and approved by the PR author. Description should lead with the following
-
-\`\`\`
-<!--
-  Are there any relevant issues / PRs / mailing lists discussions?
-  Please reference them here.
--->
-References
-[links to github issues that were referenced in the scope of the commit messages]
--
-\`\`\`
-
-
-Use the GitHub MCP tools to:
-1. Check current branch and ensure it's pushed
-2. Create a well-formatted pull request with proper title and description
-3. Set the base branch (default: main)
-4. Include relevant issue references if found in commit messages
-
-"
-`;
-
 exports[`downloads/without-beads > should match snapshot for red.md 1`] = `
 "---
 description: Execute TDD Red Phase - write ONE failing test
@@ -2183,6 +2551,198 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
+"
+`;
+
+exports[`downloads/without-beads > should match snapshot for ship.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+argument-hint: [optional-commit-message]
+---
+
+# Ship - Direct Merge to Main
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - SHIP**
+
+> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
+
+Ship is for small, obvious changes that don't need code review. Examples:
+- Typo fixes
+- Formatting changes
+- Documentation updates
+- Obvious bug fixes
+- Dependency updates with passing tests
+
+## Prerequisites
+
+Before shipping directly to main:
+1. All tests must pass
+2. Linter must pass
+3. Changes must be small and low-risk
+4. CI must be green (if configured)
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Verify Change Size**: Check git diff to ensure changes are small and focused
+   !\`git diff --stat main\`
+
+2. **Run Tests**: Ensure all tests pass
+   !\`npm test\` or !\`yarn test\` or appropriate test command for the project
+
+3. **Run Linter**: Ensure code quality checks pass
+   !\`npm run lint\` or !\`yarn lint\` or appropriate lint command (if available)
+
+4. **Safety Check**: Confirm with user that this is truly a ship-worthy change:
+   - Is this a small, obvious change?
+   - Do all tests pass?
+   - Is CI green?
+   
+   If ANY of these are "no", suggest using \`/show\` or \`/ask\` instead.
+
+5. **Merge to Main**: If all checks pass and user confirms:
+   \`\`\`bash
+   git checkout main
+   git pull origin main
+   git merge --ff-only [feature-branch] || git merge [feature-branch]
+   git push origin main
+   \`\`\`
+
+6. **Cleanup**: Delete the feature branch
+   \`\`\`bash
+   git branch -d [feature-branch]
+   git push origin --delete [feature-branch]
+   \`\`\`
+
+7. **Notify**: Show summary of what was shipped
+
+## Safety Rails
+
+If tests fail, linter fails, or changes are large/complex, STOP and suggest:
+- Use \`/show\` for changes that should be seen but don't need approval
+- Use \`/ask\` (traditional PR) for complex changes needing discussion
+
+
+"
+`;
+
+exports[`downloads/without-beads > should match snapshot for show.md 1`] = `
+"---
+allowed-tools: mcp__github__*, Bash(git:*)
+description: Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Show - Visible Merge with Optional Feedback
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+**Ship/Show/Ask Pattern - SHOW**
+
+> 🚀 **Cursor says**: Not every change needs a traditional review. Show your work, then merge.
+
+Show is for changes that teammates should see, but don't require approval. Examples:
+- Refactoring with test coverage
+- New features with comprehensive tests
+- Performance improvements
+- Non-breaking API changes
+
+## Prerequisites
+
+Before using show:
+1. All tests must pass
+2. Changes should have good test coverage
+3. Changes should be non-breaking or backward compatible
+4. CI must be green
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Verify Quality**: Check that changes meet show criteria
+   - Run tests: !\`npm test\` or !\`yarn test\` or appropriate test command
+   - Check coverage is maintained or improved
+   - Verify no breaking changes
+
+2. **Create Show PR**: Create a PR that will auto-merge after a short window
+   - Title: conventional commits format, prefixed with \`[SHOW]\`
+   - Description: Clear explanation of what changed and why
+   - Add label: "show" or "auto-merge"
+   - Set auto-merge if GitHub setting allows
+
+3. **Configure Auto-Merge**:
+   - If GitHub Actions is configured, set to auto-merge after CI passes
+   - If not, provide instructions to merge after 1-2 hours of visibility
+   - Add notice that feedback is welcome but not required
+
+4. **PR Description Template**:
+   \`\`\`markdown
+   ## 🚀 Show - Auto-merging after CI
+
+   **This is a SHOW PR**: Changes are ready to merge but shared for visibility.
+   Feedback welcome but not required. Will auto-merge when CI passes.
+
+   <!--
+     References: [link to relevant issues]
+   -->
+
+   ### What changed
+   [Brief description]
+
+   ### Why
+   [Rationale for change]
+
+   ### Test coverage
+   - [ ] All tests pass
+   - [ ] Coverage maintained/improved
+   - [ ] No breaking changes
+   \`\`\`
+
+5. **Monitoring**: Check PR status and auto-merge when ready
+
+## Decision Guide
+
+Use **Show** when:
+- ✅ Tests are comprehensive
+- ✅ Changes are non-breaking
+- ✅ You're confident in the approach
+- ✅ Team should be aware of the change
+
+Use **/ship** instead if: change is tiny and obvious (typo, formatting)
+
+Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncertain
+
+
 "
 `;
 

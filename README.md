@@ -109,7 +109,6 @@ After installation, restart Claude Code if it's currently running.
 ### Workflow
 
 - `/commit` - Create a git commit following project standards
-- `/pr` - Creates a pull request using GitHub MCP
 
 ### Worktree Management
 
@@ -119,7 +118,10 @@ After installation, restart Claude Code if it's currently running.
 ### Utilities
 
 - `/add-command` - Guide for creating new slash commands
+- `/ask` - Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
 - `/plan` - Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria
+- `/ship` - Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+- `/show` - Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
 - `/tdd` - Remind agent about TDD approach and continue conversation
 <!-- /docs -->
 
