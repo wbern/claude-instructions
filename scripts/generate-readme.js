@@ -91,6 +91,24 @@ const config = {
       });
 
       return generateCommandsMarkdown(commands);
+    },
+
+    // Generate example conversations
+    EXAMPLE_CONVERSATIONS() {
+      const examplesDir = path.join(PROJECT_ROOT, 'example-conversations');
+
+      if (!fs.existsSync(examplesDir)) {
+        return '';
+      }
+
+      const files = fs.readdirSync(examplesDir)
+        .filter(f => f.endsWith('.md'))
+        .sort();
+
+      return files.map(file => {
+        const content = fs.readFileSync(path.join(examplesDir, file), 'utf8');
+        return content;
+      }).join('\n\n');
     }
   }
 };
