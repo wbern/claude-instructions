@@ -35,7 +35,7 @@ Standalone TDD workflow commands without dependencies.
 **User-level (global - available in all projects):**
 ```bash
 # Clone the repository
-git clone https://github.com/KenDev-AB/claude-instructions.git /tmp/claude-instructions
+git clone https://github.com/wbern/claude-instructions.git /tmp/claude-instructions
 
 # Copy commands to your user directory
 cp /tmp/claude-instructions/downloads/without-beads/*.md ~/.claude/commands/
@@ -47,7 +47,7 @@ rm -rf /tmp/claude-instructions
 **Project-level (current repository only):**
 ```bash
 # Clone the repository
-git clone https://github.com/KenDev-AB/claude-instructions.git /tmp/claude-instructions
+git clone https://github.com/wbern/claude-instructions.git /tmp/claude-instructions
 
 # Create commands directory and copy files
 mkdir -p .claude/commands
@@ -64,7 +64,7 @@ Includes [Beads MCP](https://github.com/steveyegge/beads) integration for issue 
 **User-level (global - available in all projects):**
 ```bash
 # Clone the repository
-git clone https://github.com/KenDev-AB/claude-instructions.git /tmp/claude-instructions
+git clone https://github.com/wbern/claude-instructions.git /tmp/claude-instructions
 
 # Copy commands to your user directory
 cp /tmp/claude-instructions/downloads/with-beads/*.md ~/.claude/commands/
@@ -76,7 +76,7 @@ rm -rf /tmp/claude-instructions
 **Project-level (current repository only):**
 ```bash
 # Clone the repository
-git clone https://github.com/KenDev-AB/claude-instructions.git /tmp/claude-instructions
+git clone https://github.com/wbern/claude-instructions.git /tmp/claude-instructions
 
 # Create commands directory and copy files
 mkdir -p .claude/commands
