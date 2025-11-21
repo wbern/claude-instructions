@@ -15,7 +15,7 @@ const MAGIC_COMMENT_REGEX = /<!--\s*docs\s+.*?-->\n?|<!--\s*\/docs\s*-->\n?/g;
 // Regex to match frontmatter fields with underscore prefix (build-only metadata)
 const UNDERSCORE_FIELD_REGEX = /^_[a-zA-Z0-9_-]+:.*$/gm;
 
-function processFile(filePath) {
+function processFile(filePath: string): boolean {
   const content = fs.readFileSync(filePath, 'utf8');
 
   // Remove markdown-magic comment blocks
@@ -25,7 +25,7 @@ function processFile(filePath) {
   cleaned = cleaned.replace(UNDERSCORE_FIELD_REGEX, '');
 
   // Clean up any double newlines in frontmatter that may result from field removal
-  cleaned = cleaned.replace(/---\n([\s\S]*?)\n---/g, (_match, frontmatterContent) => {
+  cleaned = cleaned.replace(/---\n([\s\S]*?)\n---/g, (_match, frontmatterContent: string) => {
     const cleanedFrontmatter = frontmatterContent.replace(/\n\n+/g, '\n').trim();
     return `---\n${cleanedFrontmatter}\n---`;
   });
@@ -37,7 +37,7 @@ function processFile(filePath) {
   return false;
 }
 
-function processDirectory(dirPath) {
+function processDirectory(dirPath: string): number {
   let filesProcessed = 0;
   const files = fs.readdirSync(dirPath);
 
@@ -58,10 +58,10 @@ function processDirectory(dirPath) {
 }
 
 // Get target from command line args (can be directory or file)
-const target = process.argv[2];
+const target: string | undefined = process.argv[2];
 
 if (!target) {
-  console.error('Usage: node post-process.js <directory-or-file>');
+  console.error('Usage: tsx post-process.ts <directory-or-file>');
   process.exit(1);
 }
 
@@ -71,7 +71,7 @@ if (!fs.existsSync(target)) {
 }
 
 const stat = fs.statSync(target);
-let count;
+let count: number;
 
 if (stat.isDirectory()) {
   count = processDirectory(target);

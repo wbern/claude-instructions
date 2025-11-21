@@ -26,13 +26,13 @@ build_variant() {
 
   # Process source files with markdown-magic, output to variant directory
   echo "📄 Processing source files..."
-  node scripts/generate-readme.js $beads_flag --output-dir "$out_dir" "$SRC_DIR"/*.md
+  tsx scripts/generate-readme.ts $beads_flag --output-dir "$out_dir" "$SRC_DIR"/*.md
 
   echo "   ✅ Generated command files"
 
   # Remove markdown-magic comment blocks (workaround for markdown-magic bug)
   echo "🧹 Removing comment blocks..."
-  node scripts/post-process.js "$out_dir"
+  tsx scripts/post-process.ts "$out_dir"
   echo ""
 }
 
@@ -51,9 +51,9 @@ build_variant "without-beads" "--without-beads" "$OUT_DIR_WITHOUT_BEADS"
 
 # Generate README
 echo "📖 Updating README.md..."
-node scripts/generate-readme.js README.md > /dev/null 2>&1
+tsx scripts/generate-readme.ts README.md > /dev/null 2>&1
 echo "🧹 Removing comment blocks from README.md..."
-node scripts/post-process.js README.md
+tsx scripts/post-process.ts README.md
 echo "   ✅ README.md updated"
 echo ""
 

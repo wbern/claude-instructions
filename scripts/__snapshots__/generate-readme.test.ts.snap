@@ -1,0 +1,56 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`generateCommandsMarkdown > should generate markdown for multiple categories 1`] = `
+"### TDD Cycle
+
+- \`/red\` - Write failing test
+
+### Workflow
+
+- \`/commit\` - Create commit
+
+### Worktree Management
+
+- \`/worktree-add\` - Add worktree"
+`;
+
+exports[`generateCommandsMarkdown > should generate markdown for single category 1`] = `
+"### TDD Cycle
+
+- \`/red\` - Write failing test
+- \`/green\` - Make test pass"
+`;
+
+exports[`generateCommandsMarkdown > should maintain category order 1`] = `
+"### TDD Cycle
+
+- \`/red\` - Write failing test
+
+### Workflow
+
+- \`/commit\` - Create commit
+
+### Worktree Management
+
+- \`/worktree-add\` - Add worktree
+
+### Utilities
+
+- \`/add-command\` - Add new command"
+`;
+
+exports[`generateCommandsMarkdown > should sort commands by order within category 1`] = `
+"### TDD Cycle
+
+- \`/spike\` - Spike phase
+- \`/red\` - Write failing test
+- \`/green\` - Make test pass
+- \`/cycle\` - Full cycle"
+`;
+
+exports[`parseFrontmatter > should parse frontmatter from markdown 1`] = `
+{
+  "argument-hint": "<test>",
+  "description": "Test command",
+}
+`;
