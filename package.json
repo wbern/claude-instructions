@@ -29,10 +29,12 @@
     "clean:dev": "rm -rf .claude/commands",
     "build": "bash scripts/build.sh",
     "build:dev": "bash scripts/build-dev.sh",
+    "build:cli": "tsup",
     "generate": "tsx scripts/cli-generator.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build && pnpm build:cli",
     "prepare": "husky"
   },
   "devDependencies": {
