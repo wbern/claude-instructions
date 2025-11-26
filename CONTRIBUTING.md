@@ -135,3 +135,13 @@ This content will only be included when building with Beads integration enabled.
 - `pnpm clean` - Clean `downloads/`
 - `pnpm test` - Run all tests including snapshot tests
 - `pnpm test:watch` - Run tests in watch mode
+
+## Interactive Command Generator
+
+Run the interactive installer:
+
+```bash
+pnpm generate
+```
+
+Prompts for variant selection and installation directory.

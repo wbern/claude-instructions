@@ -1,24 +1,51 @@
 {
-  "name": "claude-instructions",
+  "name": "@wbern/claude-instructions",
   "version": "1.0.0",
-  "description": "TDD workflow commands for Claude Code with markdown fragment management",
+  "description": "TDD workflow commands for Claude Code CLI",
   "type": "module",
+  "bin": {
+    "claude-instructions": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "downloads"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wbern/claude-instructions.git"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "tdd",
+    "test-driven-development",
+    "ai",
+    "cli"
+  ],
+  "author": "wbern",
+  "license": "MIT",
   "scripts": {
     "clean": "rm -rf downloads",
     "clean:dev": "rm -rf .claude/commands",
     "build": "bash scripts/build.sh",
     "build:dev": "bash scripts/build-dev.sh",
+    "generate": "tsx scripts/cli-generator.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.10.1",
     "husky": "^9.1.7",
     "markdown-magic": "^4.0.4",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "fs-extra": "^11.3.2"
   }
 }
