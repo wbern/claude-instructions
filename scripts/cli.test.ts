@@ -73,4 +73,38 @@ describe('CLI', () => {
     expect(intro).toHaveBeenCalled();
     expect(outro).toHaveBeenCalled();
   });
+
+  it('should show Batman logo in intro', async () => {
+    const { select, intro } = await import('@clack/prompts');
+    const { main } = await import('./cli.js');
+
+    vi.mocked(select)
+      .mockResolvedValueOnce('with-beads')
+      .mockResolvedValueOnce('project');
+
+    await main();
+
+    expect(intro).toHaveBeenCalledWith(expect.stringContaining('       _==/          i     i          \\==_'));
+  });
+
+  it('should show file count and destination in outro', async () => {
+    const { select, outro } = await import('@clack/prompts');
+    const { generateToDirectory } = await import('./cli-generator.js');
+    const { main } = await import('./cli.js');
+
+    vi.mocked(generateToDirectory).mockResolvedValue({
+      success: true,
+      filesGenerated: 17,
+      variant: 'with-beads'
+    } as never);
+
+    vi.mocked(select)
+      .mockResolvedValueOnce('with-beads')
+      .mockResolvedValueOnce('project');
+
+    await main();
+
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining('17'));
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining('.claude/commands'));
+  });
 });

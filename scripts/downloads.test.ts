@@ -92,3 +92,44 @@ describe('downloads variants comparison', () => {
     }
   });
 });
+
+describe('downloads content validation', () => {
+  const COMMENT_BLOCK_PATTERN = /^<!--\s+.+\s+-->/m;
+
+  ['with-beads', 'without-beads'].forEach(variant => {
+    const variantDir = path.join(DOWNLOADS_DIR, variant);
+
+    if (!fs.existsSync(variantDir)) {
+      it.skip(`${variant} directory does not exist`, () => {});
+    } else {
+      const files = fs.readdirSync(variantDir).filter(f => f.endsWith('.md'));
+
+      files.forEach(file => {
+        it(`${variant}/${file} should not contain markdown comment blocks`, () => {
+          const content = fs.readFileSync(path.join(variantDir, file), 'utf8');
+          const lines = content.split('\n');
+
+          lines.forEach((line, index) => {
+            expect(line).not.toMatch(COMMENT_BLOCK_PATTERN);
+          });
+        });
+      });
+    }
+  });
+});
+
+describe('README', () => {
+  it('should contain Batman logo ASCII art', () => {
+    const readmePath = path.join(PROJECT_ROOT, 'README.md');
+    const content = fs.readFileSync(readmePath, 'utf8');
+
+    expect(content).toContain('_==/          i     i          \\==_');
+  });
+
+  it('should contain npx usage instructions', () => {
+    const readmePath = path.join(PROJECT_ROOT, 'README.md');
+    const content = fs.readFileSync(readmePath, 'utf8');
+
+    expect(content).toContain('npx @wbern/claude-instructions');
+  });
+});

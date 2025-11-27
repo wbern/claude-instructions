@@ -1,10 +1,35 @@
-# Claude Instructions
+# @wbern/claude-instructions
+
+```
+       _==/          i     i          \==_
+     /XX/            |\___/|            \XX\
+   /XXXX\            |XXXXX|            /XXXX\
+  |XXXXXX\_         _XXXXXXX_         _/XXXXXX|
+ XXXXXXXXXXXxxxxxxxXXXXXXXXXXXxxxxxxxXXXXXXXXXXX
+|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|
+ XXXXXX/^^^^"\XXXXXXXXXXXXXXXXXXXXX/^^^^^\XXXXXX
+  |XXX|       \XXX/^^\XXXXX/^^\XXX/       |XXX|
+    \XX\       \X/    \XXX/    \X/       /XX/
+       "\       "      \X/      "       /"
+```
 
 TDD workflow commands for Claude Code CLI.
 
 ## Installation
 
-### Without Beads Integration (Recommended for Beginners)
+### Quick Install (Recommended)
+
+```bash
+npx @wbern/claude-instructions
+```
+
+This interactive installer lets you choose your variant and installation scope.
+
+### Manual Installation
+
+#### Without Beads Integration (Recommended for Beginners)
 
 Standalone TDD workflow commands without dependencies.
 
@@ -33,7 +58,7 @@ cp /tmp/claude-instructions/downloads/without-beads/*.md .claude/commands/
 rm -rf /tmp/claude-instructions
 ```
 
-### With Beads Integration
+#### With Beads Integration
 
 Supports [Beads MCP](https://github.com/steveyegge/beads) integration for issue tracking and workflow management, installed separately.
 
