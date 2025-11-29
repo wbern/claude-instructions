@@ -1,4 +1,5 @@
 import { select, text, groupMultiselect, isCancel, intro, outro } from '@clack/prompts';
+import os from 'os';
 import { generateToDirectory, VARIANT_OPTIONS, getScopeOptions, getCommandsGroupedByCategory, type Variant, type Scope } from './cli-generator.js';
 
 const BATMAN_LOGO = `
@@ -84,5 +85,9 @@ export async function main(args?: CliArgs): Promise<void> {
 
   const result = await generateToDirectory(undefined, variant as Variant, scope as Scope, { commandPrefix: commandPrefix as string, skipTemplateInjection: args?.skipTemplateInjection, commands: selectedCommands as string[] });
 
-  outro(`Installed ${result.filesGenerated} commands to .claude/commands`);
+  const fullPath = scope === 'project'
+    ? `${process.cwd()}/.claude/commands`
+    : `${os.homedir()}/.claude/commands`;
+
+  outro(`Installed ${result.filesGenerated} commands to ${fullPath}\n\nIf Claude Code is already running, restart it to pick up the new commands.\n\nHappy TDD'ing!`);
 }

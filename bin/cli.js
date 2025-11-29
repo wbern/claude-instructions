@@ -2,6 +2,7 @@
 
 // scripts/cli.ts
 import { select, text, groupMultiselect, isCancel, intro, outro } from "@clack/prompts";
+import os2 from "os";
 
 // scripts/cli-generator.ts
 import fs from "fs-extra";
@@ -223,7 +224,12 @@ async function main(args) {
     }
   }
   const result = await generateToDirectory(void 0, variant, scope, { commandPrefix, skipTemplateInjection: args?.skipTemplateInjection, commands: selectedCommands });
-  outro(`Installed ${result.filesGenerated} commands to .claude/commands`);
+  const fullPath = scope === "project" ? `${process.cwd()}/.claude/commands` : `${os2.homedir()}/.claude/commands`;
+  outro(`Installed ${result.filesGenerated} commands to ${fullPath}
+
+If Claude Code is already running, restart it to pick up the new commands.
+
+Happy TDD'ing!`);
 }
 
 // scripts/bin.ts

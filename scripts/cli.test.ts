@@ -130,6 +130,22 @@ describe('CLI', () => {
     expect(outro).toHaveBeenCalledWith(expect.stringContaining('.claude/commands'));
   });
 
+  it('should show detailed outro with full path, restart hint, and encouragement', async () => {
+    const { select, text, outro } = await import('@clack/prompts');
+    const { main } = await import('./cli.js');
+
+    vi.mocked(select)
+      .mockResolvedValueOnce('with-beads')
+      .mockResolvedValueOnce('project');
+    vi.mocked(text).mockResolvedValueOnce('');
+
+    await main();
+
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining('Happy'));
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining(process.cwd()));
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining('restart'));
+  });
+
   it('should prompt for command prefix and pass it to generator', async () => {
     const { select, text } = await import('@clack/prompts');
     const { generateToDirectory } = await import('./cli-generator.js');
