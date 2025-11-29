@@ -37,17 +37,26 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
+    "knip": "knip",
+    "duplication-check": "jscpd",
     "prepublishOnly": "bash scripts/check-publish.sh && pnpm build && pnpm build:cli",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
     "husky": "^9.1.7",
+    "jscpd": "^4.0.5",
+    "knip": "^5.70.2",
+    "lint-staged": "^16.2.7",
     "markdown-magic": "^4.0.4",
+    "prettier": "^3.7.2",
     "tsup": "^8.5.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0",
     "vitest": "^4.0.8"
   },
   "dependencies": {
@@ -55,7 +64,9 @@
     "fs-extra": "^11.3.2"
   },
   "release": {
-    "branches": ["main"],
+    "branches": [
+      "main"
+    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",

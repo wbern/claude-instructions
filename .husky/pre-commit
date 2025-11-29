@@ -1,7 +1,13 @@
 #!/bin/sh
 
-# Run type checking
-pnpm typecheck
+# Run lint-staged (prettier, eslint, tsc on staged files)
+pnpm exec lint-staged
+
+# Check for unused code/dependencies
+pnpm knip --no-config-hints
+
+# Check for code duplication
+pnpm duplication-check
 
 # Run tests
 pnpm test

@@ -1,5 +1,6 @@
-declare module 'markdown-magic' {
+declare module "markdown-magic" {
   export interface MarkdownMagicConfig {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     transforms: Record<string, (args: any) => string>;
     outputFlatten?: boolean;
     output?: {
@@ -11,6 +12,6 @@ declare module 'markdown-magic' {
 
   export function markdownMagic(
     files: string[],
-    config: MarkdownMagicConfig
+    config: MarkdownMagicConfig,
   ): void;
 }

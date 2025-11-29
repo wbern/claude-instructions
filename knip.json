@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["scripts/bin.ts", "scripts/generate-readme.ts", "scripts/build.sh"],
+  "project": ["scripts/**/*.ts"],
+  "ignore": [
+    "scripts/**/*.test.ts",
+    "scripts/__tests__/**",
+    "scripts/post-process.ts"
+  ],
+  "ignoreDependencies": ["lint-staged", "@types/markdown-magic"],
+  "ignoreBinaries": ["semantic-release", "prettier", "eslint", "mktemp", "tar"]
+}
