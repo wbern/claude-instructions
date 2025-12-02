@@ -30,6 +30,52 @@ The interactive installer lets you choose:
 
 After installation, restart Claude Code if it's currently running.
 
+## Customizing Commands
+
+You can inject project-specific instructions into generated commands by adding a `<claude-commands-template>` block to your `CLAUDE.md` or `AGENTS.md` file.
+
+### Basic Usage
+
+Add this to your project's `CLAUDE.md`:
+
+```markdown
+# My Project
+
+Other instructions here...
+
+<claude-commands-template>
+## Project-Specific Rules
+
+- Always use pnpm instead of npm
+- Run tests with `pnpm test`
+</claude-commands-template>
+```
+
+When you run `npx @wbern/claude-instructions`, the template content is appended to all generated commands.
+
+### Targeting Specific Commands
+
+Use the `commands` attribute to inject content only into specific commands:
+
+```markdown
+<claude-commands-template commands="commit,ask">
+## Git Conventions
+
+- Use conventional commits format
+- Reference issue numbers in commits
+</claude-commands-template>
+```
+
+This injects the content only into `commit.md` and `ask.md`.
+
+### File Priority
+
+The generator looks for template blocks in this order:
+1. `CLAUDE.md` (checked first)
+2. `AGENTS.md` (fallback)
+
+Only the first file found is used.
+
 ## Which Command Should I Use?
 
 ### Main Workflow
