@@ -14,6 +14,11 @@
     "category": "Utilities",
     "order": 2
   },
+  "busycommit.md": {
+    "description": "Create multiple atomic git commits, one logical change at a time",
+    "category": "Workflow",
+    "order": 2
+  },
   "commit.md": {
     "description": "Create a git commit following project standards",
     "category": "Workflow",

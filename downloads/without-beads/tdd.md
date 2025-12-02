@@ -23,8 +23,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook `*.stories.tsx`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use `data-testid` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (`waitFor`, `findBy*`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 

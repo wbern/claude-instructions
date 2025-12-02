@@ -119,6 +119,7 @@ flowchart TB
 ### Workflow
 
 - `/commit` - Create a git commit following project standards
+- `/busycommit` - Create multiple atomic git commits, one logical change at a time
 - `/ship` - Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
 - `/show` - Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
 - `/ask` - Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)

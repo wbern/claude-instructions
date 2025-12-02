@@ -13,6 +13,8 @@ _order: 2
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
+Additional info: $ARGUMENTS
+
 <current_state>
 Current branch: !git branch --show-current`
 Current worktrees: !git worktree list`

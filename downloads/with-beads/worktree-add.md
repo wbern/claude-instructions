@@ -69,7 +69,7 @@ Uncommitted changes: !git status --short`
 
   <step_2>
     <description>Parse the arguments</description>
-    <input>$ARGUMENTS</input>
+    <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
     <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>

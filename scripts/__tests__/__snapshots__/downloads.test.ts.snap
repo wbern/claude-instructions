@@ -61,7 +61,7 @@ echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.m
 
 ### Command with Arguments
 \`\`\`markdown
-Fix issue #$ARGUMENTS following our coding standards
+Fix issue #ARGUMENTS following our coding standards
 \`\`\`
 
 ### Command with File References
@@ -86,7 +86,7 @@ Create commit for these changes.
 ### Namespaced Command
 \`\`\`bash
 mkdir -p ~/.claude/commands/ai
-echo "Ask GPT-5 about: $ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
+echo "Ask GPT-5 about: ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 # Creates: /ai:gpt5
 \`\`\`
 
@@ -339,6 +339,66 @@ This command ensures transparency about AI usage while maintaining that the user
 "
 `;
 
+exports[`downloads/with-beads > should match snapshot for busycommit.md 1`] = `
+"---
+allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
+description: Create multiple atomic git commits, one logical change at a time
+argument-hint: [optional-commit-description]
+---
+
+Create multiple atomic git commits, committing the smallest possible logical unit at a time
+
+Include any of the following info if specified: $ARGUMENTS
+
+
+
+
+## Process
+
+1. Run \`git status\` and \`git diff\` to review changes
+2. Run \`git log --oneline -5\` to see recent commit style
+3. Stage relevant files with \`git add\`
+4. Create commit with descriptive message
+5. Verify with \`git status\`
+
+## Example
+
+\`\`\`bash
+git add <files>
+git commit -m "feat(#123): add validation to user input form"
+\`\`\`
+
+## Atomic Commit Approach
+
+Each commit should represent ONE logical change. Do NOT bundle multiple unrelated changes into one commit.
+
+- Identify the smallest atomic units of change
+- For EACH atomic unit: stage only those files/hunks, commit, verify
+- Use \`git add -p\` to stage partial file changes when a file contains multiple logical changes
+- Repeat until all changes are committed
+- It is OK to create multiple commits without stopping - keep going until \`git status\` shows clean
+
+## Multi-Commit Example
+
+If a single file contains multiple unrelated changes, use \`git add -p\` to stage hunks interactively:
+
+\`\`\`bash
+# Stage only the validation-related hunks from the file
+git add -p src/user-service.ts
+# Select 'y' for validation hunks, 'n' for others
+git commit -m "feat(#123): add email format validation"
+
+# Stage the error handling hunks
+git add -p src/user-service.ts
+git commit -m "fix(#124): handle null user gracefully"
+
+# Stage remaining changes
+git add src/user-service.ts
+git commit -m "refactor: extract user lookup to helper"
+\`\`\`
+"
+`;
+
 exports[`downloads/with-beads > should match snapshot for commit.md 1`] = `
 "---
 allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
@@ -350,28 +410,8 @@ Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
 
-## General Guidelines
 
-### Output Style
-- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
-- Write natural, descriptive code without meta-commentary about the development process
-- The code should speak for itself - TDD is the process, not the product
 
-## Commit Message Rules
-
-Follows [Conventional Commits](https://www.conventionalcommits.org/) standard.
-
-1. **Format**: \`type(#issue): description\`
-   - Use \`#123\` for local repo issues
-   - Use \`owner/repo#123\` for cross-repo issues
-   - Common types: \`feat\`, \`fix\`, \`docs\`, \`refactor\`, \`test\`, \`chore\`
-
-2. **AI Credits**: **NEVER include AI credits in commit messages**
-   - No "Generated with Claude Code"
-   - No "Co-Authored-By: Claude" or "Co-Authored-By: Happy"
-   - Focus on the actual changes made, not conversation history
-
-3. **Content**: Write clear, concise commit messages describing what changed and why
 
 ## Process
 
@@ -422,8 +462,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -506,6 +549,9 @@ Present findings as a prioritized list with:
 - Suggested next action
 
 If there are no gaps, confirm that everything discussed has been addressed.
+
+Additional info:
+$ARGUMENTS
 "
 `;
 
@@ -541,8 +587,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -686,8 +735,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -947,8 +999,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -1038,8 +1093,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -1349,8 +1407,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -1418,6 +1479,8 @@ description: Summarize conversation progress and next steps
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
+Additional info: $ARGUMENTS
+
 ## Summary Structure
 
 Provide a summary with these sections:
@@ -1478,8 +1541,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -1617,7 +1683,7 @@ Uncommitted changes: !git status --short\`
 
   <step_2>
     <description>Parse the arguments</description>
-    <input>$ARGUMENTS</input>
+    <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
     <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>
@@ -1827,6 +1893,8 @@ argument-hint: (no arguments)
 - The code should speak for itself - TDD is the process, not the product
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
+
+Additional info: $ARGUMENTS
 
 <current_state>
 Current branch: !git branch --show-current\`
@@ -2100,7 +2168,7 @@ echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.m
 
 ### Command with Arguments
 \`\`\`markdown
-Fix issue #$ARGUMENTS following our coding standards
+Fix issue #ARGUMENTS following our coding standards
 \`\`\`
 
 ### Command with File References
@@ -2125,7 +2193,7 @@ Create commit for these changes.
 ### Namespaced Command
 \`\`\`bash
 mkdir -p ~/.claude/commands/ai
-echo "Ask GPT-5 about: $ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
+echo "Ask GPT-5 about: ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 # Creates: /ai:gpt5
 \`\`\`
 
@@ -2362,6 +2430,66 @@ This command ensures transparency about AI usage while maintaining that the user
 "
 `;
 
+exports[`downloads/without-beads > should match snapshot for busycommit.md 1`] = `
+"---
+allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
+description: Create multiple atomic git commits, one logical change at a time
+argument-hint: [optional-commit-description]
+---
+
+Create multiple atomic git commits, committing the smallest possible logical unit at a time
+
+Include any of the following info if specified: $ARGUMENTS
+
+
+
+
+## Process
+
+1. Run \`git status\` and \`git diff\` to review changes
+2. Run \`git log --oneline -5\` to see recent commit style
+3. Stage relevant files with \`git add\`
+4. Create commit with descriptive message
+5. Verify with \`git status\`
+
+## Example
+
+\`\`\`bash
+git add <files>
+git commit -m "feat(#123): add validation to user input form"
+\`\`\`
+
+## Atomic Commit Approach
+
+Each commit should represent ONE logical change. Do NOT bundle multiple unrelated changes into one commit.
+
+- Identify the smallest atomic units of change
+- For EACH atomic unit: stage only those files/hunks, commit, verify
+- Use \`git add -p\` to stage partial file changes when a file contains multiple logical changes
+- Repeat until all changes are committed
+- It is OK to create multiple commits without stopping - keep going until \`git status\` shows clean
+
+## Multi-Commit Example
+
+If a single file contains multiple unrelated changes, use \`git add -p\` to stage hunks interactively:
+
+\`\`\`bash
+# Stage only the validation-related hunks from the file
+git add -p src/user-service.ts
+# Select 'y' for validation hunks, 'n' for others
+git commit -m "feat(#123): add email format validation"
+
+# Stage the error handling hunks
+git add -p src/user-service.ts
+git commit -m "fix(#124): handle null user gracefully"
+
+# Stage remaining changes
+git add src/user-service.ts
+git commit -m "refactor: extract user lookup to helper"
+\`\`\`
+"
+`;
+
 exports[`downloads/without-beads > should match snapshot for commit.md 1`] = `
 "---
 allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
@@ -2373,28 +2501,8 @@ Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
 
-## General Guidelines
 
-### Output Style
-- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
-- Write natural, descriptive code without meta-commentary about the development process
-- The code should speak for itself - TDD is the process, not the product
 
-## Commit Message Rules
-
-Follows [Conventional Commits](https://www.conventionalcommits.org/) standard.
-
-1. **Format**: \`type(#issue): description\`
-   - Use \`#123\` for local repo issues
-   - Use \`owner/repo#123\` for cross-repo issues
-   - Common types: \`feat\`, \`fix\`, \`docs\`, \`refactor\`, \`test\`, \`chore\`
-
-2. **AI Credits**: **NEVER include AI credits in commit messages**
-   - No "Generated with Claude Code"
-   - No "Co-Authored-By: Claude" or "Co-Authored-By: Happy"
-   - Focus on the actual changes made, not conversation history
-
-3. **Content**: Write clear, concise commit messages describing what changed and why
 
 ## Process
 
@@ -2445,8 +2553,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -2528,6 +2639,9 @@ Present findings as a prioritized list with:
 - Suggested next action
 
 If there are no gaps, confirm that everything discussed has been addressed.
+
+Additional info:
+$ARGUMENTS
 "
 `;
 
@@ -2563,8 +2677,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -2700,8 +2817,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -2901,8 +3021,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -2992,8 +3115,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -3287,8 +3413,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -3356,6 +3485,8 @@ description: Summarize conversation progress and next steps
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
+Additional info: $ARGUMENTS
+
 ## Summary Structure
 
 Provide a summary with these sections:
@@ -3408,8 +3539,11 @@ The foundation of TDD is the Red-Green-Refactor cycle:
 
    - The test must fail for the RIGHT reason (not syntax/import errors)
    - Only one test at a time - this is critical for TDD discipline
+     - Exception: For browser-level tests or expensive setup (e.g., Storybook \`*.stories.tsx\`), group multiple assertions within a single test block to avoid redundant setup - but only when adding assertions to an existing interaction flow. If new user interactions are required, still create a new test. Split files by category if they exceed ~1000 lines.
    - **Adding a single test to a test file is ALWAYS allowed** - no prior test output needed
    - Starting TDD for a new feature is always valid, even if test output shows unrelated work
+   - For DOM-based tests, use \`data-testid\` attributes to select elements rather than CSS classes, tag names, or text content
+   - Avoid hard-coded timeouts both in form of sleep() or timeout: 5000 etc; use proper async patterns (\`waitFor\`, \`findBy*\`, event-based sync) instead and rely on global test configs for timeout settings
 
 2. **Green Phase**: Write MINIMAL code to make the test pass
 
@@ -3547,7 +3681,7 @@ Uncommitted changes: !git status --short\`
 
   <step_2>
     <description>Parse the arguments</description>
-    <input>$ARGUMENTS</input>
+    <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
     <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>
@@ -3757,6 +3891,8 @@ argument-hint: (no arguments)
 - The code should speak for itself - TDD is the process, not the product
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
+
+Additional info: $ARGUMENTS
 
 <current_state>
 Current branch: !git branch --show-current\`

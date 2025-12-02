@@ -8,80 +8,55 @@ const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 
 const DOWNLOADS_DIR = path.join(PROJECT_ROOT, "downloads");
+const SOURCES_DIR = path.join(PROJECT_ROOT, "src", "sources");
+const FRAGMENTS_DIR = path.join(PROJECT_ROOT, "src", "fragments");
 
-describe("downloads/with-beads", () => {
-  const withBeadsDir = path.join(DOWNLOADS_DIR, "with-beads");
+const getMarkdownFiles = (dir: string): string[] =>
+  fs.existsSync(dir)
+    ? fs.readdirSync(dir).filter((f) => f.endsWith(".md"))
+    : [];
 
-  if (!fs.existsSync(withBeadsDir)) {
-    it.skip("with-beads directory does not exist", () => {});
-  } else {
-    const files = fs.readdirSync(withBeadsDir).filter((f) => f.endsWith(".md"));
+["with-beads", "without-beads"].forEach((variant) => {
+  describe(`downloads/${variant}`, () => {
+    const variantDir = path.join(DOWNLOADS_DIR, variant);
+    const files = getMarkdownFiles(variantDir);
 
-    files.forEach((file) => {
-      it(`should match snapshot for ${file}`, () => {
-        const content = fs.readFileSync(path.join(withBeadsDir, file), "utf8");
-        expect(content).toMatchSnapshot();
+    if (files.length === 0) {
+      it.skip(`${variant} directory does not exist`, () => {});
+    } else {
+      files.forEach((file) => {
+        it(`should match snapshot for ${file}`, () => {
+          const content = fs.readFileSync(path.join(variantDir, file), "utf8");
+          expect(content).toMatchSnapshot();
+        });
       });
-    });
-  }
-});
-
-describe("downloads/without-beads", () => {
-  const withoutBeadsDir = path.join(DOWNLOADS_DIR, "without-beads");
-
-  if (!fs.existsSync(withoutBeadsDir)) {
-    it.skip("without-beads directory does not exist", () => {});
-  } else {
-    const files = fs
-      .readdirSync(withoutBeadsDir)
-      .filter((f) => f.endsWith(".md"));
-
-    files.forEach((file) => {
-      it(`should match snapshot for ${file}`, () => {
-        const content = fs.readFileSync(
-          path.join(withoutBeadsDir, file),
-          "utf8",
-        );
-        expect(content).toMatchSnapshot();
-      });
-    });
-  }
+    }
+  });
 });
 
 describe("downloads variants comparison", () => {
   it("should compile all source files to output directory", () => {
-    const sourcesDir = path.join(PROJECT_ROOT, "src", "sources");
     const withBeadsDir = path.join(DOWNLOADS_DIR, "with-beads");
+    const sourceFiles = getMarkdownFiles(SOURCES_DIR);
+    const compiledFiles = getMarkdownFiles(withBeadsDir);
 
-    if (fs.existsSync(sourcesDir) && fs.existsSync(withBeadsDir)) {
-      const sourceFiles = fs
-        .readdirSync(sourcesDir)
-        .filter((f) => f.endsWith(".md"));
-      const compiledFiles = fs
-        .readdirSync(withBeadsDir)
-        .filter((f) => f.endsWith(".md"));
-
-      // Every source file should have a corresponding compiled file
+    if (sourceFiles.length > 0 && compiledFiles.length > 0) {
       sourceFiles.forEach((sourceFile) => {
         expect(compiledFiles).toContain(sourceFile);
       });
-
       expect(sourceFiles.length).toBe(compiledFiles.length);
     }
   });
 
   it("should have same number of files in both variants", () => {
-    const withBeadsDir = path.join(DOWNLOADS_DIR, "with-beads");
-    const withoutBeadsDir = path.join(DOWNLOADS_DIR, "without-beads");
+    const withBeadsFiles = getMarkdownFiles(
+      path.join(DOWNLOADS_DIR, "with-beads"),
+    );
+    const withoutBeadsFiles = getMarkdownFiles(
+      path.join(DOWNLOADS_DIR, "without-beads"),
+    );
 
-    if (fs.existsSync(withBeadsDir) && fs.existsSync(withoutBeadsDir)) {
-      const withBeadsFiles = fs
-        .readdirSync(withBeadsDir)
-        .filter((f) => f.endsWith(".md"));
-      const withoutBeadsFiles = fs
-        .readdirSync(withoutBeadsDir)
-        .filter((f) => f.endsWith(".md"));
-
+    if (withBeadsFiles.length > 0 && withoutBeadsFiles.length > 0) {
       expect(withBeadsFiles.length).toBe(withoutBeadsFiles.length);
       expect(withBeadsFiles.sort()).toEqual(withoutBeadsFiles.sort());
     }
@@ -111,12 +86,11 @@ describe("downloads content validation", () => {
 
   ["with-beads", "without-beads"].forEach((variant) => {
     const variantDir = path.join(DOWNLOADS_DIR, variant);
+    const files = getMarkdownFiles(variantDir);
 
-    if (!fs.existsSync(variantDir)) {
+    if (files.length === 0) {
       it.skip(`${variant} directory does not exist`, () => {});
     } else {
-      const files = fs.readdirSync(variantDir).filter((f) => f.endsWith(".md"));
-
       files.forEach((file) => {
         it(`${variant}/${file} should not contain markdown comment blocks`, () => {
           const content = fs.readFileSync(path.join(variantDir, file), "utf8");
@@ -125,6 +99,55 @@ describe("downloads content validation", () => {
           lines.forEach((line) => {
             expect(line).not.toMatch(COMMENT_BLOCK_PATTERN);
           });
+        });
+      });
+    }
+  });
+});
+
+describe("src/sources validation", () => {
+  const files = getMarkdownFiles(SOURCES_DIR);
+
+  if (files.length === 0) {
+    it.skip("sources directory does not exist", () => {});
+  } else {
+    files.forEach((file) => {
+      it(`${file} should contain $ARGUMENTS`, () => {
+        const content = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        expect(content).toContain("$ARGUMENTS");
+      });
+    });
+  }
+});
+
+describe("src/fragments validation", () => {
+  const files = getMarkdownFiles(FRAGMENTS_DIR);
+
+  if (files.length === 0) {
+    it.skip("fragments directory does not exist", () => {});
+  } else {
+    files.forEach((file) => {
+      it(`${file} should not contain $ARGUMENTS`, () => {
+        const content = fs.readFileSync(path.join(FRAGMENTS_DIR, file), "utf8");
+        expect(content).not.toContain("$ARGUMENTS");
+      });
+    });
+  }
+});
+
+describe("compiled commands $ARGUMENTS validation", () => {
+  ["with-beads", "without-beads"].forEach((variant) => {
+    const variantDir = path.join(DOWNLOADS_DIR, variant);
+    const files = getMarkdownFiles(variantDir);
+
+    if (files.length === 0) {
+      it.skip(`${variant} directory does not exist`, () => {});
+    } else {
+      files.forEach((file) => {
+        it(`${variant}/${file} should have exactly one $ARGUMENTS`, () => {
+          const content = fs.readFileSync(path.join(variantDir, file), "utf8");
+          const matches = content.match(/\$ARGUMENTS/g) || [];
+          expect(matches.length).toBe(1);
         });
       });
     }

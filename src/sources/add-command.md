@@ -60,7 +60,7 @@ echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.m
 
 ### Command with Arguments
 ```markdown
-Fix issue #$ARGUMENTS following our coding standards
+Fix issue #ARGUMENTS following our coding standards
 ```
 
 ### Command with File References
@@ -85,7 +85,7 @@ Create commit for these changes.
 ### Namespaced Command
 ```bash
 mkdir -p ~/.claude/commands/ai
-echo "Ask GPT-5 about: $ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
+echo "Ask GPT-5 about: ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 # Creates: /ai:gpt5
 ```
 
