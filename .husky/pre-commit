@@ -18,3 +18,4 @@ pnpm test
 # Stage generated files
 git add downloads/
 git add README.md
+git add .claude/commands/

@@ -6,6 +6,7 @@ argument-hint: <command-name> <description>
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -13,7 +14,9 @@ argument-hint: <command-name> <description>
 # Slash Command Creator Guide
 
 ## How This Command Works
+
 The `/add-command` command shows this guide for creating new slash commands. It includes:
+
 - Command structure and syntax
 - Common patterns and examples
 - Security restrictions and limitations
@@ -22,6 +25,7 @@ The `/add-command` command shows this guide for creating new slash commands. It 
 **Note for AI**: When creating commands, you CAN use bash tools like `Bash(mkdir:*)`, `Bash(ls:*)`, `Bash(git status:*)` in the `allowed-tools` frontmatter of NEW commands - but ONLY for operations within the current project directory. This command itself doesn't need bash tools since it's just documentation.
 
 ## Command Locations
+
 - **Personal**: `~/.claude/commands/` (available across all projects)
 - **Project**: `.claude/commands/` (shared with team, shows "(project)")
 
@@ -48,33 +52,40 @@ Bash command output: (exclamation)git status(backticks)
 ## ⚠️ Security Restrictions
 
 **Bash Commands (exclamation prefix)**: Limited to current working directory only.
+
 - ✅ Works: `! + backtick + git status + backtick` (in project dir)
 - ❌ Blocked: `! + backtick + ls /outside/project + backtick` (outside project)  
 - ❌ Blocked: `! + backtick + pwd + backtick` (if referencing dirs outside project)
 
 **File References (`@` prefix)**: No directory restrictions.
+
 - ✅ Works: `@/path/to/system/file.md`
 - ✅ Works: `@../other-project/file.js`
 
 ## Common Patterns
 
 ### Simple Command
+
 ```bash
 echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.md
 ```
 
 ### Command with Arguments
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular `$` character.
+
 ```markdown
 Fix issue ＄ARGUMENTS following our coding standards
 ```
 
 ### Command with File References
+
 ```markdown
 Compare @src/old.js with @src/new.js and explain differences
 ```
 
 ### Command with Bash Output (Project Directory Only)
+
 ```markdown
 ---
 allowed-tools: Bash(git status:*), Bash(git branch:*), Bash(git log:*)
@@ -89,7 +100,9 @@ Create commit for these changes.
 **Note**: Only works with commands in the current project directory.
 
 ### Namespaced Command
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular `$` character.
+
 ```bash
 mkdir -p ~/.claude/commands/ai
 echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
@@ -97,6 +110,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 ```
 
 ## Frontmatter Options
+
 - `allowed-tools`: Tools this command can use
   - **Important**: Intrusive tools like `Write`, `Edit`, `NotebookEdit` should NEVER be allowed in commands unless the user explicitly requests them. These tools modify files and should only be used when the command's purpose is to make changes.
   - ✅ Safe for most commands: `Read`, `Glob`, `Grep`, `Bash(git status:*)`, `Task`, `AskUserQuestion`
@@ -107,6 +121,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 ## Best Practices
 
 ### Safe Commands (No Security Issues)
+
 ```markdown
 # System prompt editor (file reference only)  
 (@)path/to/system/prompt.md
@@ -115,6 +130,7 @@ Edit your system prompt above.
 ```
 
 ### Project-Specific Commands (Bash OK)
+
 ```markdown
 ---
 allowed-tools: Bash(git status:*), Bash(npm list:*)
@@ -126,6 +142,7 @@ Review project state and suggest next steps.
 ```
 
 ### Cross-Directory File Access (Use @ not !)
+
 ```markdown
 # Compare config files
 Compare (@)path/to/system.md with (@)project/config.md
@@ -134,6 +151,7 @@ Show differences and suggest improvements.
 ```
 
 ## Usage
+
 After creating: `/<command-name> [arguments]`
 
 Example: `/review` or `/ai:gpt5 "explain this code"`

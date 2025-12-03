@@ -35,17 +35,19 @@ pnpm vitest run -u  # Update snapshots
 
 ### Git Hooks (Husky)
 Pre-commit hook automatically:
-1. Runs tests (must pass)
-2. Builds both variants
-3. Stages generated files (downloads/, README.md)
+1. Builds both variants (includes markdownlint --fix)
+2. Runs tests (validates built output)
+3. Stages generated files (downloads/, README.md, .claude/commands/)
 
 This ensures artifacts are always in sync with sources.
 
 ### Build Process
 1. markdown-magic expands INCLUDE directives from fragments
 2. Comment blocks are removed from output
-3. Two variants generated: with-beads and without-beads
-4. README.md automatically updated
+3. markdownlint --fix corrects formatting (list numbering, spacing)
+4. Two variants generated: with-beads and without-beads
+5. README.md automatically updated
+6. .claude/commands/ copied from with-beads variant
 
 ### Making Changes
 

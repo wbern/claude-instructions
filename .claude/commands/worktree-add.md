@@ -9,6 +9,7 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -72,7 +73,7 @@ Uncommitted changes: !git status --short`
     <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
-    <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>
+    <example_github_url><https://github.com/owner/project/issues/123> main</example_github_url>
     <default_base_branch>main (if not specified)</default_base_branch>
   </step_1>
 
@@ -182,7 +183,7 @@ Uncommitted changes: !git status --short`
       - packages/*/.env.local
       - (any other .env.local files found)
     </common_locations>
-    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "${parent_path}/${branch_name}/$1")" && cp "$1" "${parent_path}/${branch_name}/$1"' _ {} \;</copy_command>
+    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "${parent_path}/${branch_name}/$1")" && cp "$1" "${parent_path}/${branch_name}/$1"' _{} \;</copy_command>
     <purpose>Preserve local environment configurations for development</purpose>
     <note>Only copies files that exist; ignores missing ones</note>
   </step_9>
@@ -249,14 +250,15 @@ EOF</create_file_command>
 </execution_steps>
 
 <important_notes>
-  - Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
-  - Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
-  - Branch names with slashes (feat/, fix/, etc.) are fully supported
-  - The worktree directory path will match the full branch name including slashes
-  - Settings are copied to maintain the same permissions across worktrees
-  - Environment files (.env.local) are copied to preserve local configurations
-  - Each worktree has its own node_modules installation
-  - Uncommitted changes are automatically stashed and moved to the new worktree
-  - Your work-in-progress seamlessly transfers to the new branch
-  - IDE detection fallback: checks available editors and uses priority order
+
+- Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
+- Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
+- Branch names with slashes (feat/, fix/, etc.) are fully supported
+- The worktree directory path will match the full branch name including slashes
+- Settings are copied to maintain the same permissions across worktrees
+- Environment files (.env.local) are copied to preserve local configurations
+- Each worktree has its own node_modules installation
+- Uncommitted changes are automatically stashed and moved to the new worktree
+- Your work-in-progress seamlessly transfers to the new branch
+- IDE detection fallback: checks available editors and uses priority order
 </important_notes>

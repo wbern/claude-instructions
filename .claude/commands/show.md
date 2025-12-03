@@ -9,6 +9,7 @@ argument-hint: [optional-pr-title-and-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -106,8 +107,9 @@ Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncerta
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with `bd ready` to find next task
 - Create issues with `bd create "description"`
 - Track dependencies with `bd dep add`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
