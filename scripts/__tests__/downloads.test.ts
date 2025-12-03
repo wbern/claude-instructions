@@ -183,6 +183,18 @@ describe("argument-hint frontmatter", () => {
   });
 });
 
+describe("consistency checks inclusion", () => {
+  ["with-beads", "without-beads"].forEach((variant) => {
+    it(`${variant}/gap.md should include consistency checking guidance`, () => {
+      const content = fs.readFileSync(
+        path.join(DOWNLOADS_DIR, variant, "gap.md"),
+        "utf8",
+      );
+      expect(content).toContain("Consistency");
+    });
+  });
+});
+
 describe("README", () => {
   it("should contain Batman logo ASCII art", () => {
     const readmePath = path.join(PROJECT_ROOT, "README.md");

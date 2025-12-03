@@ -552,6 +552,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 exports[`downloads/with-beads > should match snapshot for gap.md 1`] = `
 "---
 description: Analyze conversation context for unaddressed items and gaps
+argument-hint: [optional additional info]
 ---
 
 ## General Guidelines
@@ -571,6 +572,7 @@ Analyze the current conversation context and identify things that have not yet b
 5. **TODO comments** - Any TODOs mentioned in conversation
 6. **Error handling gaps** - Missing error cases or edge cases
 7. **Documentation gaps** - Undocumented APIs or features
+8. **Consistency gaps** - Inconsistent patterns, naming, or structure across the codebase
 
 Present findings as a prioritized list with:
 
@@ -1004,6 +1006,7 @@ exports[`downloads/with-beads > should match snapshot for red.md 1`] = `
 "---
 allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Red Phase - write ONE failing test
+argument-hint: [optional additional info]
 ---
 
 RED PHASE! Apply the below to the info given by user input here:
@@ -1505,6 +1508,7 @@ exports[`downloads/with-beads > should match snapshot for summarize.md 1`] = `
 "---
 allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
+argument-hint: [optional additional info]
 ---
 
 ## General Guidelines
@@ -2680,6 +2684,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 exports[`downloads/without-beads > should match snapshot for gap.md 1`] = `
 "---
 description: Analyze conversation context for unaddressed items and gaps
+argument-hint: [optional additional info]
 ---
 
 ## General Guidelines
@@ -2698,6 +2703,7 @@ Analyze the current conversation context and identify things that have not yet b
 5. **TODO comments** - Any TODOs mentioned in conversation
 6. **Error handling gaps** - Missing error cases or edge cases
 7. **Documentation gaps** - Undocumented APIs or features
+8. **Consistency gaps** - Inconsistent patterns, naming, or structure across the codebase
 
 Present findings as a prioritized list with:
 
@@ -3063,6 +3069,7 @@ exports[`downloads/without-beads > should match snapshot for red.md 1`] = `
 "---
 allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Red Phase - write ONE failing test
+argument-hint: [optional additional info]
 ---
 
 RED PHASE! Apply the below to the info given by user input here:
@@ -3548,6 +3555,7 @@ exports[`downloads/without-beads > should match snapshot for summarize.md 1`] = 
 "---
 allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
+argument-hint: [optional additional info]
 ---
 
 ## General Guidelines
