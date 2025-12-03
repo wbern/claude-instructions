@@ -5,6 +5,9 @@ _category: Utilities
 _order: 3
 ---
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 # Slash Command Creator Guide
 
 ## How This Command Works

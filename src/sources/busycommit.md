@@ -6,6 +6,9 @@ _category: Workflow
 _order: 2
 ---
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS

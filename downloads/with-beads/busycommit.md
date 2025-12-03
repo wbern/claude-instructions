@@ -4,6 +4,13 @@ description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS

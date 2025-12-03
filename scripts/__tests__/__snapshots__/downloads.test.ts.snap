@@ -6,6 +6,13 @@ description: Guide for creating new slash commands
 argument-hint: <command-name> <description>
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 # Slash Command Creator Guide
 
 ## How This Command Works
@@ -348,6 +355,13 @@ description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS
@@ -407,6 +421,13 @@ allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
 ---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Create a git commit following project standards
 
@@ -532,6 +553,13 @@ exports[`downloads/with-beads > should match snapshot for gap.md 1`] = `
 "---
 description: Analyze conversation context for unaddressed items and gaps
 ---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Analyze the current conversation context and identify things that have not yet been addressed. Look for:
 
@@ -1479,6 +1507,13 @@ allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
 Additional info: $ARGUMENTS
@@ -2115,6 +2150,13 @@ description: Guide for creating new slash commands
 argument-hint: <command-name> <description>
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 # Slash Command Creator Guide
 
 ## How This Command Works
@@ -2441,6 +2483,13 @@ description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS
@@ -2500,6 +2549,13 @@ allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
 ---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Create a git commit following project standards
 
@@ -2625,6 +2681,13 @@ exports[`downloads/without-beads > should match snapshot for gap.md 1`] = `
 "---
 description: Analyze conversation context for unaddressed items and gaps
 ---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Analyze the current conversation context and identify things that have not yet been addressed. Look for:
 
@@ -3486,6 +3549,13 @@ exports[`downloads/without-beads > should match snapshot for summarize.md 1`] = 
 allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
 ---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 

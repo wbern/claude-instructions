@@ -3,6 +3,13 @@ description: Guide for creating new slash commands
 argument-hint: <command-name> <description>
 ---
 
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
 # Slash Command Creator Guide
 
 ## How This Command Works

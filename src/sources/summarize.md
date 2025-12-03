@@ -5,6 +5,9 @@ _category: Workflow
 _order: 10
 ---
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
 Additional info: $ARGUMENTS

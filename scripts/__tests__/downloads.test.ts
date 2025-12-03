@@ -154,6 +154,22 @@ describe("compiled commands $ARGUMENTS validation", () => {
   });
 });
 
+describe("universal-guidelines inclusion", () => {
+  const UNIVERSAL_GUIDELINES_MARKER = "Never explicitly mention TDD";
+
+  ["with-beads", "without-beads"].forEach((variant) => {
+    const variantDir = path.join(DOWNLOADS_DIR, variant);
+    const files = getMarkdownFiles(variantDir);
+
+    files.forEach((file) => {
+      it(`${variant}/${file} should include universal-guidelines content`, () => {
+        const content = fs.readFileSync(path.join(variantDir, file), "utf8");
+        expect(content).toContain(UNIVERSAL_GUIDELINES_MARKER);
+      });
+    });
+  });
+});
+
 describe("README", () => {
   it("should contain Batman logo ASCII art", () => {
     const readmePath = path.join(PROJECT_ROOT, "README.md");

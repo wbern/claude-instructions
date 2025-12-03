@@ -6,6 +6,9 @@ _category: Workflow
 _order: 1
 ---
 
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
 Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
