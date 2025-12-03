@@ -9,11 +9,11 @@ pnpm knip --no-config-hints
 # Check for code duplication
 pnpm duplication-check
 
-# Run tests
-pnpm test
-
-# Build both variants
+# Build both variants (includes markdownlint --fix)
 pnpm build
+
+# Run tests (validates built output)
+pnpm test
 
 # Stage generated files
 git add downloads/

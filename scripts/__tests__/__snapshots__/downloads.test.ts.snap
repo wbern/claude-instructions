@@ -9,6 +9,7 @@ argument-hint: <command-name> <description>
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -16,7 +17,9 @@ argument-hint: <command-name> <description>
 # Slash Command Creator Guide
 
 ## How This Command Works
+
 The \`/add-command\` command shows this guide for creating new slash commands. It includes:
+
 - Command structure and syntax
 - Common patterns and examples
 - Security restrictions and limitations
@@ -25,6 +28,7 @@ The \`/add-command\` command shows this guide for creating new slash commands. I
 **Note for AI**: When creating commands, you CAN use bash tools like \`Bash(mkdir:*)\`, \`Bash(ls:*)\`, \`Bash(git status:*)\` in the \`allowed-tools\` frontmatter of NEW commands - but ONLY for operations within the current project directory. This command itself doesn't need bash tools since it's just documentation.
 
 ## Command Locations
+
 - **Personal**: \`~/.claude/commands/\` (available across all projects)
 - **Project**: \`.claude/commands/\` (shared with team, shows "(project)")
 
@@ -51,33 +55,40 @@ Bash command output: (exclamation)git status(backticks)
 ## ⚠️ Security Restrictions
 
 **Bash Commands (exclamation prefix)**: Limited to current working directory only.
+
 - ✅ Works: \`! + backtick + git status + backtick\` (in project dir)
 - ❌ Blocked: \`! + backtick + ls /outside/project + backtick\` (outside project)  
 - ❌ Blocked: \`! + backtick + pwd + backtick\` (if referencing dirs outside project)
 
 **File References (\`@\` prefix)**: No directory restrictions.
+
 - ✅ Works: \`@/path/to/system/file.md\`
 - ✅ Works: \`@../other-project/file.js\`
 
 ## Common Patterns
 
 ### Simple Command
+
 \`\`\`bash
 echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.md
 \`\`\`
 
 ### Command with Arguments
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular \`$\` character.
+
 \`\`\`markdown
 Fix issue ＄ARGUMENTS following our coding standards
 \`\`\`
 
 ### Command with File References
+
 \`\`\`markdown
 Compare @src/old.js with @src/new.js and explain differences
 \`\`\`
 
 ### Command with Bash Output (Project Directory Only)
+
 \`\`\`markdown
 ---
 allowed-tools: Bash(git status:*), Bash(git branch:*), Bash(git log:*)
@@ -92,7 +103,9 @@ Create commit for these changes.
 **Note**: Only works with commands in the current project directory.
 
 ### Namespaced Command
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular \`$\` character.
+
 \`\`\`bash
 mkdir -p ~/.claude/commands/ai
 echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
@@ -100,6 +113,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 \`\`\`
 
 ## Frontmatter Options
+
 - \`allowed-tools\`: Tools this command can use
   - **Important**: Intrusive tools like \`Write\`, \`Edit\`, \`NotebookEdit\` should NEVER be allowed in commands unless the user explicitly requests them. These tools modify files and should only be used when the command's purpose is to make changes.
   - ✅ Safe for most commands: \`Read\`, \`Glob\`, \`Grep\`, \`Bash(git status:*)\`, \`Task\`, \`AskUserQuestion\`
@@ -110,6 +124,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 ## Best Practices
 
 ### Safe Commands (No Security Issues)
+
 \`\`\`markdown
 # System prompt editor (file reference only)  
 (@)path/to/system/prompt.md
@@ -118,6 +133,7 @@ Edit your system prompt above.
 \`\`\`
 
 ### Project-Specific Commands (Bash OK)
+
 \`\`\`markdown
 ---
 allowed-tools: Bash(git status:*), Bash(npm list:*)
@@ -129,6 +145,7 @@ Review project state and suggest next steps.
 \`\`\`
 
 ### Cross-Directory File Access (Use @ not !)
+
 \`\`\`markdown
 # Compare config files
 Compare (@)path/to/system.md with (@)project/config.md
@@ -137,6 +154,7 @@ Show differences and suggest improvements.
 \`\`\`
 
 ## Usage
+
 After creating: \`/<command-name> [arguments]\`
 
 Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
@@ -155,6 +173,7 @@ argument-hint: [optional-pr-title-and-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -282,11 +301,12 @@ Use **/ship** instead if: change is tiny, obvious, and safe
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 "
 `;
 
@@ -304,6 +324,7 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -311,11 +332,12 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 
 ## Instructions
 
@@ -358,6 +380,7 @@ argument-hint: [optional-commit-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -365,9 +388,6 @@ argument-hint: [optional-commit-description]
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS
-
-
-
 
 ## Process
 
@@ -425,6 +445,7 @@ argument-hint: [optional-commit-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -432,9 +453,6 @@ argument-hint: [optional-commit-description]
 Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
-
-
-
 
 ## Process
 
@@ -467,11 +485,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -558,6 +578,7 @@ argument-hint: [optional additional info]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -567,13 +588,14 @@ Analyze the current conversation context and identify things that have not yet b
 1. **Incomplete implementations** - Code that was started but not finished
 2. **Unused variables/results** - Values that were captured but never used
 3. **Missing tests** - Functionality without test coverage
-      4. **Open issues** - Beads issues that are still open or in progress
-      4. **User requests** - Things the user asked for that weren't fully completed
-5. **TODO comments** - Any TODOs mentioned in conversation
-6. **Error handling gaps** - Missing error cases or edge cases
-7. **Documentation gaps** - Undocumented APIs or features
-8. <!- **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
-    resent findings as a prioritized list with:
+4. **Open issues** - Beads issues that are still open or in progress
+5. **User requests** - Things the user asked for that weren't fully completed
+6. **TODO comments** - Any TODOs mentioned in conversation
+7. **Error handling gaps** - Missing error cases or edge cases
+8. **Documentation gaps** - Undocumented APIs or features
+9. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+
+Present findings as a prioritized list with:
 
 - What the gap is
 - Why it matters
@@ -600,11 +622,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -694,6 +718,7 @@ Analyze GitHub issue and create TDD implementation plan.
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -707,11 +732,12 @@ Process:
 - Or from this bullet point with custom info: $ARGUMENTS
 - If not found: ask user
 
-2. Fetch Issue
+1. Fetch Issue
 
 Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
 
 If GitHub MCP is not configured, show:
+
 \`\`\`
 GitHub MCP not configured!
 See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
@@ -720,7 +746,7 @@ Trying GitHub CLI fallback...
 
 Then try using \`gh issue view [ISSUE_NUMBER] --json\` as fallback.
 
-3. Analyze and Plan
+1. Analyze and Plan
 
 Summarize the issue and requirements, then:
 
@@ -729,32 +755,37 @@ Summarize the issue and requirements, then:
 Understand the requirement by asking (use AskUserQuestion if needed):
 
 **Problem Statement**
+
 - What problem does this solve?
 - Who experiences this problem?
 - What's the current pain point?
 
 **Desired Outcome**
+
 - What should happen after this is built?
 - How will users interact with it?
 - What does success look like?
 
 **Scope & Constraints**
+
 - What's in scope vs. out of scope?
 - Any technical constraints?
 - Dependencies on other systems/features?
 
 **Context Check**
+
 - Search codebase for related features/modules
 - Check for existing test files that might be relevant
 
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 
 ## TDD Fundamentals
 
@@ -844,6 +875,7 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -858,6 +890,7 @@ $ARGUMENTS
 ## Input Processing
 
 The input can be one of:
+
 1. **GitHub Issue URL** (e.g., \`https://github.com/owner/repo/issues/123\`)
 2. **GitHub Issue Number** (e.g., \`#123\` or \`123\`)
 3. **Feature Description** (e.g., "Add user authentication")
@@ -868,12 +901,14 @@ The input can be one of:
 If input looks like a GitHub issue:
 
 **Step 1: Extract Issue Number**
+
 - From URL: extract owner/repo/number
 - From number: try to infer repo from git remote
 - From branch name: check patterns like \`issue-123\`, \`123-feature\`, \`feature/123\`
 
 **Step 2: Fetch Issue**
 Try GitHub MCP first:
+
 - If available: use \`mcp__github__issue_read\` to fetch issue details
 - If not available: show message and try \`gh issue view <number>\`
 
@@ -884,6 +919,7 @@ Trying GitHub CLI fallback...
 \`\`\`
 
 **Step 3: Use Issue as Discovery Input**
+
 - Title → Feature name
 - Description → Problem statement and context
 - Labels → Type/priority hints
@@ -891,6 +927,7 @@ Trying GitHub CLI fallback...
 - Linked issues → Dependencies
 
 Extract from GitHub issue:
+
 - Problem statement and context
 - Acceptance criteria (if present)
 - Technical notes (if present)
@@ -903,21 +940,25 @@ Extract from GitHub issue:
 Understand the requirement by asking (use AskUserQuestion if needed):
 
 **Problem Statement**
+
 - What problem does this solve?
 - Who experiences this problem?
 - What's the current pain point?
 
 **Desired Outcome**
+
 - What should happen after this is built?
 - How will users interact with it?
 - What does success look like?
 
 **Scope & Constraints**
+
 - What's in scope vs. out of scope?
 - Any technical constraints?
 - Dependencies on other systems/features?
 
 **Context Check**
+
 - Search codebase for related features/modules
 - Check for existing test files that might be relevant
 
@@ -937,27 +978,32 @@ bd create "Task title" \\
 **Issue Structure Best Practices:**
 
 **Title**: Action-oriented, specific
+
 - ✅ "Add JWT token validation middleware"
 - ❌ "Authentication stuff"
 
 **Description**: Provide context
+
 - Why this task exists
 - How it fits into the larger feature
 - Links to related issues/docs
 
 **Design**: Technical approach
+
 - Key interfaces/types needed
 - Algorithm or approach
 - Libraries or patterns to use
 - Known gotchas or considerations
 
 **Acceptance Criteria**: Test-ready scenarios
+
 - Given-When-Then format
 - Concrete, verifiable conditions
 - Cover main case + edge cases
 - Map 1:1 to future tests
 
 **Dependencies**: Link related issues
+
 \`\`\`bash
 bd dep add ISSUE-123 ISSUE-456 --type blocks
 \`\`\`
@@ -965,6 +1011,7 @@ bd dep add ISSUE-123 ISSUE-456 --type blocks
 ### Validation
 
 After creating issues, verify:
+
 - ✅ Each issue has clear acceptance criteria
 - ✅ Dependencies are mapped (use \`bd dep add\`)
 - ✅ Issues are ordered by implementation sequence
@@ -974,11 +1021,13 @@ After creating issues, verify:
 ## Key Principles
 
 **From PRD World:**
+
 - Start with user problems, not solutions
 - Define success criteria upfront
 - Understand constraints and scope
 
 **From TDD World:**
+
 - Make acceptance criteria test-ready
 - Break work into small, testable pieces
 - Each task should map to test(s)
@@ -986,11 +1035,12 @@ After creating issues, verify:
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 
 ## Integration with Other Commands
 
@@ -1017,6 +1067,7 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1107,11 +1158,13 @@ Apply this document (specifically the Refactor phase), to the info given by user
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -1187,7 +1240,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
-**Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+1. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
 "
 `;
 
@@ -1203,6 +1256,7 @@ argument-hint: [optional-commit-message]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1284,11 +1338,12 @@ If tests fail, linter fails, or changes are large/complex, STOP and suggest:
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 "
 `;
 
@@ -1304,6 +1359,7 @@ argument-hint: [optional-pr-title-and-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1401,11 +1457,12 @@ Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncerta
 ### Beads Integration
 
 Use Beads MCP to:
+
 - Track work with \`bd ready\` to find next task
 - Create issues with \`bd create "description"\`
 - Track dependencies with \`bd dep add\`
 
-See https://github.com/steveyegge/beads for more information.
+See <https://github.com/steveyegge/beads> for more information.
 "
 `;
 
@@ -1423,11 +1480,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -1515,6 +1574,7 @@ argument-hint: [optional additional info]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1528,16 +1588,19 @@ Additional info: $ARGUMENTS
 Provide a summary with these sections:
 
 ### What We Did
+
 - Key accomplishments and changes made
 - Important decisions or discoveries
 - Files created, modified, or analyzed
 
 ### What We're Doing Next
+
 - Immediate next steps
 - Pending tasks or work in progress
 - Goals or objectives to continue
 
 ### Blockers & User Input Needed
+
 - Any issues requiring user intervention
 - Decisions that need to be made
 - Missing information or clarifications needed
@@ -1549,6 +1612,7 @@ Keep the summary concise and actionable - suitable for pasting into a new conver
 ## Beads Integration
 
 If Beads MCP is available, check for task tracking status and ask if the user wants to:
+
 1. Review current task status
 2. Update task states based on conversation progress
 3. Include Beads context in the summary
@@ -1569,6 +1633,7 @@ argument-hint: [optional-response-to-last-message]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1665,6 +1730,7 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -1728,7 +1794,7 @@ Uncommitted changes: !git status --short\`
     <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
-    <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>
+    <example_github_url><https://github.com/owner/project/issues/123> main</example_github_url>
     <default_base_branch>main (if not specified)</default_base_branch>
   </step_1>
 
@@ -1838,7 +1904,7 @@ Uncommitted changes: !git status --short\`
       - packages/*/.env.local
       - (any other .env.local files found)
     </common_locations>
-    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "\${parent_path}/\${branch_name}/$1")" && cp "$1" "\${parent_path}/\${branch_name}/$1"' _ {} \\;</copy_command>
+    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "\${parent_path}/\${branch_name}/$1")" && cp "$1" "\${parent_path}/\${branch_name}/$1"' _{} \\;</copy_command>
     <purpose>Preserve local environment configurations for development</purpose>
     <note>Only copies files that exist; ignores missing ones</note>
   </step_9>
@@ -1905,17 +1971,19 @@ EOF</create_file_command>
 </execution_steps>
 
 <important_notes>
-  - Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
-  - Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
-  - Branch names with slashes (feat/, fix/, etc.) are fully supported
-  - The worktree directory path will match the full branch name including slashes
-  - Settings are copied to maintain the same permissions across worktrees
-  - Environment files (.env.local) are copied to preserve local configurations
-  - Each worktree has its own node_modules installation
-  - Uncommitted changes are automatically stashed and moved to the new worktree
-  - Your work-in-progress seamlessly transfers to the new branch
-  - IDE detection fallback: checks available editors and uses priority order
-</important_notes>"
+
+- Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
+- Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
+- Branch names with slashes (feat/, fix/, etc.) are fully supported
+- The worktree directory path will match the full branch name including slashes
+- Settings are copied to maintain the same permissions across worktrees
+- Environment files (.env.local) are copied to preserve local configurations
+- Each worktree has its own node_modules installation
+- Uncommitted changes are automatically stashed and moved to the new worktree
+- Your work-in-progress seamlessly transfers to the new branch
+- IDE detection fallback: checks available editors and uses priority order
+</important_notes>
+"
 `;
 
 exports[`downloads/with-beads > should match snapshot for worktree-cleanup.md 1`] = `
@@ -1930,6 +1998,7 @@ argument-hint: (no arguments)
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2133,20 +2202,22 @@ Current worktrees: !git worktree list\`
 </execution_steps>
 
 <important_notes>
-  - Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
-  - DOES NOT use "git branch --merged" command as it's unreliable for merge verification
-  - Only processes branches with PRs that were definitively merged to main
-  - Skips worktrees without merged PRs and continues to next oldest candidate
-  - Checks and optionally closes related GitHub issues
-  - Prioritizes oldest worktrees by directory age first for systematic cleanup
-  - Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
-  - Preserves useful development settings before deletion
-  - Requires explicit confirmation before any destructive actions
-  - Handles locked worktrees automatically
-  - Processes one worktree at a time to maintain control
-  - Must be run from main branch for safety
-  - Works with standard GitHub repository URLs (owner/repo format)
-</important_notes>"
+
+- Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
+- DOES NOT use "git branch --merged" command as it's unreliable for merge verification
+- Only processes branches with PRs that were definitively merged to main
+- Skips worktrees without merged PRs and continues to next oldest candidate
+- Checks and optionally closes related GitHub issues
+- Prioritizes oldest worktrees by directory age first for systematic cleanup
+- Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
+- Preserves useful development settings before deletion
+- Requires explicit confirmation before any destructive actions
+- Handles locked worktrees automatically
+- Processes one worktree at a time to maintain control
+- Must be run from main branch for safety
+- Works with standard GitHub repository URLs (owner/repo format)
+</important_notes>
+"
 `;
 
 exports[`downloads/without-beads > should match snapshot for add-command.md 1`] = `
@@ -2158,6 +2229,7 @@ argument-hint: <command-name> <description>
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2165,7 +2237,9 @@ argument-hint: <command-name> <description>
 # Slash Command Creator Guide
 
 ## How This Command Works
+
 The \`/add-command\` command shows this guide for creating new slash commands. It includes:
+
 - Command structure and syntax
 - Common patterns and examples
 - Security restrictions and limitations
@@ -2174,6 +2248,7 @@ The \`/add-command\` command shows this guide for creating new slash commands. I
 **Note for AI**: When creating commands, you CAN use bash tools like \`Bash(mkdir:*)\`, \`Bash(ls:*)\`, \`Bash(git status:*)\` in the \`allowed-tools\` frontmatter of NEW commands - but ONLY for operations within the current project directory. This command itself doesn't need bash tools since it's just documentation.
 
 ## Command Locations
+
 - **Personal**: \`~/.claude/commands/\` (available across all projects)
 - **Project**: \`.claude/commands/\` (shared with team, shows "(project)")
 
@@ -2200,33 +2275,40 @@ Bash command output: (exclamation)git status(backticks)
 ## ⚠️ Security Restrictions
 
 **Bash Commands (exclamation prefix)**: Limited to current working directory only.
+
 - ✅ Works: \`! + backtick + git status + backtick\` (in project dir)
 - ❌ Blocked: \`! + backtick + ls /outside/project + backtick\` (outside project)  
 - ❌ Blocked: \`! + backtick + pwd + backtick\` (if referencing dirs outside project)
 
 **File References (\`@\` prefix)**: No directory restrictions.
+
 - ✅ Works: \`@/path/to/system/file.md\`
 - ✅ Works: \`@../other-project/file.js\`
 
 ## Common Patterns
 
 ### Simple Command
+
 \`\`\`bash
 echo "Review this code for bugs and suggest fixes" > ~/.claude/commands/review.md
 \`\`\`
 
 ### Command with Arguments
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular \`$\` character.
+
 \`\`\`markdown
 Fix issue ＄ARGUMENTS following our coding standards
 \`\`\`
 
 ### Command with File References
+
 \`\`\`markdown
 Compare @src/old.js with @src/new.js and explain differences
 \`\`\`
 
 ### Command with Bash Output (Project Directory Only)
+
 \`\`\`markdown
 ---
 allowed-tools: Bash(git status:*), Bash(git branch:*), Bash(git log:*)
@@ -2241,7 +2323,9 @@ Create commit for these changes.
 **Note**: Only works with commands in the current project directory.
 
 ### Namespaced Command
+
 **Note for AI**: The example below uses a fullwidth dollar sign (＄, U+FF04) to prevent interpolation in this documentation. When creating actual commands, use the regular \`$\` character.
+
 \`\`\`bash
 mkdir -p ~/.claude/commands/ai
 echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
@@ -2249,6 +2333,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 \`\`\`
 
 ## Frontmatter Options
+
 - \`allowed-tools\`: Tools this command can use
   - **Important**: Intrusive tools like \`Write\`, \`Edit\`, \`NotebookEdit\` should NEVER be allowed in commands unless the user explicitly requests them. These tools modify files and should only be used when the command's purpose is to make changes.
   - ✅ Safe for most commands: \`Read\`, \`Glob\`, \`Grep\`, \`Bash(git status:*)\`, \`Task\`, \`AskUserQuestion\`
@@ -2259,6 +2344,7 @@ echo "Ask GPT-5 about: ＄ARGUMENTS" > ~/.claude/commands/ai/gpt5.md
 ## Best Practices
 
 ### Safe Commands (No Security Issues)
+
 \`\`\`markdown
 # System prompt editor (file reference only)  
 (@)path/to/system/prompt.md
@@ -2267,6 +2353,7 @@ Edit your system prompt above.
 \`\`\`
 
 ### Project-Specific Commands (Bash OK)
+
 \`\`\`markdown
 ---
 allowed-tools: Bash(git status:*), Bash(npm list:*)
@@ -2278,6 +2365,7 @@ Review project state and suggest next steps.
 \`\`\`
 
 ### Cross-Directory File Access (Use @ not !)
+
 \`\`\`markdown
 # Compare config files
 Compare (@)path/to/system.md with (@)project/config.md
@@ -2286,6 +2374,7 @@ Show differences and suggest improvements.
 \`\`\`
 
 ## Usage
+
 After creating: \`/<command-name> [arguments]\`
 
 Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
@@ -2304,6 +2393,7 @@ argument-hint: [optional-pr-title-and-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2427,7 +2517,6 @@ Use **Ask** when:
 Use **/show** instead if: confident in approach, just want visibility
 
 Use **/ship** instead if: change is tiny, obvious, and safe
-
 "
 `;
 
@@ -2445,10 +2534,10 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
-
 
 ## Instructions
 
@@ -2491,6 +2580,7 @@ argument-hint: [optional-commit-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2498,9 +2588,6 @@ argument-hint: [optional-commit-description]
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS
-
-
-
 
 ## Process
 
@@ -2558,6 +2645,7 @@ argument-hint: [optional-commit-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2565,9 +2653,6 @@ argument-hint: [optional-commit-description]
 Create a git commit following project standards
 
 Include any of the following info if specified: $ARGUMENTS
-
-
-
 
 ## Process
 
@@ -2600,11 +2685,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -2691,6 +2778,7 @@ argument-hint: [optional additional info]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2700,12 +2788,13 @@ Analyze the current conversation context and identify things that have not yet b
 1. **Incomplete implementations** - Code that was started but not finished
 2. **Unused variables/results** - Values that were captured but never used
 3. **Missing tests** - Functionality without test coverage
-      4. **User requests** - Things the user asked for that weren't fully completed
+4. **User requests** - Things the user asked for that weren't fully completed
 5. **TODO comments** - Any TODOs mentioned in conversation
 6. **Error handling gaps** - Missing error cases or edge cases
 7. **Documentation gaps** - Undocumented APIs or features
-8. <!- **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
-    resent findings as a prioritized list with:
+8. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+
+Present findings as a prioritized list with:
 
 - What the gap is
 - Why it matters
@@ -2732,11 +2821,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -2826,6 +2917,7 @@ Analyze GitHub issue and create TDD implementation plan.
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2839,11 +2931,12 @@ Process:
 - Or from this bullet point with custom info: $ARGUMENTS
 - If not found: ask user
 
-2. Fetch Issue
+1. Fetch Issue
 
 Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
 
 If GitHub MCP is not configured, show:
+
 \`\`\`
 GitHub MCP not configured!
 See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
@@ -2852,7 +2945,7 @@ Trying GitHub CLI fallback...
 
 Then try using \`gh issue view [ISSUE_NUMBER] --json\` as fallback.
 
-3. Analyze and Plan
+1. Analyze and Plan
 
 Summarize the issue and requirements, then:
 
@@ -2861,24 +2954,27 @@ Summarize the issue and requirements, then:
 Understand the requirement by asking (use AskUserQuestion if needed):
 
 **Problem Statement**
+
 - What problem does this solve?
 - Who experiences this problem?
 - What's the current pain point?
 
 **Desired Outcome**
+
 - What should happen after this is built?
 - How will users interact with it?
 - What does success look like?
 
 **Scope & Constraints**
+
 - What's in scope vs. out of scope?
 - Any technical constraints?
 - Dependencies on other systems/features?
 
 **Context Check**
+
 - Search codebase for related features/modules
 - Check for existing test files that might be relevant
-
 
 ## TDD Fundamentals
 
@@ -2968,6 +3064,7 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -2981,6 +3078,7 @@ $ARGUMENTS
 ## Input Processing
 
 The input can be one of:
+
 1. **GitHub Issue URL** (e.g., \`https://github.com/owner/repo/issues/123\`)
 2. **GitHub Issue Number** (e.g., \`#123\` or \`123\`)
 3. **Feature Description** (e.g., "Add user authentication")
@@ -2991,12 +3089,14 @@ The input can be one of:
 If input looks like a GitHub issue:
 
 **Step 1: Extract Issue Number**
+
 - From URL: extract owner/repo/number
 - From number: try to infer repo from git remote
 - From branch name: check patterns like \`issue-123\`, \`123-feature\`, \`feature/123\`
 
 **Step 2: Fetch Issue**
 Try GitHub MCP first:
+
 - If available: use \`mcp__github__issue_read\` to fetch issue details
 - If not available: show message and try \`gh issue view <number>\`
 
@@ -3007,6 +3107,7 @@ Trying GitHub CLI fallback...
 \`\`\`
 
 **Step 3: Use Issue as Discovery Input**
+
 - Title → Feature name
 - Description → Problem statement and context
 - Labels → Type/priority hints
@@ -3014,6 +3115,7 @@ Trying GitHub CLI fallback...
 - Linked issues → Dependencies
 
 Extract from GitHub issue:
+
 - Problem statement and context
 - Acceptance criteria (if present)
 - Technical notes (if present)
@@ -3026,37 +3128,41 @@ Extract from GitHub issue:
 Understand the requirement by asking (use AskUserQuestion if needed):
 
 **Problem Statement**
+
 - What problem does this solve?
 - Who experiences this problem?
 - What's the current pain point?
 
 **Desired Outcome**
+
 - What should happen after this is built?
 - How will users interact with it?
 - What does success look like?
 
 **Scope & Constraints**
+
 - What's in scope vs. out of scope?
 - Any technical constraints?
 - Dependencies on other systems/features?
 
 **Context Check**
+
 - Search codebase for related features/modules
 - Check for existing test files that might be relevant
-
 
 ## Key Principles
 
 **From PRD World:**
+
 - Start with user problems, not solutions
 - Define success criteria upfront
 - Understand constraints and scope
 
 **From TDD World:**
+
 - Make acceptance criteria test-ready
 - Break work into small, testable pieces
 - Each task should map to test(s)
-
 
 ## Integration with Other Commands
 
@@ -3081,6 +3187,7 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3171,11 +3278,13 @@ Apply this document (specifically the Refactor phase), to the info given by user
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -3251,7 +3360,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
-**Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+1. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
 "
 `;
 
@@ -3267,6 +3376,7 @@ argument-hint: [optional-commit-message]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3344,7 +3454,6 @@ If tests fail, linter fails, or changes are large/complex, STOP and suggest:
 
 - Use \`/show\` for changes that should be seen but don't need approval
 - Use \`/ask\` (traditional PR) for complex changes needing discussion
-
 "
 `;
 
@@ -3360,6 +3469,7 @@ argument-hint: [optional-pr-title-and-description]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3453,7 +3563,6 @@ Use **Show** when:
 Use **/ship** instead if: change is tiny and obvious (typo, formatting)
 
 Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncertain
-
 "
 `;
 
@@ -3471,11 +3580,13 @@ $ARGUMENTS
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
 
@@ -3563,6 +3674,7 @@ argument-hint: [optional additional info]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3576,16 +3688,19 @@ Additional info: $ARGUMENTS
 Provide a summary with these sections:
 
 ### What We Did
+
 - Key accomplishments and changes made
 - Important decisions or discoveries
 - Files created, modified, or analyzed
 
 ### What We're Doing Next
+
 - Immediate next steps
 - Pending tasks or work in progress
 - Goals or objectives to continue
 
 ### Blockers & User Input Needed
+
 - Any issues requiring user intervention
 - Decisions that need to be made
 - Missing information or clarifications needed
@@ -3593,7 +3708,6 @@ Provide a summary with these sections:
 ## Output Format
 
 Keep the summary concise and actionable - suitable for pasting into a new conversation to quickly restore context without needing the full conversation history.
-
 "
 `;
 
@@ -3609,6 +3723,7 @@ argument-hint: [optional-response-to-last-message]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3705,6 +3820,7 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -3768,7 +3884,7 @@ Uncommitted changes: !git status --short\`
     <input>The user-provided arguments</input>
     <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
-    <example_github_url>https://github.com/owner/project/issues/123 main</example_github_url>
+    <example_github_url><https://github.com/owner/project/issues/123> main</example_github_url>
     <default_base_branch>main (if not specified)</default_base_branch>
   </step_1>
 
@@ -3878,7 +3994,7 @@ Uncommitted changes: !git status --short\`
       - packages/*/.env.local
       - (any other .env.local files found)
     </common_locations>
-    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "\${parent_path}/\${branch_name}/$1")" && cp "$1" "\${parent_path}/\${branch_name}/$1"' _ {} \\;</copy_command>
+    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "\${parent_path}/\${branch_name}/$1")" && cp "$1" "\${parent_path}/\${branch_name}/$1"' _{} \\;</copy_command>
     <purpose>Preserve local environment configurations for development</purpose>
     <note>Only copies files that exist; ignores missing ones</note>
   </step_9>
@@ -3945,17 +4061,19 @@ EOF</create_file_command>
 </execution_steps>
 
 <important_notes>
-  - Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
-  - Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
-  - Branch names with slashes (feat/, fix/, etc.) are fully supported
-  - The worktree directory path will match the full branch name including slashes
-  - Settings are copied to maintain the same permissions across worktrees
-  - Environment files (.env.local) are copied to preserve local configurations
-  - Each worktree has its own node_modules installation
-  - Uncommitted changes are automatically stashed and moved to the new worktree
-  - Your work-in-progress seamlessly transfers to the new branch
-  - IDE detection fallback: checks available editors and uses priority order
-</important_notes>"
+
+- Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
+- Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
+- Branch names with slashes (feat/, fix/, etc.) are fully supported
+- The worktree directory path will match the full branch name including slashes
+- Settings are copied to maintain the same permissions across worktrees
+- Environment files (.env.local) are copied to preserve local configurations
+- Each worktree has its own node_modules installation
+- Uncommitted changes are automatically stashed and moved to the new worktree
+- Your work-in-progress seamlessly transfers to the new branch
+- IDE detection fallback: checks available editors and uses priority order
+</important_notes>
+"
 `;
 
 exports[`downloads/without-beads > should match snapshot for worktree-cleanup.md 1`] = `
@@ -3970,6 +4088,7 @@ argument-hint: (no arguments)
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -4173,18 +4292,20 @@ Current worktrees: !git worktree list\`
 </execution_steps>
 
 <important_notes>
-  - Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
-  - DOES NOT use "git branch --merged" command as it's unreliable for merge verification
-  - Only processes branches with PRs that were definitively merged to main
-  - Skips worktrees without merged PRs and continues to next oldest candidate
-  - Checks and optionally closes related GitHub issues
-  - Prioritizes oldest worktrees by directory age first for systematic cleanup
-  - Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
-  - Preserves useful development settings before deletion
-  - Requires explicit confirmation before any destructive actions
-  - Handles locked worktrees automatically
-  - Processes one worktree at a time to maintain control
-  - Must be run from main branch for safety
-  - Works with standard GitHub repository URLs (owner/repo format)
-</important_notes>"
+
+- Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
+- DOES NOT use "git branch --merged" command as it's unreliable for merge verification
+- Only processes branches with PRs that were definitively merged to main
+- Skips worktrees without merged PRs and continues to next oldest candidate
+- Checks and optionally closes related GitHub issues
+- Prioritizes oldest worktrees by directory age first for systematic cleanup
+- Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
+- Preserves useful development settings before deletion
+- Requires explicit confirmation before any destructive actions
+- Handles locked worktrees automatically
+- Processes one worktree at a time to maintain control
+- Must be run from main branch for safety
+- Works with standard GitHub repository URLs (owner/repo format)
+</important_notes>
+"
 `;

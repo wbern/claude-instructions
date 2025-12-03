@@ -61,6 +61,11 @@ function buildVariant(
   // Remove markdown-magic comment blocks (workaround for markdown-magic bug)
   console.log("🧹 Removing comment blocks...");
   run(`tsx scripts/post-process.ts "${outDir}"`);
+
+  // Fix markdown formatting issues
+  console.log("🔧 Fixing markdown formatting...");
+  run(`pnpm exec markdownlint --fix "${outDir}"/*.md`, { silent: true });
+  console.log("   ✅ Markdown formatting fixed");
   console.log("");
 }
 
@@ -92,6 +97,8 @@ fs.copyFileSync("src/README.md", "README.md");
 run("tsx scripts/generate-readme.ts README.md", { silent: true });
 console.log("🧹 Removing comment blocks from README.md...");
 run("tsx scripts/post-process.ts README.md");
+console.log("🔧 Fixing markdown formatting...");
+run("pnpm exec markdownlint --fix README.md", { silent: true });
 console.log("   ✅ README.md updated");
 console.log("");
 
@@ -111,6 +118,7 @@ for (const file of fs
     path.join(".claude/commands", file),
   );
 }
+run('pnpm exec markdownlint --fix ".claude/commands"/*.md', { silent: true });
 console.log("   ✅ .claude/commands updated");
 console.log("");
 

@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -216,5 +217,31 @@ describe("README", () => {
     const content = fs.readFileSync(readmePath, "utf8");
 
     expect(content).toContain("npx @wbern/claude-instructions");
+  });
+});
+
+describe("markdownlint validation", () => {
+  ["with-beads", "without-beads"].forEach((variant) => {
+    it(`${variant} should pass markdownlint`, () => {
+      const variantDir = path.join(DOWNLOADS_DIR, variant);
+
+      // Run markdownlint on the variant directory
+      // This will throw if there are any errors
+      expect(() => {
+        execSync(`pnpm exec markdownlint "${variantDir}"/*.md`, {
+          encoding: "utf-8",
+          stdio: "pipe",
+        });
+      }).not.toThrow();
+    });
+  });
+
+  it("README.md should pass markdownlint", () => {
+    expect(() => {
+      execSync(`pnpm exec markdownlint README.md`, {
+        encoding: "utf-8",
+        stdio: "pipe",
+      });
+    }).not.toThrow();
   });
 });

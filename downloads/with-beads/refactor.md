@@ -9,11 +9,13 @@ Apply this document (specifically the Refactor phase), to the info given by user
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
 (If there was no info above, fallback to:
+
 1. Context of the conversation, if there's an immediate thing
 2. `bd ready` to see what to work on next and start from there)
 
@@ -89,4 +91,4 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
-**Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+1. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase

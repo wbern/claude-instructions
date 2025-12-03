@@ -106,6 +106,7 @@ This injects the content only into `commit.md` and `ask.md`.
 ### File Priority
 
 The generator looks for template blocks in this order:
+
 1. `CLAUDE.md` (checked first)
 2. `AGENTS.md` (fallback)
 

@@ -7,6 +7,6 @@
     "scripts/__tests__/**",
     "scripts/post-process.ts"
   ],
-  "ignoreDependencies": [],
+  "ignoreDependencies": ["markdownlint-cli"],
   "ignoreBinaries": ["semantic-release", "mktemp", "tar"]
 }

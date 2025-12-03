@@ -9,6 +9,7 @@ argument-hint: (no arguments)
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -212,17 +213,18 @@ Current worktrees: !git worktree list`
 </execution_steps>
 
 <important_notes>
-  - Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
-  - DOES NOT use "git branch --merged" command as it's unreliable for merge verification
-  - Only processes branches with PRs that were definitively merged to main
-  - Skips worktrees without merged PRs and continues to next oldest candidate
-  - Checks and optionally closes related GitHub issues
-  - Prioritizes oldest worktrees by directory age first for systematic cleanup
-  - Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
-  - Preserves useful development settings before deletion
-  - Requires explicit confirmation before any destructive actions
-  - Handles locked worktrees automatically
-  - Processes one worktree at a time to maintain control
-  - Must be run from main branch for safety
-  - Works with standard GitHub repository URLs (owner/repo format)
+
+- Uses GitHub PR merge status as the ONLY reliable way to verify if a branch was merged
+- DOES NOT use "git branch --merged" command as it's unreliable for merge verification
+- Only processes branches with PRs that were definitively merged to main
+- Skips worktrees without merged PRs and continues to next oldest candidate
+- Checks and optionally closes related GitHub issues
+- Prioritizes oldest worktrees by directory age first for systematic cleanup
+- Warns about very recent worktrees (created within 24 hours) to avoid cleaning active work
+- Preserves useful development settings before deletion
+- Requires explicit confirmation before any destructive actions
+- Handles locked worktrees automatically
+- Processes one worktree at a time to maintain control
+- Must be run from main branch for safety
+- Works with standard GitHub repository URLs (owner/repo format)
 </important_notes>

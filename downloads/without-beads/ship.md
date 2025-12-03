@@ -9,6 +9,7 @@ argument-hint: [optional-commit-message]
 ## General Guidelines
 
 ### Output Style
+
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
@@ -86,4 +87,3 @@ If tests fail, linter fails, or changes are large/complex, STOP and suggest:
 
 - Use `/show` for changes that should be seen but don't need approval
 - Use `/ask` (traditional PR) for complex changes needing discussion
-
