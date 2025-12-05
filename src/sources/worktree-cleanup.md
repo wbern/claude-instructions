@@ -1,5 +1,4 @@
 ---
-allowed-tools: Read, mcp__mcp-jq__jq_query, mcp__mcp-jq__jq_query_file, mcp__github__search_pull_requests, mcp__github__pull_request_read, mcp__github__issue_read, mcp__github__issue_write, mcp__github__add_issue_comment, ListMcpResourcesTool
 description: Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees
 argument-hint: (no arguments)
 _category: Worktree Management

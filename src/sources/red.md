@@ -1,8 +1,7 @@
 ---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Red Phase - write ONE failing test
 argument-hint: [optional additional info]
-_category: TDD Cycle
+_category: Test-Driven Development
 _order: 2
 ---
 

@@ -1,9 +1,9 @@
 ---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+description: Request team review and approval - for complex changes needing discussion
 argument-hint: [optional-pr-title-and-description]
-_category: Workflow
-_order: 4
+_category: Ship / Show / Ask
+_order: 3
+_selectedByDefault: false
 ---
 
 # Ask - Request Review and Approval
@@ -15,8 +15,6 @@ _order: 4
 <!-- /docs -->
 
 **Ship/Show/Ask Pattern - ASK**
-
-> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
 
 Ask is for complex changes that need team discussion and approval. Examples:
 

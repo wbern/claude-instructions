@@ -192,12 +192,14 @@ export async function getAvailableCommands(
 interface CommandOption {
   value: string;
   label: string;
+  selectedByDefault?: boolean;
 }
 
 interface CommandMetadata {
   description: string;
   category: string;
   order: number;
+  selectedByDefault?: boolean;
 }
 
 export async function getCommandsGroupedByCategory(
@@ -224,6 +226,7 @@ export async function getCommandsGroupedByCategory(
     grouped[category].push({
       value: filename,
       label: filename,
+      selectedByDefault: data.selectedByDefault !== false,
     });
   }
 

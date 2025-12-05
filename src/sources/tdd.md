@@ -1,8 +1,7 @@
 ---
-allowed-tools: Read, Glob, Grep, Task
 description: Remind agent about TDD approach and continue conversation
 argument-hint: [optional-response-to-last-message]
-_category: Utilities
+_category: Test-Driven Development
 _order: 1
 ---
 

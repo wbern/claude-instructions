@@ -1,8 +1,7 @@
 ---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Refactor Phase - improve code structure while keeping tests green
 argument-hint: <refactoring description>
-_category: TDD Cycle
+_category: Test-Driven Development
 _order: 4
 ---
 

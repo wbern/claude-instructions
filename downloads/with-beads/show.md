@@ -1,6 +1,5 @@
 ---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
+description: Show code to team with auto-merge - for changes that should be visible but don't need approval
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -17,8 +16,6 @@ argument-hint: [optional-pr-title-and-description]
 Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
 
 **Ship/Show/Ask Pattern - SHOW**
-
-> 🚀 **Cursor says**: Not every change needs a traditional review. Show your work, then merge.
 
 Show is for changes that teammates should see, but don't require approval. Examples:
 

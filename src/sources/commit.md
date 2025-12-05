@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
 _category: Workflow

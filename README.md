@@ -192,21 +192,29 @@ flowchart TB
 
 ### TDD Cycle
 
-- `/spike` - Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
-- `/red` - Execute TDD Red Phase - write ONE failing test
-- `/green` - Execute TDD Green Phase - write minimal implementation to pass the failing test
-- `/refactor` - Execute TDD Refactor Phase - improve code structure while keeping tests green
 - `/cycle` - Execute complete TDD cycle - Red, Green, and Refactor phases in sequence
 
 ### Workflow
 
 - `/commit` - Create a git commit following project standards
 - `/busycommit` - Create multiple atomic git commits, one logical change at a time
-- `/ship` - Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
-- `/show` - Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
-- `/ask` - Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+- `/pr` - Creates a pull request using GitHub MCP
 - `/summarize` - Summarize conversation progress and next steps
 - `/gap` - Analyze conversation context for unaddressed items and gaps
+
+### Test-Driven Development
+
+- `/spike` - Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
+- `/tdd` - Remind agent about TDD approach and continue conversation
+- `/red` - Execute TDD Red Phase - write ONE failing test
+- `/green` - Execute TDD Green Phase - write minimal implementation to pass the failing test
+- `/refactor` - Execute TDD Refactor Phase - improve code structure while keeping tests green
+
+### Ship / Show / Ask
+
+- `/ship` - Ship code directly to main - for small, obvious changes that don't need review
+- `/show` - Show code to team with auto-merge - for changes that should be visible but don't need approval
+- `/ask` - Request team review and approval - for complex changes needing discussion
 
 ### Worktree Management
 
@@ -215,7 +223,6 @@ flowchart TB
 
 ### Utilities
 
-- `/tdd` - Remind agent about TDD approach and continue conversation
 - `/beepboop` - Communicate AI-generated content with transparent attribution
 - `/add-command` - Guide for creating new slash commands
 

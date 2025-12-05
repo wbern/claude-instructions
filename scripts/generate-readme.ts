@@ -14,6 +14,8 @@ const CATEGORIES = {
   PLANNING: "Planning",
   TDD_CYCLE: "TDD Cycle",
   WORKFLOW: "Workflow",
+  WORKFLOW_TDD: "Test-Driven Development",
+  WORKFLOW_SHIP_SHOW_ASK: "Ship / Show / Ask",
   WORKTREE: "Worktree Management",
   UTILITIES: "Utilities",
 } as const;
@@ -78,6 +80,12 @@ function parseFrontmatter(content: string): Frontmatter {
     // Parse numeric values for _order field
     if (key === "_order" && !isNaN(Number(value))) {
       value = parseInt(value, 10);
+    }
+
+    // Parse boolean values for _selectedByDefault field
+    if (key === "_selectedByDefault") {
+      frontmatter[key] = value === "true";
+      continue;
     }
 
     frontmatter[key] = value;
@@ -226,6 +234,7 @@ interface CommandMetadata {
   description: string;
   category: string;
   order: number;
+  selectedByDefault?: boolean;
 }
 
 // Generate metadata JSON for all commands
@@ -243,6 +252,9 @@ function generateCommandsMetadata(): Record<string, CommandMetadata> {
       description: frontmatter.description || "No description",
       category: getCategory(frontmatter),
       order: typeof frontmatter._order === "number" ? frontmatter._order : 999,
+      ...(frontmatter._selectedByDefault === false && {
+        selectedByDefault: false,
+      }),
     };
   }
 

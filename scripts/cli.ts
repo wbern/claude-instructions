@@ -232,13 +232,14 @@ export async function main(args?: CliArgs): Promise<void> {
     const groupedCommands = await getCommandsGroupedByCategory(
       variant as Variant,
     );
-    const allCommandValues = Object.values(groupedCommands)
+    const enabledCommandValues = Object.values(groupedCommands)
       .flat()
+      .filter((cmd) => cmd.selectedByDefault)
       .map((cmd) => cmd.value);
     selectedCommands = await groupMultiselect({
       message: "Select commands to install (Enter to accept all)",
       options: groupedCommands,
-      initialValues: allCommandValues,
+      initialValues: enabledCommandValues,
     });
 
     if (isCancel(selectedCommands)) {

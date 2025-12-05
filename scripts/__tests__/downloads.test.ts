@@ -299,3 +299,58 @@ describe("without-beads variant should not contain beads references", () => {
     });
   });
 });
+
+describe("TDD commands category", () => {
+  const TDD_COMMANDS = ["red.md", "green.md", "refactor.md", "spike.md"];
+  const EXPECTED_CATEGORY = "Test-Driven Development";
+
+  ["with-beads", "without-beads"].forEach((variant) => {
+    it(`${variant} should have TDD commands in "${EXPECTED_CATEGORY}" category`, () => {
+      const metadataPath = path.join(
+        DOWNLOADS_DIR,
+        variant,
+        "commands-metadata.json",
+      );
+      const metadata = JSON.parse(fs.readFileSync(metadataPath, "utf8"));
+
+      TDD_COMMANDS.forEach((cmd) => {
+        expect(
+          metadata[cmd].category,
+          `${cmd} should be in "${EXPECTED_CATEGORY}" category`,
+        ).toBe(EXPECTED_CATEGORY);
+      });
+    });
+  });
+});
+
+describe("allowed-tools should not contain Bash commands", () => {
+  const BASH_PATTERN = /Bash\([^)]*\)/;
+
+  ["with-beads", "without-beads"].forEach((variant) => {
+    const variantDir = path.join(DOWNLOADS_DIR, variant);
+    const files = getMarkdownFiles(variantDir);
+
+    files.forEach((file) => {
+      it(`${variant}/${file} allowed-tools should not contain Bash commands`, () => {
+        const content = fs.readFileSync(path.join(variantDir, file), "utf8");
+        // Extract frontmatter (between --- markers at start of file)
+        const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+
+        if (frontmatterMatch) {
+          const frontmatter = frontmatterMatch[1];
+          const allowedToolsMatch = frontmatter.match(
+            /^allowed-tools:\s*(.*)$/m,
+          );
+
+          if (allowedToolsMatch) {
+            const allowedTools = allowedToolsMatch[1];
+            expect(
+              allowedTools,
+              `allowed-tools contains Bash command: "${allowedTools}"`,
+            ).not.toMatch(BASH_PATTERN);
+          }
+        }
+      });
+    });
+  });
+});

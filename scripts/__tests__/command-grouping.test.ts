@@ -32,10 +32,12 @@ describe("getCommandsGroupedByCategory", () => {
 
     expect(result).toEqual({
       "TDD Cycle": [
-        { value: "red.md", label: "red.md" },
-        { value: "green.md", label: "green.md" },
+        { value: "red.md", label: "red.md", selectedByDefault: true },
+        { value: "green.md", label: "green.md", selectedByDefault: true },
       ],
-      Workflow: [{ value: "commit.md", label: "commit.md" }],
+      Workflow: [
+        { value: "commit.md", label: "commit.md", selectedByDefault: true },
+      ],
     });
   });
 });

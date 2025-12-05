@@ -1,0 +1,73 @@
+---
+description: Creates a pull request using GitHub MCP
+argument-hint: [optional-pr-title-and-description]
+_category: Workflow
+_order: 5
+---
+
+# Create Pull Request
+
+<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
+<!-- /docs -->
+
+<!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
+<!-- /docs -->
+
+Create a pull request for the current branch using GitHub MCP tools.
+
+## Workflow
+
+Current branch status:
+!`git status`
+
+Recent commits:
+!`git log --oneline -5`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Ensure Branch is Ready**:
+   !`git status`
+   - Commit all changes
+   - Push to remote: `git push origin [branch-name]`
+
+2. **Create PR**: Create a well-formatted pull request
+
+   Title: conventional commits format, like `feat(#123): add user authentication`
+
+   Description template:
+
+   ```markdown
+   <!--
+     Are there any relevant issues / PRs / mailing lists discussions?
+     Please reference them here.
+   -->
+
+   ## References
+
+   - [links to github issues referenced in commit messages]
+
+   ## Summary
+
+   [Brief description of changes]
+
+   ## Test Plan
+
+   - [ ] Tests pass
+   - [ ] Manual testing completed
+   ```
+
+3. **Set Base Branch**: Default to main unless specified otherwise
+
+4. **Link Issues**: Reference related issues found in commit messages
+
+## Use GitHub MCP Tools
+
+1. Check current branch and ensure it's pushed
+2. Create a well-formatted pull request with proper title and description
+3. Set the base branch (default: main)
+4. Include relevant issue references if found in commit messages
+
+<!-- docs INCLUDE path='src/fragments/beads-integration.md' featureFlag='beads' -->
+<!-- /docs -->

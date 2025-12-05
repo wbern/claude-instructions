@@ -1,5 +1,4 @@
 ---
-allowed-tools: Read, Glob, Grep, Task
 description: Remind agent about TDD approach and continue conversation
 argument-hint: [optional-response-to-last-message]
 ---

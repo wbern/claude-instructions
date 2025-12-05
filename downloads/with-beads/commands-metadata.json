@@ -5,9 +5,10 @@
     "order": 3
   },
   "ask.md": {
-    "description": "Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)",
-    "category": "Workflow",
-    "order": 4
+    "description": "Request team review and approval - for complex changes needing discussion",
+    "category": "Ship / Show / Ask",
+    "order": 3,
+    "selectedByDefault": false
   },
   "beepboop.md": {
     "description": "Communicate AI-generated content with transparent attribution",
@@ -36,7 +37,7 @@
   },
   "green.md": {
     "description": "Execute TDD Green Phase - write minimal implementation to pass the failing test",
-    "category": "TDD Cycle",
+    "category": "Test-Driven Development",
     "order": 3
   },
   "issue.md": {
@@ -49,29 +50,36 @@
     "category": "Planning",
     "order": 2
   },
+  "pr.md": {
+    "description": "Creates a pull request using GitHub MCP",
+    "category": "Workflow",
+    "order": 5
+  },
   "red.md": {
     "description": "Execute TDD Red Phase - write ONE failing test",
-    "category": "TDD Cycle",
+    "category": "Test-Driven Development",
     "order": 2
   },
   "refactor.md": {
     "description": "Execute TDD Refactor Phase - improve code structure while keeping tests green",
-    "category": "TDD Cycle",
+    "category": "Test-Driven Development",
     "order": 4
   },
   "ship.md": {
-    "description": "Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)",
-    "category": "Workflow",
-    "order": 2
+    "description": "Ship code directly to main - for small, obvious changes that don't need review",
+    "category": "Ship / Show / Ask",
+    "order": 1,
+    "selectedByDefault": false
   },
   "show.md": {
-    "description": "Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)",
-    "category": "Workflow",
-    "order": 3
+    "description": "Show code to team with auto-merge - for changes that should be visible but don't need approval",
+    "category": "Ship / Show / Ask",
+    "order": 2,
+    "selectedByDefault": false
   },
   "spike.md": {
     "description": "Execute TDD Spike Phase - exploratory coding to understand problem space before TDD",
-    "category": "TDD Cycle",
+    "category": "Test-Driven Development",
     "order": 1
   },
   "summarize.md": {
@@ -81,7 +89,7 @@
   },
   "tdd.md": {
     "description": "Remind agent about TDD approach and continue conversation",
-    "category": "Utilities",
+    "category": "Test-Driven Development",
     "order": 1
   },
   "worktree-add.md": {

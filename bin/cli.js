@@ -605,6 +605,7 @@ async function getCommandsGroupedByCategory(variant) {
     grouped[category].push({
       value: filename,
       label: filename,
+      selectedByDefault: data.selectedByDefault !== false,
     });
   }
   for (const category of Object.keys(grouped)) {
@@ -738,7 +739,7 @@ function splitChangeIntoLines(value) {
   if (lines[lines.length - 1] === "") lines.pop();
   return lines;
 }
-function formatCompactDiff(oldContent, newContent, contextLines = 2) {
+function formatCompactDiff(oldContent, newContent, contextLines = 3) {
   const changes = diffLines(oldContent, newContent);
   const lines = [];
   const allLines = [];
@@ -893,13 +894,14 @@ async function main(args) {
       return;
     }
     const groupedCommands = await getCommandsGroupedByCategory(variant);
-    const allCommandValues = Object.values(groupedCommands)
+    const enabledCommandValues = Object.values(groupedCommands)
       .flat()
+      .filter((cmd) => cmd.selectedByDefault)
       .map((cmd) => cmd.value);
     selectedCommands = await groupMultiselect({
       message: "Select commands to install (Enter to accept all)",
       options: groupedCommands,
-      initialValues: allCommandValues,
+      initialValues: enabledCommandValues,
     });
     if (isCancel(selectedCommands)) {
       return;

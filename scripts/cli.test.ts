@@ -760,4 +760,47 @@ NEW LAST`;
     );
     expect(skipCall).toBeDefined();
   });
+
+  it("should not include commands with selectedByDefault: false in initial selection", async () => {
+    const { select, text, groupMultiselect } = await import("@clack/prompts");
+    const { getCommandsGroupedByCategory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    // Mock grouped commands with one category not selected by default
+    vi.mocked(getCommandsGroupedByCategory).mockResolvedValueOnce({
+      "TDD Cycle": [
+        { value: "red.md", label: "red.md", selectedByDefault: true },
+        { value: "green.md", label: "green.md", selectedByDefault: true },
+      ],
+      "Ship / Show / Ask": [
+        { value: "ship.md", label: "ship.md", selectedByDefault: false },
+        { value: "show.md", label: "show.md", selectedByDefault: false },
+        { value: "ask.md", label: "ask.md", selectedByDefault: false },
+      ],
+    });
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md", "green.md"]);
+    vi.mocked(text).mockResolvedValueOnce("");
+
+    await main();
+
+    // groupMultiselect should be called with initialValues that exclude non-default commands
+    expect(groupMultiselect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        initialValues: expect.arrayContaining(["red.md", "green.md"]),
+      }),
+    );
+    expect(groupMultiselect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        initialValues: expect.not.arrayContaining([
+          "ship.md",
+          "show.md",
+          "ask.md",
+        ]),
+      }),
+    );
+  });
 });

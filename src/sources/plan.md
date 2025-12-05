@@ -1,5 +1,4 @@
 ---
-allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, mcp__github__issue_read, mcp__github__search_issues
 description: Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria
 argument-hint: <feature/requirement description or GitHub issue URL/number>
 _category: Planning

@@ -165,8 +165,7 @@ Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
 
 exports[`downloads/with-beads > should match snapshot for ask.md 1`] = `
 "---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+description: Request team review and approval - for complex changes needing discussion
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -183,8 +182,6 @@ argument-hint: [optional-pr-title-and-description]
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 **Ship/Show/Ask Pattern - ASK**
-
-> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
 
 Ask is for complex changes that need team discussion and approval. Examples:
 
@@ -316,7 +313,6 @@ See <https://github.com/steveyegge/beads> for more information.
 
 exports[`downloads/with-beads > should match snapshot for beepboop.md 1`] = `
 "---
-allowed-tools: Read, Grep, Glob
 description: Communicate AI-generated content with transparent attribution
 argument-hint: <task-description>
 ---
@@ -368,7 +364,6 @@ This command ensures transparency about AI usage while maintaining that the user
 
 exports[`downloads/with-beads > should match snapshot for busycommit.md 1`] = `
 "---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---
@@ -435,7 +430,6 @@ git commit -m "refactor: extract user lookup to helper"
 
 exports[`downloads/with-beads > should match snapshot for commit.md 1`] = `
 "---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
 ---
@@ -473,7 +467,6 @@ git commit -m "feat(#123): add validation to user input form"
 
 exports[`downloads/with-beads > should match snapshot for cycle.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute complete TDD cycle - Red, Green, and Refactor phases in sequence
 argument-hint: <feature or requirement description>
 ---
@@ -614,7 +607,6 @@ $ARGUMENTS
 
 exports[`downloads/with-beads > should match snapshot for green.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Green Phase - write minimal implementation to pass the failing test
 argument-hint: <implementation description>
 ---
@@ -714,7 +706,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/with-beads > should match snapshot for issue.md 1`] = `
 "---
-allowed-tools: mcp__github__issue_read, mcp__github__get_issue, Task
 description: Analyze GitHub issue and create TDD implementation plan
 argument-hint: [optional-issue-number]
 ---
@@ -871,7 +862,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/with-beads > should match snapshot for plan.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, mcp__github__issue_read, mcp__github__search_issues
 description: Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria
 argument-hint: <feature/requirement description or GitHub issue URL/number>
 ---
@@ -1061,9 +1051,94 @@ See <https://github.com/steveyegge/beads> for more information.
 "
 `;
 
+exports[`downloads/with-beads > should match snapshot for pr.md 1`] = `
+"---
+description: Creates a pull request using GitHub MCP
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Create Pull Request
+
+## General Guidelines
+
+### Output Style
+
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+Create a pull request for the current branch using GitHub MCP tools.
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Ensure Branch is Ready**:
+   !\`git status\`
+   - Commit all changes
+   - Push to remote: \`git push origin [branch-name]\`
+
+2. **Create PR**: Create a well-formatted pull request
+
+   Title: conventional commits format, like \`feat(#123): add user authentication\`
+
+   Description template:
+
+   \`\`\`markdown
+   <!--
+     Are there any relevant issues / PRs / mailing lists discussions?
+     Please reference them here.
+   -->
+
+   ## References
+
+   - [links to github issues referenced in commit messages]
+
+   ## Summary
+
+   [Brief description of changes]
+
+   ## Test Plan
+
+   - [ ] Tests pass
+   - [ ] Manual testing completed
+   \`\`\`
+
+3. **Set Base Branch**: Default to main unless specified otherwise
+
+4. **Link Issues**: Reference related issues found in commit messages
+
+## Use GitHub MCP Tools
+
+1. Check current branch and ensure it's pushed
+2. Create a well-formatted pull request with proper title and description
+3. Set the base branch (default: main)
+4. Include relevant issue references if found in commit messages
+
+### Beads Integration
+
+Use Beads MCP to:
+
+- Track work with \`bd ready\` to find next task
+- Create issues with \`bd create "description"\`
+- Track dependencies with \`bd dep add\`
+
+See <https://github.com/steveyegge/beads> for more information.
+"
+`;
+
 exports[`downloads/with-beads > should match snapshot for red.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Red Phase - write ONE failing test
 argument-hint: [optional additional info]
 ---
@@ -1163,7 +1238,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/with-beads > should match snapshot for refactor.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Refactor Phase - improve code structure while keeping tests green
 argument-hint: <refactoring description>
 ---
@@ -1263,8 +1337,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/with-beads > should match snapshot for ship.md 1`] = `
 "---
-allowed-tools: Bash(git status:*), Bash(git log:*), Bash(git diff:*), Bash(git checkout:*), Bash(git pull:*), Bash(git merge:*), Bash(git push:*), Bash(git branch:*)
-description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+description: Ship code directly to main - for small, obvious changes that don't need review
 argument-hint: [optional-commit-message]
 ---
 
@@ -1281,8 +1354,6 @@ argument-hint: [optional-commit-message]
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 **Ship/Show/Ask Pattern - SHIP**
-
-> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
 
 Ship is for small, obvious changes that don't need code review. Examples:
 
@@ -1368,8 +1439,7 @@ See <https://github.com/steveyegge/beads> for more information.
 
 exports[`downloads/with-beads > should match snapshot for show.md 1`] = `
 "---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
+description: Show code to team with auto-merge - for changes that should be visible but don't need approval
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -1386,8 +1456,6 @@ argument-hint: [optional-pr-title-and-description]
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 **Ship/Show/Ask Pattern - SHOW**
-
-> 🚀 **Cursor says**: Not every change needs a traditional review. Show your work, then merge.
 
 Show is for changes that teammates should see, but don't require approval. Examples:
 
@@ -1489,7 +1557,6 @@ See <https://github.com/steveyegge/beads> for more information.
 
 exports[`downloads/with-beads > should match snapshot for spike.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task
 description: Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
 argument-hint: <exploration description>
 ---
@@ -1589,7 +1656,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/with-beads > should match snapshot for summarize.md 1`] = `
 "---
-allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
 argument-hint: [optional additional info]
 ---
@@ -1648,7 +1714,6 @@ Use AskUserQuestion to confirm Beads integration preferences.
 
 exports[`downloads/with-beads > should match snapshot for tdd.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task
 description: Remind agent about TDD approach and continue conversation
 argument-hint: [optional-response-to-last-message]
 ---
@@ -1747,7 +1812,6 @@ Please continue with TDD approach based on the above response.
 
 exports[`downloads/with-beads > should match snapshot for worktree-add.md 1`] = `
 "---
-allowed-tools: Bash(code-insiders:*), Bash(code:*), Bash(zed:*), Bash(cursor:*), Bash(which:*), Read, mcp__github__issue_read, mcp__ide__getDiagnostics, ListMcpResourcesTool
 description: Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE
 argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ---
@@ -2017,7 +2081,6 @@ EOF</create_file_command>
 
 exports[`downloads/with-beads > should match snapshot for worktree-cleanup.md 1`] = `
 "---
-allowed-tools: Read, mcp__mcp-jq__jq_query, mcp__mcp-jq__jq_query_file, mcp__github__search_pull_requests, mcp__github__pull_request_read, mcp__github__issue_read, mcp__github__issue_write, mcp__github__add_issue_comment, ListMcpResourcesTool
 description: Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees
 argument-hint: (no arguments)
 ---
@@ -2414,8 +2477,7 @@ Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
 
 exports[`downloads/without-beads > should match snapshot for ask.md 1`] = `
 "---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+description: Request team review and approval - for complex changes needing discussion
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -2430,8 +2492,6 @@ argument-hint: [optional-pr-title-and-description]
 - The code should speak for itself - TDD is the process, not the product
 
 **Ship/Show/Ask Pattern - ASK**
-
-> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
 
 Ask is for complex changes that need team discussion and approval. Examples:
 
@@ -2553,7 +2613,6 @@ Use **/ship** instead if: change is tiny, obvious, and safe
 
 exports[`downloads/without-beads > should match snapshot for beepboop.md 1`] = `
 "---
-allowed-tools: Read, Grep, Glob
 description: Communicate AI-generated content with transparent attribution
 argument-hint: <task-description>
 ---
@@ -2603,7 +2662,6 @@ This command ensures transparency about AI usage while maintaining that the user
 
 exports[`downloads/without-beads > should match snapshot for busycommit.md 1`] = `
 "---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---
@@ -2668,7 +2726,6 @@ git commit -m "refactor: extract user lookup to helper"
 
 exports[`downloads/without-beads > should match snapshot for commit.md 1`] = `
 "---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
 ---
@@ -2704,7 +2761,6 @@ git commit -m "feat(#123): add validation to user input form"
 
 exports[`downloads/without-beads > should match snapshot for cycle.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute complete TDD cycle - Red, Green, and Refactor phases in sequence
 argument-hint: <feature or requirement description>
 ---
@@ -2837,7 +2893,6 @@ $ARGUMENTS
 
 exports[`downloads/without-beads > should match snapshot for green.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Green Phase - write minimal implementation to pass the failing test
 argument-hint: <implementation description>
 ---
@@ -2932,7 +2987,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/without-beads > should match snapshot for issue.md 1`] = `
 "---
-allowed-tools: mcp__github__issue_read, mcp__github__get_issue, Task
 description: Analyze GitHub issue and create TDD implementation plan
 argument-hint: [optional-issue-number]
 ---
@@ -3077,7 +3131,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/without-beads > should match snapshot for plan.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task, AskUserQuestion, mcp__github__issue_read, mcp__github__search_issues
 description: Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria
 argument-hint: <feature/requirement description or GitHub issue URL/number>
 ---
@@ -3196,9 +3249,82 @@ Understand the requirement by asking (use AskUserQuestion if needed):
 "
 `;
 
+exports[`downloads/without-beads > should match snapshot for pr.md 1`] = `
+"---
+description: Creates a pull request using GitHub MCP
+argument-hint: [optional-pr-title-and-description]
+---
+
+# Create Pull Request
+
+## General Guidelines
+
+### Output Style
+
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+Create a pull request for the current branch using GitHub MCP tools.
+
+## Workflow
+
+Current branch status:
+!\`git status\`
+
+Recent commits:
+!\`git log --oneline -5\`
+
+Arguments: $ARGUMENTS
+
+**Process:**
+
+1. **Ensure Branch is Ready**:
+   !\`git status\`
+   - Commit all changes
+   - Push to remote: \`git push origin [branch-name]\`
+
+2. **Create PR**: Create a well-formatted pull request
+
+   Title: conventional commits format, like \`feat(#123): add user authentication\`
+
+   Description template:
+
+   \`\`\`markdown
+   <!--
+     Are there any relevant issues / PRs / mailing lists discussions?
+     Please reference them here.
+   -->
+
+   ## References
+
+   - [links to github issues referenced in commit messages]
+
+   ## Summary
+
+   [Brief description of changes]
+
+   ## Test Plan
+
+   - [ ] Tests pass
+   - [ ] Manual testing completed
+   \`\`\`
+
+3. **Set Base Branch**: Default to main unless specified otherwise
+
+4. **Link Issues**: Reference related issues found in commit messages
+
+## Use GitHub MCP Tools
+
+1. Check current branch and ensure it's pushed
+2. Create a well-formatted pull request with proper title and description
+3. Set the base branch (default: main)
+4. Include relevant issue references if found in commit messages
+"
+`;
+
 exports[`downloads/without-beads > should match snapshot for red.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Red Phase - write ONE failing test
 argument-hint: [optional additional info]
 ---
@@ -3293,7 +3419,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/without-beads > should match snapshot for refactor.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Refactor Phase - improve code structure while keeping tests green
 argument-hint: <refactoring description>
 ---
@@ -3388,8 +3513,7 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/without-beads > should match snapshot for ship.md 1`] = `
 "---
-allowed-tools: Bash(git status:*), Bash(git log:*), Bash(git diff:*), Bash(git checkout:*), Bash(git pull:*), Bash(git merge:*), Bash(git push:*), Bash(git branch:*)
-description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+description: Ship code directly to main - for small, obvious changes that don't need review
 argument-hint: [optional-commit-message]
 ---
 
@@ -3404,8 +3528,6 @@ argument-hint: [optional-commit-message]
 - The code should speak for itself - TDD is the process, not the product
 
 **Ship/Show/Ask Pattern - SHIP**
-
-> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
 
 Ship is for small, obvious changes that don't need code review. Examples:
 
@@ -3481,8 +3603,7 @@ If tests fail, linter fails, or changes are large/complex, STOP and suggest:
 
 exports[`downloads/without-beads > should match snapshot for show.md 1`] = `
 "---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Show code to team with auto-merge - for changes that should be visible but don't need approval (Cursor's modern workflow)
+description: Show code to team with auto-merge - for changes that should be visible but don't need approval
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -3497,8 +3618,6 @@ argument-hint: [optional-pr-title-and-description]
 - The code should speak for itself - TDD is the process, not the product
 
 **Ship/Show/Ask Pattern - SHOW**
-
-> 🚀 **Cursor says**: Not every change needs a traditional review. Show your work, then merge.
 
 Show is for changes that teammates should see, but don't require approval. Examples:
 
@@ -3590,7 +3709,6 @@ Use **/ask** instead if: change needs discussion, breaks APIs, or you're uncerta
 
 exports[`downloads/without-beads > should match snapshot for spike.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task
 description: Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
 argument-hint: <exploration description>
 ---
@@ -3685,7 +3803,6 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 exports[`downloads/without-beads > should match snapshot for summarize.md 1`] = `
 "---
-allowed-tools: AskUserQuestion
 description: Summarize conversation progress and next steps
 argument-hint: [optional additional info]
 ---
@@ -3732,7 +3849,6 @@ Keep the summary concise and actionable - suitable for pasting into a new conver
 
 exports[`downloads/without-beads > should match snapshot for tdd.md 1`] = `
 "---
-allowed-tools: Read, Glob, Grep, Task
 description: Remind agent about TDD approach and continue conversation
 argument-hint: [optional-response-to-last-message]
 ---
@@ -3829,7 +3945,6 @@ Please continue with TDD approach based on the above response.
 
 exports[`downloads/without-beads > should match snapshot for worktree-add.md 1`] = `
 "---
-allowed-tools: Bash(code-insiders:*), Bash(code:*), Bash(zed:*), Bash(cursor:*), Bash(which:*), Read, mcp__github__issue_read, mcp__ide__getDiagnostics, ListMcpResourcesTool
 description: Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE
 argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 ---
@@ -4097,7 +4212,6 @@ EOF</create_file_command>
 
 exports[`downloads/without-beads > should match snapshot for worktree-cleanup.md 1`] = `
 "---
-allowed-tools: Read, mcp__mcp-jq__jq_query, mcp__mcp-jq__jq_query_file, mcp__github__search_pull_requests, mcp__github__pull_request_read, mcp__github__issue_read, mcp__github__issue_write, mcp__github__add_issue_comment, ListMcpResourcesTool
 description: Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees
 argument-hint: (no arguments)
 ---

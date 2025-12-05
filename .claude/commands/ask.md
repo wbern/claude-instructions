@@ -1,6 +1,5 @@
 ---
-allowed-tools: mcp__github__create_pull_request, mcp__github__update_pull_request, Bash(git status:*), Bash(git log:*), Bash(git push:*), Bash(git branch:*)
-description: Request team review and approval - for complex changes needing discussion (OK fine, traditional PRs still have their place - Cursor)
+description: Request team review and approval - for complex changes needing discussion
 argument-hint: [optional-pr-title-and-description]
 ---
 
@@ -17,8 +16,6 @@ argument-hint: [optional-pr-title-and-description]
 Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
 
 **Ship/Show/Ask Pattern - ASK**
-
-> 💭 **Cursor says**: Fine, SOME things still need traditional PRs. But be intentional about it.
 
 Ask is for complex changes that need team discussion and approval. Examples:
 

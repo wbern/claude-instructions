@@ -1,5 +1,4 @@
 ---
-allowed-tools: Bash(pnpm test:*), Bash(pnpm lint:*)
 description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
 ---

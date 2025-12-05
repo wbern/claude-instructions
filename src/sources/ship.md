@@ -1,9 +1,9 @@
 ---
-allowed-tools: Bash(git status:*), Bash(git log:*), Bash(git diff:*), Bash(git checkout:*), Bash(git pull:*), Bash(git merge:*), Bash(git push:*), Bash(git branch:*)
-description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+description: Ship code directly to main - for small, obvious changes that don't need review
 argument-hint: [optional-commit-message]
-_category: Workflow
-_order: 2
+_category: Ship / Show / Ask
+_order: 1
+_selectedByDefault: false
 ---
 
 # Ship - Direct Merge to Main
@@ -15,8 +15,6 @@ _order: 2
 <!-- /docs -->
 
 **Ship/Show/Ask Pattern - SHIP**
-
-> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
 
 Ship is for small, obvious changes that don't need code review. Examples:
 

@@ -1,5 +1,4 @@
 ---
-allowed-tools: Read, Glob, Grep, Bash(pnpm test:*)
 description: Execute TDD Green Phase - write minimal implementation to pass the failing test
 argument-hint: <implementation description>
 ---

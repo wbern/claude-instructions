@@ -1,5 +1,4 @@
 ---
-allowed-tools: Read, Glob, Grep, Task
 description: Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
 argument-hint: <exploration description>
 ---

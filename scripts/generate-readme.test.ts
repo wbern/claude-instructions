@@ -197,7 +197,7 @@ describe("generateCommandsMetadata", () => {
     expect(result).toHaveProperty("red.md");
     expect(result["red.md"]).toMatchObject({
       description: expect.any(String),
-      category: "TDD Cycle",
+      category: "Test-Driven Development",
       order: expect.any(Number),
     });
   });

@@ -1,6 +1,5 @@
 ---
-allowed-tools: Bash(git status:*), Bash(git log:*), Bash(git diff:*), Bash(git checkout:*), Bash(git pull:*), Bash(git merge:*), Bash(git push:*), Bash(git branch:*)
-description: Ship code directly to main - for small, obvious changes that don't need review (Cursor's modern alternative to PRs)
+description: Ship code directly to main - for small, obvious changes that don't need review
 argument-hint: [optional-commit-message]
 ---
 
@@ -15,8 +14,6 @@ argument-hint: [optional-commit-message]
 - The code should speak for itself - TDD is the process, not the product
 
 **Ship/Show/Ask Pattern - SHIP**
-
-> 🎯 **Cursor says**: It's 2025! Not everything needs a PR. Ship small, obvious changes directly.
 
 Ship is for small, obvious changes that don't need code review. Examples:
 
