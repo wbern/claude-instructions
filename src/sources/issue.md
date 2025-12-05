@@ -1,6 +1,7 @@
 ---
 description: Analyze GitHub issue and create TDD implementation plan
 argument-hint: [optional-issue-number]
+_hint: Analyze issue
 _category: Planning
 _order: 1
 ---

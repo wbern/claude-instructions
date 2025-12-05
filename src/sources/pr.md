@@ -1,6 +1,7 @@
 ---
 description: Creates a pull request using GitHub MCP
 argument-hint: [optional-pr-title-and-description]
+_hint: Create PR
 _category: Workflow
 _order: 5
 ---

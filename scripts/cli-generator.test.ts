@@ -406,6 +406,74 @@ describe("checkExistingFiles", () => {
   });
 });
 
+describe("getCommandsGroupedByCategory", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should return categories in defined order with Test-Driven Development first and Ship / Show / Ask last", async () => {
+    const mockMetadata = {
+      "ship.md": {
+        description: "Ship",
+        category: "Ship / Show / Ask",
+        order: 1,
+      },
+      "red.md": {
+        description: "Red",
+        category: "Test-Driven Development",
+        order: 1,
+      },
+      "commit.md": {
+        description: "Commit",
+        category: "Workflow",
+        order: 1,
+      },
+      "plan.md": {
+        description: "Plan",
+        category: "Planning",
+        order: 1,
+      },
+    };
+
+    vi.mocked(fs.readFile).mockResolvedValue(
+      JSON.stringify(mockMetadata) as never,
+    );
+
+    const { getCommandsGroupedByCategory, VARIANTS } =
+      await import("./cli-generator.js");
+    const grouped = await getCommandsGroupedByCategory(VARIANTS.WITH_BEADS);
+
+    const categoryOrder = Object.keys(grouped);
+    expect(categoryOrder[0]).toBe("Test-Driven Development");
+    expect(categoryOrder[categoryOrder.length - 1]).toBe("Ship / Show / Ask");
+  });
+
+  it("should include hint from _hint property in command options", async () => {
+    const mockMetadata = {
+      "red.md": {
+        description: "Execute Red Phase - write ONE failing test",
+        hint: "Write failing test",
+        category: "Test-Driven Development",
+        order: 2,
+      },
+    };
+
+    vi.mocked(fs.readFile).mockResolvedValue(
+      JSON.stringify(mockMetadata) as never,
+    );
+
+    const { getCommandsGroupedByCategory, VARIANTS } =
+      await import("./cli-generator.js");
+    const grouped = await getCommandsGroupedByCategory(VARIANTS.WITH_BEADS);
+
+    expect(grouped["Test-Driven Development"][0]).toMatchObject({
+      value: "red.md",
+      label: "red.md",
+      hint: "Write failing test",
+    });
+  });
+});
+
 describe("generateToDirectory with skipFiles", () => {
   const MOCK_OUTPUT_PATH = "/mock/output/path";
 

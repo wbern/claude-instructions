@@ -1,6 +1,7 @@
 ---
 description: Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees
 argument-hint: (no arguments)
+_hint: Cleanup worktree
 _category: Worktree Management
 _order: 2
 ---

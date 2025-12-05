@@ -1,6 +1,7 @@
 ---
 description: Create a git commit following project standards
 argument-hint: [optional-commit-description]
+_hint: Git commit
 _category: Workflow
 _order: 1
 ---

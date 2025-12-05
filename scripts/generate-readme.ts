@@ -232,6 +232,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 // Types for metadata
 interface CommandMetadata {
   description: string;
+  hint?: string;
   category: string;
   order: number;
   selectedByDefault?: boolean;
@@ -250,6 +251,7 @@ function generateCommandsMetadata(): Record<string, CommandMetadata> {
 
     metadata[file] = {
       description: frontmatter.description || "No description",
+      hint: frontmatter._hint as string | undefined,
       category: getCategory(frontmatter),
       order: typeof frontmatter._order === "number" ? frontmatter._order : 999,
       ...(frontmatter._selectedByDefault === false && {

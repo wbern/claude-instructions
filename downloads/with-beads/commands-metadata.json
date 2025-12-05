@@ -1,104 +1,124 @@
 {
   "add-command.md": {
     "description": "Guide for creating new slash commands",
+    "hint": "Create command",
     "category": "Utilities",
     "order": 3
   },
   "ask.md": {
     "description": "Request team review and approval - for complex changes needing discussion",
+    "hint": "Request review",
     "category": "Ship / Show / Ask",
     "order": 3,
     "selectedByDefault": false
   },
   "beepboop.md": {
     "description": "Communicate AI-generated content with transparent attribution",
+    "hint": "AI attribution",
     "category": "Utilities",
     "order": 2
   },
   "busycommit.md": {
     "description": "Create multiple atomic git commits, one logical change at a time",
+    "hint": "Atomic commits",
     "category": "Workflow",
     "order": 2
   },
   "commit.md": {
     "description": "Create a git commit following project standards",
+    "hint": "Git commit",
     "category": "Workflow",
     "order": 1
   },
   "cycle.md": {
     "description": "Execute complete TDD cycle - Red, Green, and Refactor phases in sequence",
+    "hint": "Full TDD cycle",
     "category": "Test-Driven Development",
     "order": 5
   },
   "gap.md": {
     "description": "Analyze conversation context for unaddressed items and gaps",
+    "hint": "Find gaps",
     "category": "Workflow",
     "order": 11
   },
   "green.md": {
     "description": "Execute TDD Green Phase - write minimal implementation to pass the failing test",
+    "hint": "Make it pass",
     "category": "Test-Driven Development",
     "order": 3
   },
   "issue.md": {
     "description": "Analyze GitHub issue and create TDD implementation plan",
+    "hint": "Analyze issue",
     "category": "Planning",
     "order": 1
   },
   "plan.md": {
     "description": "Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria",
+    "hint": "Plan feature",
     "category": "Planning",
     "order": 2
   },
   "pr.md": {
     "description": "Creates a pull request using GitHub MCP",
+    "hint": "Create PR",
     "category": "Workflow",
     "order": 5
   },
   "red.md": {
     "description": "Execute TDD Red Phase - write ONE failing test",
+    "hint": "Failing test",
     "category": "Test-Driven Development",
     "order": 2
   },
   "refactor.md": {
     "description": "Execute TDD Refactor Phase - improve code structure while keeping tests green",
+    "hint": "Clean up code",
     "category": "Test-Driven Development",
     "order": 4
   },
   "ship.md": {
     "description": "Ship code directly to main - for small, obvious changes that don't need review",
+    "hint": "Direct to main",
     "category": "Ship / Show / Ask",
     "order": 1,
     "selectedByDefault": false
   },
   "show.md": {
     "description": "Show code to team with auto-merge - for changes that should be visible but don't need approval",
+    "hint": "Auto-merge PR",
     "category": "Ship / Show / Ask",
     "order": 2,
     "selectedByDefault": false
   },
   "spike.md": {
     "description": "Execute TDD Spike Phase - exploratory coding to understand problem space before TDD",
+    "hint": "Explore first",
     "category": "Test-Driven Development",
     "order": 1
   },
   "summarize.md": {
     "description": "Summarize conversation progress and next steps",
+    "hint": "Summarize chat",
     "category": "Workflow",
     "order": 10
   },
   "tdd.md": {
     "description": "Remind agent about TDD approach and continue conversation",
+    "hint": "TDD reminder",
     "category": "Test-Driven Development",
     "order": 1
   },
   "worktree-add.md": {
     "description": "Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE",
+    "hint": "Add worktree",
     "category": "Worktree Management",
     "order": 1
   },
   "worktree-cleanup.md": {
     "description": "Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees",
+    "hint": "Cleanup worktree",
     "category": "Worktree Management",
     "order": 2
   }

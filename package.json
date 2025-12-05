@@ -31,6 +31,7 @@
     "build": "tsx scripts/build.ts",
     "build:cli": "tsup",
     "test:manual": "pnpm build:cli && TMPDIR=$(mktemp -d) && pnpm pack --pack-destination $TMPDIR && cd $TMPDIR && tar -xzf *.tgz && cd package && pnpm i && node bin/cli.js",
+    "test:quick-manual": "pnpm build:cli && node bin/cli.js",
     "generate": "tsx scripts/cli-generator.ts",
     "test": "vitest run",
     "test:watch": "vitest",

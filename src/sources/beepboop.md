@@ -1,6 +1,7 @@
 ---
 description: Communicate AI-generated content with transparent attribution
 argument-hint: <task-description>
+_hint: AI attribution
 _category: Utilities
 _order: 2
 ---

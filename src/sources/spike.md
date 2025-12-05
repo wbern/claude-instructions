@@ -1,6 +1,7 @@
 ---
 description: Execute TDD Spike Phase - exploratory coding to understand problem space before TDD
 argument-hint: <exploration description>
+_hint: Explore first
 _category: Test-Driven Development
 _order: 1
 ---

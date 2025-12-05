@@ -1,6 +1,7 @@
 ---
 description: Show code to team with auto-merge - for changes that should be visible but don't need approval
 argument-hint: [optional-pr-title-and-description]
+_hint: Auto-merge PR
 _category: Ship / Show / Ask
 _order: 2
 _selectedByDefault: false

@@ -192,15 +192,27 @@ export async function getAvailableCommands(
 interface CommandOption {
   value: string;
   label: string;
+  hint?: string;
   selectedByDefault?: boolean;
 }
 
 interface CommandMetadata {
   description: string;
+  hint?: string;
   category: string;
   order: number;
   selectedByDefault?: boolean;
 }
+
+// Categories in display order (unlisted categories appear at the end alphabetically)
+const CATEGORY_ORDER = [
+  "Test-Driven Development",
+  "Planning",
+  "Workflow",
+  "Worktree Management",
+  "Utilities",
+  "Ship / Show / Ask",
+];
 
 export async function getCommandsGroupedByCategory(
   variant: Variant,
@@ -226,6 +238,7 @@ export async function getCommandsGroupedByCategory(
     grouped[category].push({
       value: filename,
       label: filename,
+      hint: data.hint,
       selectedByDefault: data.selectedByDefault !== false,
     });
   }
@@ -239,7 +252,26 @@ export async function getCommandsGroupedByCategory(
     });
   }
 
-  return grouped;
+  // Sort categories by CATEGORY_ORDER (unlisted categories at end, alphabetically)
+  const sortedCategories = Object.keys(grouped).sort((a, b) => {
+    const indexA = CATEGORY_ORDER.indexOf(a);
+    const indexB = CATEGORY_ORDER.indexOf(b);
+    // Both in order list: sort by position
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    // Only a in order list: a comes first
+    if (indexA !== -1) return -1;
+    // Only b in order list: b comes first
+    if (indexB !== -1) return 1;
+    // Neither in order list: alphabetical
+    return a.localeCompare(b);
+  });
+
+  const sortedGrouped: Record<string, CommandOption[]> = {};
+  for (const category of sortedCategories) {
+    sortedGrouped[category] = grouped[category];
+  }
+
+  return sortedGrouped;
 }
 
 function getDestinationPath(

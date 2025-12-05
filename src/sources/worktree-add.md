@@ -1,6 +1,7 @@
 ---
 description: Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE
 argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
+_hint: Add worktree
 _category: Worktree Management
 _order: 1
 ---

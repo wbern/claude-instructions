@@ -1,6 +1,7 @@
 ---
 description: Analyze conversation context for unaddressed items and gaps
 argument-hint: [optional additional info]
+_hint: Find gaps
 _category: Workflow
 _order: 11
 ---

@@ -209,6 +209,17 @@ describe("generateCommandsMetadata", () => {
 
     expect(result["cycle.md"].category).toBe(result["red.md"].category);
   });
+
+  it("should have hint for all commands", async () => {
+    const { generateCommandsMetadata } = await import("./generate-readme.js");
+
+    const result = await generateCommandsMetadata();
+
+    for (const [filename, metadata] of Object.entries(result)) {
+      expect(metadata.hint, `${filename} is missing _hint`).toBeDefined();
+      expect(metadata.hint, `${filename} has empty _hint`).not.toBe("");
+    }
+  });
 });
 
 describe("generateExampleConversations", () => {

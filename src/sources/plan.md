@@ -1,6 +1,7 @@
 ---
 description: Create implementation plan from feature/requirement with PRD-style discovery and TDD acceptance criteria
 argument-hint: <feature/requirement description or GitHub issue URL/number>
+_hint: Plan feature
 _category: Planning
 _order: 2
 ---

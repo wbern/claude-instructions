@@ -9,6 +9,9 @@ pnpm-lock.yaml
 .beads/beads.db
 .beads/*.db
 
+# Build artifacts
+bin/
+
 # Test artifacts
 coverage/
 

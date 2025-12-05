@@ -1,6 +1,7 @@
 ---
 description: Create multiple atomic git commits, one logical change at a time
 argument-hint: [optional-commit-description]
+_hint: Atomic commits
 _category: Workflow
 _order: 2
 ---

@@ -1,6 +1,7 @@
 ---
 description: Execute TDD Refactor Phase - improve code structure while keeping tests green
 argument-hint: <refactoring description>
+_hint: Clean up code
 _category: Test-Driven Development
 _order: 4
 ---

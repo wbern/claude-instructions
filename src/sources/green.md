@@ -1,6 +1,7 @@
 ---
 description: Execute TDD Green Phase - write minimal implementation to pass the failing test
 argument-hint: <implementation description>
+_hint: Make it pass
 _category: Test-Driven Development
 _order: 3
 ---

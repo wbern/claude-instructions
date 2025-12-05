@@ -1,6 +1,7 @@
 ---
 description: Summarize conversation progress and next steps
 argument-hint: [optional additional info]
+_hint: Summarize chat
 _category: Workflow
 _order: 10
 ---
