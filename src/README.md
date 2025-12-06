@@ -21,6 +21,10 @@ TDD workflow commands for Claude Code CLI.
 
 ```bash
 npx @wbern/claude-instructions
+
+// or
+
+pnpm dlx @wbern/claude-instructions
 ```
 
 The interactive installer lets you choose:
