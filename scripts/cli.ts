@@ -306,6 +306,7 @@ export async function main(args?: CliArgs): Promise<void> {
       selectedAllowedTools = await multiselect({
         message: "Select allowed tools for commands (optional)",
         options: requestedToolsOptions,
+        required: false,
       });
 
       if (isCancel(selectedAllowedTools)) {

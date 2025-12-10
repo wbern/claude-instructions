@@ -1283,4 +1283,42 @@ describe("allowed tools prompt", () => {
 
     expect(multiselect).not.toHaveBeenCalled();
   });
+
+  it("should allow submitting with no allowed tools selected (optional)", async () => {
+    const { select, text, groupMultiselect, multiselect } =
+      await import("@clack/prompts");
+    const { generateToDirectory, checkExistingFiles } =
+      await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    // Ensure no conflicting files
+    vi.mocked(checkExistingFiles).mockResolvedValueOnce([]);
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(text).mockResolvedValueOnce("");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md"]);
+    // User presses Enter without selecting any tools
+    vi.mocked(multiselect).mockResolvedValueOnce([]);
+
+    await main();
+
+    // Should call multiselect with required: false
+    expect(multiselect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        required: false,
+      }),
+    );
+
+    // Should still generate files successfully
+    expect(generateToDirectory).toHaveBeenCalledWith(
+      undefined,
+      "with-beads",
+      "project",
+      expect.objectContaining({
+        allowedTools: [],
+      }),
+    );
+  });
 });
