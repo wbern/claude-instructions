@@ -596,9 +596,67 @@ describe("getRequestedToolsOptions", () => {
     const options = await getRequestedToolsOptions(VARIANTS.WITH_BEADS);
 
     expect(options).toEqual([
-      { value: "Bash(git diff:*)", label: "git diff" },
-      { value: "Bash(git status:*)", label: "git status" },
-      { value: "Bash(git log:*)", label: "git log" },
+      {
+        value: "Bash(git diff:*)",
+        label: "git diff",
+        hint: "/red, /code-review",
+      },
+      { value: "Bash(git status:*)", label: "git status", hint: "/red" },
+      { value: "Bash(git log:*)", label: "git log", hint: "/code-review" },
     ]);
+  });
+
+  it("should include hint showing which commands use each tool", async () => {
+    const mockMetadata = {
+      "red.md": {
+        description: "Red phase",
+        category: "TDD",
+        order: 1,
+        "_requested-tools": ["Bash(git diff:*)", "Bash(git status:*)"],
+      },
+      "code-review.md": {
+        description: "Code review",
+        category: "Workflow",
+        order: 2,
+        "_requested-tools": ["Bash(git diff:*)", "Bash(git log:*)"],
+      },
+      "green.md": {
+        description: "Green phase",
+        category: "TDD",
+        order: 2,
+        "_requested-tools": ["Bash(git diff:*)"],
+      },
+      "refactor.md": {
+        description: "Refactor phase",
+        category: "TDD",
+        order: 3,
+        "_requested-tools": ["Bash(git diff:*)"],
+      },
+      "cycle.md": {
+        description: "Full cycle",
+        category: "TDD",
+        order: 4,
+        "_requested-tools": ["Bash(git diff:*)"],
+      },
+    };
+
+    vi.mocked(fs.readFile).mockResolvedValue(
+      JSON.stringify(mockMetadata) as never,
+    );
+
+    const options = await getRequestedToolsOptions(VARIANTS.WITH_BEADS);
+
+    const gitDiffOption = options.find((o) => o.value === "Bash(git diff:*)");
+    const gitStatusOption = options.find(
+      (o) => o.value === "Bash(git status:*)",
+    );
+    const gitLogOption = options.find((o) => o.value === "Bash(git log:*)");
+
+    // Tool used by 5 commands: show first 2, then "and 3 others"
+    expect(gitDiffOption?.hint).toBe("/red, /code-review, and 3 others");
+    // Tool used by 1 command: just show the command
+    expect(gitStatusOption?.hint).toBe("/red");
+    // Tool used by 1 command: just show the command
+    expect(gitLogOption?.hint).toBe("/code-review");
   });
 });

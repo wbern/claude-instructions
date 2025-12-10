@@ -283,6 +283,7 @@ export async function getCommandsGroupedByCategory(
 interface RequestedToolOption {
   value: string;
   label: string;
+  hint: string;
 }
 
 function extractLabelFromTool(tool: string): string {
@@ -290,23 +291,36 @@ function extractLabelFromTool(tool: string): string {
   return match ? match[1] : tool;
 }
 
+function formatCommandsHint(commands: string[]): string {
+  if (commands.length <= 2) {
+    return commands.map((c) => `/${c}`).join(", ");
+  }
+  const first = commands.slice(0, 2).map((c) => `/${c}`);
+  const remaining = commands.length - 2;
+  return `${first.join(", ")}, and ${remaining} ${remaining === 1 ? "other" : "others"}`;
+}
+
 export async function getRequestedToolsOptions(
   variant: Variant,
 ): Promise<RequestedToolOption[]> {
   const metadata = await loadCommandsMetadata(variant);
 
-  const allTools = new Set<string>();
-  for (const data of Object.values(metadata)) {
+  const toolToCommands = new Map<string, string[]>();
+  for (const [filename, data] of Object.entries(metadata)) {
     if (data["_requested-tools"]) {
+      const commandName = filename.replace(/\.md$/, "");
       for (const tool of data["_requested-tools"]) {
-        allTools.add(tool);
+        const commands = toolToCommands.get(tool) || [];
+        commands.push(commandName);
+        toolToCommands.set(tool, commands);
       }
     }
   }
 
-  return Array.from(allTools).map((tool) => ({
+  return Array.from(toolToCommands.entries()).map(([tool, commands]) => ({
     value: tool,
     label: extractLabelFromTool(tool),
+    hint: formatCommandsHint(commands),
   }));
 }
 
