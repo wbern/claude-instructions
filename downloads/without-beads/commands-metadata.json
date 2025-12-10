@@ -24,6 +24,20 @@
     "category": "Workflow",
     "order": 2
   },
+  "code-review.md": {
+    "description": "Code review using dynamic category detection and domain-specific analysis",
+    "hint": "Review code",
+    "category": "Workflow",
+    "order": 35,
+    "_requested-tools": [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)"
+    ]
+  },
   "commit.md": {
     "description": "Create a git commit following project standards",
     "hint": "Git commit",

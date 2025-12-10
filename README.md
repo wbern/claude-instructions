@@ -211,6 +211,7 @@ flowchart TB
 - `/pr` - Creates a pull request using GitHub MCP
 - `/summarize` - Summarize conversation progress and next steps
 - `/gap` - Analyze conversation context for unaddressed items and gaps
+- `/code-review` - Code review using dynamic category detection and domain-specific analysis
 
 ### Ship / Show / Ask
 

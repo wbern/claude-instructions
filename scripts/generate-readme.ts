@@ -59,12 +59,35 @@ function parseFrontmatter(content: string): Frontmatter {
 
   const frontmatter: Frontmatter = {};
   const lines = match[1].split("\n");
+  let currentKey: string | null = null;
+  let currentArray: string[] | null = null;
 
   for (const line of lines) {
+    // Check for array item (indented with "- ")
+    if (line.match(/^\s+-\s+/) && currentKey && currentArray) {
+      const value = line.replace(/^\s+-\s+/, "").trim();
+      currentArray.push(value);
+      continue;
+    }
+
+    // Save any pending array
+    if (currentKey && currentArray) {
+      frontmatter[currentKey] = currentArray;
+      currentKey = null;
+      currentArray = null;
+    }
+
     const colonIndex = line.indexOf(":");
     if (colonIndex === -1) continue;
     const key = line.slice(0, colonIndex).trim();
     let value: string | number = line.slice(colonIndex + 1).trim();
+
+    // Check if this is the start of an array (empty value after colon)
+    if (value === "") {
+      currentKey = key;
+      currentArray = [];
+      continue;
+    }
 
     // Parse numeric values for _order field
     if (key === "_order" && !isNaN(Number(value))) {
@@ -78,6 +101,11 @@ function parseFrontmatter(content: string): Frontmatter {
     }
 
     frontmatter[key] = value;
+  }
+
+  // Save any pending array at end
+  if (currentKey && currentArray) {
+    frontmatter[currentKey] = currentArray;
   }
 
   return frontmatter;
@@ -201,6 +229,7 @@ interface CommandMetadata {
   category: string;
   order: number;
   selectedByDefault?: boolean;
+  "_requested-tools"?: string[];
 }
 
 // Generate metadata JSON for all commands
@@ -214,14 +243,19 @@ function generateCommandsMetadata(): Record<string, CommandMetadata> {
     const content = fs.readFileSync(path.join(sourcesDir, file), "utf8");
     const frontmatter = parseFrontmatter(content);
 
+    const requestedTools = frontmatter["_requested-tools"] as
+      | string[]
+      | undefined;
+
     metadata[file] = {
       description: frontmatter.description || "No description",
       hint: frontmatter._hint as string | undefined,
       category: getCategory(frontmatter),
       order: typeof frontmatter._order === "number" ? frontmatter._order : 999,
-      ...(frontmatter._selectedByDefault === false && {
-        selectedByDefault: false,
-      }),
+      ...(frontmatter._selectedByDefault === false
+        ? { selectedByDefault: false }
+        : {}),
+      ...(requestedTools ? { "_requested-tools": requestedTools } : {}),
     };
   }
 

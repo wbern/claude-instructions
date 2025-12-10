@@ -45,6 +45,23 @@ argument-hint: <test description or feature requirement>
       "Execute TDD Red Phase - write ONE failing test",
     );
   });
+
+  it("should parse YAML arrays like _requested-tools", () => {
+    const content = `---
+description: Code review command
+_requested-tools:
+  - Bash(git diff:*)
+  - Bash(git status:*)
+  - Bash(git log:*)
+---`;
+
+    const result = parseFrontmatter(content);
+    expect(result["_requested-tools"]).toEqual([
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+    ]);
+  });
 });
 
 describe("getCategory", () => {
@@ -274,6 +291,22 @@ describe("generateCommandsMetadata", () => {
       expect(metadata.hint, `${filename} is missing _hint`).toBeDefined();
       expect(metadata.hint, `${filename} has empty _hint`).not.toBe("");
     }
+  });
+
+  it("should include _requested-tools when present in source", async () => {
+    const { generateCommandsMetadata } = await import("./generate-readme.js");
+
+    const result = await generateCommandsMetadata();
+
+    // code-review.md has _requested-tools defined
+    expect(result["code-review.md"]["_requested-tools"]).toEqual([
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)",
+    ]);
   });
 });
 
