@@ -90,6 +90,7 @@ export interface GenerateOptions {
   commandPrefix?: string;
   commands?: string[];
   skipFiles?: string[];
+  allowedTools?: string[];
 }
 
 export interface FileConflict {
@@ -202,6 +203,7 @@ interface CommandMetadata {
   category: string;
   order: number;
   selectedByDefault?: boolean;
+  "_requested-tools"?: string[];
 }
 
 // Categories in display order (unlisted categories appear at the end alphabetically)
@@ -214,9 +216,9 @@ const CATEGORY_ORDER = [
   "Ship / Show / Ask",
 ];
 
-export async function getCommandsGroupedByCategory(
+async function loadCommandsMetadata(
   variant: Variant,
-): Promise<Record<string, CommandOption[]>> {
+): Promise<Record<string, CommandMetadata>> {
   const sourcePath = path.join(
     __dirname,
     "..",
@@ -226,7 +228,13 @@ export async function getCommandsGroupedByCategory(
   const metadataPath = path.join(sourcePath, "commands-metadata.json");
 
   const metadataContent = await fs.readFile(metadataPath, "utf-8");
-  const metadata: Record<string, CommandMetadata> = JSON.parse(metadataContent);
+  return JSON.parse(metadataContent);
+}
+
+export async function getCommandsGroupedByCategory(
+  variant: Variant,
+): Promise<Record<string, CommandOption[]>> {
+  const metadata = await loadCommandsMetadata(variant);
 
   const grouped: Record<string, CommandOption[]> = {};
 
@@ -270,6 +278,36 @@ export async function getCommandsGroupedByCategory(
   }
 
   return sortedGrouped;
+}
+
+interface RequestedToolOption {
+  value: string;
+  label: string;
+}
+
+function extractLabelFromTool(tool: string): string {
+  const match = tool.match(/^Bash\(([^:]+):/);
+  return match ? match[1] : tool;
+}
+
+export async function getRequestedToolsOptions(
+  variant: Variant,
+): Promise<RequestedToolOption[]> {
+  const metadata = await loadCommandsMetadata(variant);
+
+  const allTools = new Set<string>();
+  for (const data of Object.values(metadata)) {
+    if (data["_requested-tools"]) {
+      for (const tool of data["_requested-tools"]) {
+        allTools.add(tool);
+      }
+    }
+  }
+
+  return Array.from(allTools).map((tool) => ({
+    value: tool,
+    label: extractLabelFromTool(tool),
+  }));
 }
 
 function getDestinationPath(
@@ -354,6 +392,19 @@ export async function generateToDirectory(
     }
   } else {
     await fs.copy(sourcePath, destinationPath, {});
+  }
+
+  if (options?.allowedTools && options.allowedTools.length > 0) {
+    for (const file of files) {
+      const filePath = path.join(destinationPath, file);
+      const content = await fs.readFile(filePath, "utf-8");
+      const allowedToolsYaml = `allowed-tools: ${options.allowedTools.join(", ")}`;
+      const modifiedContent = content.replace(
+        /^---\n/,
+        `---\n${allowedToolsYaml}\n`,
+      );
+      await fs.writeFile(filePath, modifiedContent);
+    }
   }
 
   if (options?.commandPrefix) {

@@ -16,6 +16,7 @@ vi.mock("fs-extra", () => ({
 import {
   generateToDirectory,
   checkForConflicts,
+  getRequestedToolsOptions,
   VARIANTS,
   SCOPES,
 } from "./cli-generator.js";
@@ -474,6 +475,56 @@ describe("getCommandsGroupedByCategory", () => {
   });
 });
 
+describe("generateToDirectory with allowedTools", () => {
+  const MOCK_OUTPUT_PATH = "/mock/output/path";
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should accept allowedTools option", async () => {
+    vi.mocked(fs.readdir).mockResolvedValue(["red.md"] as never);
+    vi.mocked(fs.pathExists).mockResolvedValue(false as never);
+
+    const result = await generateToDirectory(
+      MOCK_OUTPUT_PATH,
+      VARIANTS.WITH_BEADS,
+      SCOPES.PROJECT,
+      { allowedTools: ["Bash(git diff:*)", "Bash(git status:*)"] },
+    );
+
+    expect(result.success).toBe(true);
+  });
+
+  it("should inject allowed-tools into command frontmatter", async () => {
+    const commandContent = `---
+description: Test command
+---
+
+# Test Command`;
+
+    vi.mocked(fs.readdir).mockResolvedValue(["red.md"] as never);
+    vi.mocked(fs.pathExists).mockResolvedValue(false as never);
+    vi.mocked(fs.readFile).mockResolvedValue(commandContent as never);
+
+    await generateToDirectory(
+      MOCK_OUTPUT_PATH,
+      VARIANTS.WITH_BEADS,
+      SCOPES.PROJECT,
+      {
+        allowedTools: ["Bash(git diff:*)", "Bash(git status:*)"],
+      },
+    );
+
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      expect.stringContaining("red.md"),
+      expect.stringContaining(
+        "allowed-tools: Bash(git diff:*), Bash(git status:*)",
+      ),
+    );
+  });
+});
+
 describe("generateToDirectory with skipFiles", () => {
   const MOCK_OUTPUT_PATH = "/mock/output/path";
 
@@ -509,5 +560,45 @@ describe("generateToDirectory with skipFiles", () => {
       expect.stringContaining("commit.md"),
       expect.anything(),
     );
+  });
+});
+
+describe("getRequestedToolsOptions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should extract unique _requested-tools from commands metadata", async () => {
+    const mockMetadata = {
+      "red.md": {
+        description: "Red phase",
+        category: "TDD",
+        order: 1,
+        "_requested-tools": ["Bash(git diff:*)", "Bash(git status:*)"],
+      },
+      "code-review.md": {
+        description: "Code review",
+        category: "Workflow",
+        order: 2,
+        "_requested-tools": ["Bash(git diff:*)", "Bash(git log:*)"],
+      },
+      "commit.md": {
+        description: "Commit",
+        category: "Workflow",
+        order: 3,
+      },
+    };
+
+    vi.mocked(fs.readFile).mockResolvedValue(
+      JSON.stringify(mockMetadata) as never,
+    );
+
+    const options = await getRequestedToolsOptions(VARIANTS.WITH_BEADS);
+
+    expect(options).toEqual([
+      { value: "Bash(git diff:*)", label: "git diff" },
+      { value: "Bash(git status:*)", label: "git status" },
+      { value: "Bash(git log:*)", label: "git log" },
+    ]);
   });
 });

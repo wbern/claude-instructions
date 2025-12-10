@@ -1,6 +1,7 @@
 import {
   select,
   text,
+  multiselect,
   groupMultiselect,
   isCancel,
   intro,
@@ -20,6 +21,7 @@ import {
   VARIANT_OPTIONS,
   getScopeOptions,
   getCommandsGroupedByCategory,
+  getRequestedToolsOptions,
   type Variant,
   type Scope,
   type ExistingFile,
@@ -197,6 +199,7 @@ export async function main(args?: CliArgs): Promise<void> {
   let scope: string | symbol;
   let commandPrefix: string | symbol;
   let selectedCommands: string[] | symbol | undefined;
+  let selectedAllowedTools: string[] | symbol | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
 
   if (args?.variant && args?.scope && args?.prefix !== undefined) {
@@ -294,6 +297,21 @@ export async function main(args?: CliArgs): Promise<void> {
     if (isCancel(selectedCommands)) {
       return;
     }
+
+    const requestedToolsOptions = await getRequestedToolsOptions(
+      variant as Variant,
+    );
+
+    if (requestedToolsOptions.length > 0) {
+      selectedAllowedTools = await multiselect({
+        message: "Select allowed tools for commands (optional)",
+        options: requestedToolsOptions,
+      });
+
+      if (isCancel(selectedAllowedTools)) {
+        return;
+      }
+    }
   }
 
   const existingFiles =
@@ -341,6 +359,7 @@ export async function main(args?: CliArgs): Promise<void> {
       skipTemplateInjection: args?.skipTemplateInjection,
       commands: selectedCommands as string[],
       skipFiles,
+      allowedTools: selectedAllowedTools as string[] | undefined,
     },
   );
 

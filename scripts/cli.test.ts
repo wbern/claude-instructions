@@ -33,6 +33,10 @@ vi.mock("./cli-generator.js", () => ({
       { value: "commit.md", label: "commit.md", hint: "Create commit" },
     ],
   }),
+  getRequestedToolsOptions: vi.fn().mockResolvedValue([
+    { value: "Bash(git diff:*)", label: "git diff" },
+    { value: "Bash(git status:*)", label: "git status" },
+  ]),
   VARIANT_OPTIONS: [
     { value: "with-beads", label: "With Beads" },
     { value: "without-beads", label: "Without Beads" },
@@ -1030,5 +1034,100 @@ NEW LAST`;
         skipFiles: ["commit.md"],
       }),
     );
+  });
+});
+
+describe("allowed tools prompt", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should prompt for allowed tools selection with multiselect", async () => {
+    const { select, text, groupMultiselect, multiselect } =
+      await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(text).mockResolvedValueOnce("");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md"]);
+    vi.mocked(multiselect).mockResolvedValueOnce([]);
+
+    await main();
+
+    expect(multiselect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringContaining("allowed"),
+        options: [
+          { value: "Bash(git diff:*)", label: "git diff" },
+          { value: "Bash(git status:*)", label: "git status" },
+        ],
+      }),
+    );
+  });
+
+  it("should pass selected allowed tools to generator", async () => {
+    const { select, text, groupMultiselect, multiselect } =
+      await import("@clack/prompts");
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(text).mockResolvedValueOnce("");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md"]);
+    vi.mocked(multiselect).mockResolvedValueOnce([
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+    ]);
+
+    await main();
+
+    expect(generateToDirectory).toHaveBeenCalledWith(
+      undefined,
+      "with-beads",
+      "project",
+      expect.objectContaining({
+        allowedTools: ["Bash(git diff:*)", "Bash(git status:*)"],
+      }),
+    );
+  });
+
+  it("should exit gracefully when user cancels on allowed tools prompt", async () => {
+    const { select, text, groupMultiselect, multiselect } =
+      await import("@clack/prompts");
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(text).mockResolvedValueOnce("");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md"]);
+    vi.mocked(multiselect).mockResolvedValueOnce(mockCancel);
+
+    await main();
+
+    expect(generateToDirectory).not.toHaveBeenCalled();
+  });
+
+  it("should skip allowed tools prompt when no commands have requested tools", async () => {
+    const { select, text, groupMultiselect, multiselect } =
+      await import("@clack/prompts");
+    const { getRequestedToolsOptions } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("with-beads")
+      .mockResolvedValueOnce("project");
+    vi.mocked(text).mockResolvedValueOnce("");
+    vi.mocked(groupMultiselect).mockResolvedValueOnce(["red.md"]);
+    vi.mocked(getRequestedToolsOptions).mockResolvedValueOnce([]);
+
+    await main();
+
+    expect(multiselect).not.toHaveBeenCalled();
   });
 });

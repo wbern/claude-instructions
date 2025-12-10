@@ -117,6 +117,17 @@ describe("src/sources validation", () => {
         const content = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
         expect(content).toContain("$ARGUMENTS");
       });
+
+      it(`${file} should not contain allowed-tools in frontmatter`, () => {
+        const content = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+        if (frontmatterMatch) {
+          expect(
+            frontmatterMatch[1],
+            "allowed-tools should be injected at install time, not baked into source",
+          ).not.toMatch(/^allowed-tools:/m);
+        }
+      });
     });
   }
 });
