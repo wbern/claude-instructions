@@ -1,6 +1,6 @@
 ---
-description: Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE
-argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
+description: Add a new git worktree from branch name or issue URL, copy settings, install deps, and open in current IDE
+argument-hint: <branch-name-or-issue-url> [optional-base-branch]
 ---
 
 # Git Worktree Setup
@@ -16,31 +16,36 @@ argument-hint: <branch-name-or-github-issue-url> [optional-base-branch]
 Create a new git worktree for branch: $ARGUMENTS
 
 <current_state>
-Current branch: !git branch --show-current`
-Current worktrees: !git worktree list`
-Remote branches: !git branch -r`
-Uncommitted changes: !git status --short`
+Current branch: `git branch --show-current`
+Current worktrees: `git worktree list`
+Remote branches: `git branch -r`
+Uncommitted changes: `git status --short`
 </current_state>
 
 <execution_steps>
 <step_0>
-  <description>Validate MCP dependencies</description>
-  <check_github_mcp>
-    <requirement>GitHub MCP server must be configured</requirement>
-    <fallback>If unavailable, use `gh` CLI commands</fallback>
-    <validation>
-      - Try listing available MCP resources
-      - If GitHub MCP not found, switch to CLI fallback
-      - Inform user about MCP configuration if needed
-    </validation>
-  </check_github_mcp>
-  <error_handling>
-    If MCP validation fails:
-    - Show clear error message
-    - Provide setup instructions
-    - Fallback to CLI if possible
-  </error_handling>
-  <purpose>Ensure required MCP dependencies are available before proceeding</purpose>
+  <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
+  <condition>Only run this step if first argument looks like a git hosting URL</condition>
+  <detect_provider>
+    <check_url_or_remote>Parse argument URL, or fall back to: git remote get-url origin</check_url_or_remote>
+    <identify_host>
+      - github.com → GitHub
+      - gitlab.com → GitLab
+      - bitbucket.org → Bitbucket
+      - Other → Ask user
+    </identify_host>
+  </detect_provider>
+  <check_available_tools>
+    <list_mcp_servers>Check which git-hosting MCP servers are available (github, gitlab, etc.)</list_mcp_servers>
+    <check_cli>Check if gh/glab CLI is available as fallback</check_cli>
+  </check_available_tools>
+  <select_tool>
+    <if_single_mcp>If only one relevant MCP available, ask user: "Use [MCP name] for issue lookup?"</if_single_mcp>
+    <if_multiple>Let user choose which tool to use</if_multiple>
+    <if_told_earlier>If user specified tool earlier in conversation, use that without asking again</if_told_earlier>
+    <store_as>$GIT_HOST_TOOL (e.g., "github_mcp", "gitlab_mcp", "gh_cli")</store_as>
+  </select_tool>
+  <purpose>Detect git hosting provider and select appropriate tool for issue lookup</purpose>
 </step_0>
 
   <step_1>
@@ -68,30 +73,41 @@ Uncommitted changes: !git status --short`
   </step_1>
 
   <step_2>
-    <description>Parse the arguments</description>
+    <description>Determine default branch and parse arguments</description>
+    <find_default_branch>
+      <command>git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remotes/origin/@@'</command>
+      <fallback>git remote show origin | grep 'HEAD branch' | cut -d: -f2 | tr -d ' '</fallback>
+      <store_as>$DEFAULT_BRANCH (typically "main" or "master")</store_as>
+    </find_default_branch>
     <input>The user-provided arguments</input>
-    <expected_format>branch-name-or-github-url [optional-base-branch]</expected_format>
+    <expected_format>branch-name-or-issue-url [optional-base-branch]</expected_format>
     <example>fix/issue-123-main-content-area-visually-clipped main</example>
-    <example_github_url><https://github.com/owner/project/issues/123> main</example_github_url>
-    <default_base_branch>main (if not specified)</default_base_branch>
-  </step_1>
+    <example_issue_url>https://github.com/owner/project/issues/123 main</example_issue_url>
+    <base_branch>Use provided base branch, or $DEFAULT_BRANCH if not specified</base_branch>
+  </step_2>
 
   <step_2_5>
-    <description>Handle GitHub issue URLs</description>
-    <condition>If first argument matches GitHub issue URL pattern</condition>
-    <url_detection>Check if argument contains "github.com" and "/issues/"</url_detection>
+    <description>Handle issue URLs from git hosting provider</description>
+    <condition>If first argument matches issue URL pattern (detected in step_0)</condition>
+    <url_detection>
+      <github>Check if argument contains "github.com" and "/issues/"</github>
+      <gitlab>Check if argument contains "gitlab.com" and "/-/issues/"</gitlab>
+      <bitbucket>Check if argument contains "bitbucket.org" and "/issues/"</bitbucket>
+    </url_detection>
     <url_parsing>
-      <pattern>https://github.com/{owner}/{repo}/issues/{issue_number}</pattern>
+      <github_pattern><https://github.com/{owner}/{repo}/issues/{issue_number}></github_pattern>
+      <gitlab_pattern><https://gitlab.com/{owner}/{repo}/-/issues/{issue_number}></gitlab_pattern>
+      <bitbucket_pattern><https://bitbucket.org/{owner}/{repo}/issues/{issue_number}></bitbucket_pattern>
       <extract>owner, repo, issue_number from URL</extract>
     </url_parsing>
     <fetch_issue_details>
-      <tool>mcp__github__issue_read</tool>
-      <method>get</method>
+      <tool>Use $GIT_HOST_TOOL from step_0</tool>
+      <method>get issue details</method>
       <parameters>owner, repo, issue_number</parameters>
     </fetch_issue_details>
     <generate_branch_name>
       <determine_type>Analyze issue title/labels to determine type (feat/fix/refactor/chore)</determine_type>
-      <format>{type}/{repo}-{issue_number}-{kebab-case-title}</format>
+      <format>{type}/issue-{issue_number}-{kebab-case-title}</format>
       <kebab_case>Convert title to lowercase, replace spaces/special chars with hyphens</kebab_case>
       <sanitization>
         <rule>Always use lowercase for branch names</rule>
@@ -114,12 +130,12 @@ Uncommitted changes: !git status --short`
       <title>"Fix duplicate items in list view"</title>
       <generated>fix/issue-456-duplicate-items-in-list-view</generated>
     </examples>
-  </step_1_5>
+  </step_2_5>
 
   <step_3>
     <description>Add all files and stash uncommitted changes if any exist</description>
     <condition>If output is not empty (has uncommitted changes)</condition>
-    <command>git add -A && git stash push -m "Worktree switch: Moving changes to ${branch_name}"</chained_command>
+    <command>git add -A && git stash push -m "Worktree switch: Moving changes to ${branch_name}"</command>
     <purpose>Preserve work in progress before switching worktrees</purpose>
     <note>Remember stash was created for later restoration</note>
   </step_3>
@@ -138,20 +154,20 @@ Uncommitted changes: !git status --short`
   <step_5>
     <description>Fetch latest changes from remote</description>
     <command>git fetch origin</command>
-    <purpose>Ensure we have the latest remote branches and main branch state</purpose>
-    <note>This ensures new worktrees are created from the most recent main branch</note>
-  </step_6>
+    <purpose>Ensure we have the latest remote branches and default branch state</purpose>
+    <note>This ensures new worktrees are created from the most recent default branch</note>
+  </step_5>
 
-  <step_7>
+  <step_6>
     <description>Check if branch exists on remote</description>
     <command>git branch -r | grep "origin/${branch_name}"</command>
     <decision>
       <if_exists>Branch exists on remote - will checkout existing branch</if_exists>
       <if_not_exists>Branch does not exist - will create new branch from base</if_not_exists>
     </decision>
-  </step_5>
+  </step_6>
 
-  <step_6>
+  <step_7>
     <description>Create the worktree</description>
     <option_a_new_branch>
       <condition>Remote branch does NOT exist</condition>
@@ -245,7 +261,7 @@ EOF</create_file_command>
     </ide_specific_behavior>
     <purpose>Launch development environment for the new worktree using detected IDE</purpose>
     <confirmation_message>Opening worktree in ${ide_name}</confirmation_message>
-  </step_11>
+  </step_13>
 </execution_steps>
 
 <important_notes>
@@ -260,4 +276,11 @@ EOF</create_file_command>
 - Uncommitted changes are automatically stashed and moved to the new worktree
 - Your work-in-progress seamlessly transfers to the new branch
 - IDE detection fallback: checks available editors and uses priority order
+
+Limitations:
+
+- Assumes remote is named "origin" (most common convention)
+- Supports macOS and Linux only (no Windows support)
+- Requires MCP server or CLI for git hosting provider when using issue URLs (GitHub, GitLab, etc.)
+- Dependency install command is pnpm (modify for npm/yarn if needed)
 </important_notes>

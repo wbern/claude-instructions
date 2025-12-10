@@ -125,7 +125,7 @@
     "order": 1
   },
   "worktree-add.md": {
-    "description": "Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE",
+    "description": "Add a new git worktree from branch name or issue URL, copy settings, install deps, and open in current IDE",
     "hint": "Add worktree",
     "category": "Worktree Management",
     "order": 1

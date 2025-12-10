@@ -221,7 +221,7 @@ flowchart TB
 
 ### Worktree Management
 
-- `/worktree-add` - Add a new git worktree from branch name or GitHub issue URL, copy settings, install deps, and open in current IDE
+- `/worktree-add` - Add a new git worktree from branch name or issue URL, copy settings, install deps, and open in current IDE
 - `/worktree-cleanup` - Clean up merged worktrees by verifying PR/issue status, consolidating settings, and removing stale worktrees
 
 ### Utilities
