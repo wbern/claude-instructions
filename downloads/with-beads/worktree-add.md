@@ -26,6 +26,25 @@ Uncommitted changes: `git status --short`
 
 <execution_steps>
 <step_0>
+  <description>Ask user for setup mode</description>
+  <prompt>
+    <message>How would you like to set up the worktree?</message>
+    <options>
+      <option value="quick">
+        <label>Quick</label>
+        <description>Just create the worktree (skip deps, settings, IDE)</description>
+      </option>
+      <option value="full">
+        <label>Full setup</label>
+        <description>Install dependencies, copy settings, open in IDE</description>
+      </option>
+    </options>
+  </prompt>
+  <set_variable>$SETUP_MODE = user selection ("quick" or "full")</set_variable>
+  <purpose>Allow quick worktree creation when user just needs the branch</purpose>
+</step_0>
+
+<step_0b>
   <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
   <condition>Only run this step if first argument looks like a git hosting URL</condition>
 <detect_provider>
@@ -49,10 +68,11 @@ Uncommitted changes: `git status --short`
 </select_tool>
 
   <purpose>Detect git hosting provider and select appropriate tool for issue lookup</purpose>
-</step_0>
+</step_0b>
 
   <step_1>
     <description>Detect current IDE environment</description>
+    <condition>Only if $SETUP_MODE is "full"</condition>
     <detection_methods>
       <method_1>
         <tool>mcp__ide__getDiagnostics</tool>
@@ -136,11 +156,29 @@ Uncommitted changes: `git status --short`
   </step_2_5>
 
   <step_3>
-    <description>Add all files and stash uncommitted changes if any exist</description>
-    <condition>If output is not empty (has uncommitted changes)</condition>
-    <command>git add -A && git stash push -m "Worktree switch: Moving changes to ${branch_name}"</command>
-    <purpose>Preserve work in progress before switching worktrees</purpose>
-    <note>Remember stash was created for later restoration</note>
+    <description>Handle uncommitted changes if any exist</description>
+    <condition>If git status --short output is not empty (has uncommitted changes)</condition>
+    <prompt>
+      <message>You have uncommitted changes. Move them to the new branch?</message>
+      <options>
+        <option value="yes">
+          <label>Yes</label>
+          <description>Stash changes and apply them in the new worktree</description>
+        </option>
+        <option value="no">
+          <label>No</label>
+          <description>Leave changes in current branch</description>
+        </option>
+      </options>
+    </prompt>
+    <if_yes>
+      <command>git add -A && git stash push -m "Worktree switch: Moving changes to ${branch_name}"</command>
+      <set_variable>$STASH_CREATED = true</set_variable>
+    </if_yes>
+    <if_no>
+      <set_variable>$STASH_CREATED = false</set_variable>
+    </if_no>
+    <purpose>Let user decide whether to move work in progress to new branch</purpose>
   </step_3>
 
   <step_4>
@@ -184,8 +222,32 @@ Uncommitted changes: `git status --short`
     </option_b_existing_branch>
   </step_7>
 
+  <step_7b>
+    <description>Set up remote tracking for new branch</description>
+    <condition>Only if new branch was created (option_a from step_7)</condition>
+    <working_directory>${parent_path}/${branch_name}</working_directory>
+    <command>cd ${parent_path}/${branch_name} && git push -u origin ${branch_name}</command>
+    <purpose>Establish remote tracking so git status shows ahead/behind and git push/pull work without specifying remote</purpose>
+    <note>This creates the remote branch and sets upstream tracking in one step</note>
+  </step_7b>
+
+  <step_7c>
+    <description>Quick mode completion</description>
+    <condition>Only if $SETUP_MODE is "quick"</condition>
+    <message>Worktree created at: ${parent_path}/${branch_name}</message>
+    <suggested_next_steps>
+      <intro>You can now:</intro>
+      <suggestion priority="1">Open in VS Code: `code ${parent_path}/${branch_name}`</suggestion>
+      <suggestion priority="2">Open in Cursor: `cursor ${parent_path}/${branch_name}`</suggestion>
+      <suggestion priority="3">Navigate to it: `cd ${parent_path}/${branch_name}`</suggestion>
+      <suggestion priority="4">Install dependencies: `cd ${parent_path}/${branch_name} && pnpm install`</suggestion>
+    </suggested_next_steps>
+    <action>STOP here - do not continue to remaining steps</action>
+  </step_7c>
+
   <step_8>
     <description>Copy Claude settings to new worktree</description>
+    <condition>Only if $SETUP_MODE is "full"</condition>
     <source>.claude/settings.local.json</source>
     <destination>${parent_path}/${branch_name}/.claude/settings.local.json</destination>
     <command>cp -r .claude/settings.local.json ${parent_path}/${branch_name}/.claude/settings.local.json</command>
@@ -194,6 +256,7 @@ Uncommitted changes: `git status --short`
 
   <step_9>
     <description>Copy .env.local files to new worktree</description>
+    <condition>Only if $SETUP_MODE is "full"</condition>
     <search_command>find . -name ".env.local" -type f</search_command>
     <copy_logic>For each .env.local file found, copy to corresponding location in new worktree</copy_logic>
     <common_locations>
@@ -201,14 +264,14 @@ Uncommitted changes: `git status --short`
       - packages/*/.env.local
       - (any other .env.local files found)
     </common_locations>
-    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "${parent_path}/${branch_name}/$1")" && cp "$1" "${parent_path}/${branch_name}/$1"' _{} \;</copy_command>
+    <copy_command>find . -name ".env.local" -type f -exec sh -c 'mkdir -p "$(dirname "${parent_path}/${branch_name}/$1")" && cp "$1" "${parent_path}/${branch_name}/$1"'_ {} \;</copy_command>
     <purpose>Preserve local environment configurations for development</purpose>
     <note>Only copies files that exist; ignores missing ones</note>
   </step_9>
 
   <step_10>
     <description>Create IDE-specific configuration (conditional)</description>
-    <condition>Only if supports_tasks is true (VS Code variants)</condition>
+    <condition>Only if $SETUP_MODE is "full" AND supports_tasks is true (VS Code variants)</condition>
     <vs_code_tasks>
       <create_directory>mkdir -p ${parent_path}/${branch_name}/.vscode</create_directory>
       <create_file_command>cat > ${parent_path}/${branch_name}/.vscode/tasks.json << 'EOF'
@@ -240,6 +303,7 @@ EOF</create_file_command>
 
   <step_11>
     <description>Install dependencies in new worktree</description>
+    <condition>Only if $SETUP_MODE is "full"</condition>
     <working_directory>${parent_path}/${branch_name}</working_directory>
     <command>cd ${parent_path}/${branch_name} && pnpm install</command>
     <purpose>Ensure all node_modules are installed for the new worktree</purpose>
@@ -247,7 +311,7 @@ EOF</create_file_command>
 
   <step_12>
     <description>Apply stashed changes to new worktree (if stash was created)</description>
-    <condition>Only if stash was created in step_3</condition>
+    <condition>Only if $SETUP_MODE is "full" AND $STASH_CREATED is true</condition>
     <working_directory>${parent_path}/${branch_name}</working_directory>
     <command>cd ${parent_path}/${branch_name} && git stash pop</command>
     <purpose>Restore uncommitted work-in-progress to the new worktree branch</purpose>
@@ -256,6 +320,7 @@ EOF</create_file_command>
 
   <step_13>
     <description>Open detected IDE in new worktree</description>
+    <condition>Only if $SETUP_MODE is "full"</condition>
     <command>${ide_command} ${parent_path}/${branch_name}</command>
     <ide_specific_behavior>
       <vs_code_variants>Opens folder in VS Code/Insiders/Cursor with tasks.json auto-starting Claude</vs_code_variants>
@@ -269,7 +334,8 @@ EOF</create_file_command>
 
 <important_notes>
 
-- Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.)
+- Offers Quick or Full setup mode - Quick just creates the worktree, Full does everything
+- Automatically detects and uses your current IDE (VS Code, VS Code Insiders, Cursor, Zed, etc.) in Full mode
 - Creates VS Code-specific tasks.json only for VS Code variants (auto-starts Claude on folder open)
 - Branch names with slashes (feat/, fix/, etc.) are fully supported
 - The worktree directory path will match the full branch name including slashes
@@ -279,6 +345,7 @@ EOF</create_file_command>
 - Uncommitted changes are automatically stashed and moved to the new worktree
 - Your work-in-progress seamlessly transfers to the new branch
 - IDE detection fallback: checks available editors and uses priority order
+- New branches are automatically pushed with `-u` to set up remote tracking
 
 Limitations:
 
