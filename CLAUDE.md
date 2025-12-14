@@ -139,7 +139,7 @@ If sources accidentally contain expanded content:
 ```
 
 ### Add Conventional Commits Reference
-Content lives in `src/fragments/commit-message-format.md`
+Content lives in `src/fragments/commit-process.md`
 
 ### Update TDD Fundamentals
 Content lives in `src/fragments/tdd-fundamentals.md`
