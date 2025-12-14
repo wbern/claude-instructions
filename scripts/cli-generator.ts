@@ -24,6 +24,9 @@ export const DIRECTORIES = {
 
 export const TEMPLATE_SOURCE_FILES = ["CLAUDE.md", "AGENTS.md"] as const;
 
+/** Frontmatter key for tools requested by a command */
+export const REQUESTED_TOOLS_KEY = "_requested-tools" as const;
+
 export interface TemplateBlock {
   content: string;
   commands?: string[];
@@ -150,7 +153,7 @@ export async function checkExistingFiles(
 
       if (metadata && allowedToolsSet) {
         const commandMetadata = metadata[file];
-        const requestedTools = commandMetadata?.["_requested-tools"] || [];
+        const requestedTools = commandMetadata?.[REQUESTED_TOOLS_KEY] || [];
         const toolsForCommand = requestedTools.filter((tool: string) =>
           allowedToolsSet!.has(tool),
         );
@@ -334,9 +337,9 @@ export async function getRequestedToolsOptions(
 
   const toolToCommands = new Map<string, string[]>();
   for (const [filename, data] of Object.entries(metadata)) {
-    if (data["_requested-tools"]) {
+    if (data[REQUESTED_TOOLS_KEY]) {
       const commandName = filename.replace(/\.md$/, "");
-      for (const tool of data["_requested-tools"]) {
+      for (const tool of data[REQUESTED_TOOLS_KEY]) {
         const commands = toolToCommands.get(tool) || [];
         commands.push(commandName);
         toolToCommands.set(tool, commands);
@@ -444,7 +447,7 @@ export async function generateToDirectory(
 
     for (const file of files) {
       const commandMetadata = metadata[file];
-      const requestedTools = commandMetadata?.["_requested-tools"] || [];
+      const requestedTools = commandMetadata?.[REQUESTED_TOOLS_KEY] || [];
 
       // Only inject tools that this command requested AND user selected
       const toolsForCommand = requestedTools.filter((tool: string) =>

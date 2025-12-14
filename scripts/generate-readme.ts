@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { generateMarkdownTable } from "./cli-options.js";
+import { REQUESTED_TOOLS_KEY } from "./cli-generator.js";
 import { getMarkdownFiles } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -251,7 +252,7 @@ function generateCommandsMetadata(): Record<string, CommandMetadata> {
     const content = fs.readFileSync(path.join(sourcesDir, file), "utf8");
     const frontmatter = parseFrontmatter(content);
 
-    const requestedTools = frontmatter["_requested-tools"] as
+    const requestedTools = frontmatter[REQUESTED_TOOLS_KEY] as
       | string[]
       | undefined;
 
@@ -263,7 +264,7 @@ function generateCommandsMetadata(): Record<string, CommandMetadata> {
       ...(frontmatter._selectedByDefault === false
         ? { selectedByDefault: false }
         : {}),
-      ...(requestedTools ? { "_requested-tools": requestedTools } : {}),
+      ...(requestedTools ? { [REQUESTED_TOOLS_KEY]: requestedTools } : {}),
     };
   }
 
