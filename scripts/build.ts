@@ -7,6 +7,7 @@ import {
   processMarkdownFiles,
   writeCommandsMetadata,
 } from "./generate-readme.js";
+import { getMarkdownFiles } from "./utils.js";
 
 // Constants
 const SRC_DIR = "src/sources";
@@ -18,13 +19,6 @@ function run(cmd: string, options?: { silent?: boolean }): void {
     stdio: options?.silent ? "pipe" : "inherit",
     encoding: "utf-8",
   });
-}
-
-function listMarkdownFiles(dir: string): string[] {
-  return fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
-    .sort();
 }
 
 async function buildVariant(
@@ -42,17 +36,16 @@ async function buildVariant(
 
   // Process source files with markdown-magic, output to variant directory
   console.log("📄 Processing source files...");
-  const sourceFiles = fs
-    .readdirSync(SRC_DIR)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => path.join(SRC_DIR, f));
+  const sourceFiles = getMarkdownFiles(SRC_DIR).map((f) =>
+    path.join(SRC_DIR, f),
+  );
 
   await processMarkdownFiles(sourceFiles, { withBeads, outputDir: outDir });
   console.log("   ✅ Generated command files");
 
   // Copy files without transforms (plain markdown files)
   console.log("📄 Copying files without transforms...");
-  for (const file of fs.readdirSync(SRC_DIR).filter((f) => f.endsWith(".md"))) {
+  for (const file of getMarkdownFiles(SRC_DIR)) {
     const destPath = path.join(outDir, file);
     if (!fs.existsSync(destPath)) {
       fs.copyFileSync(path.join(SRC_DIR, file), destPath);
@@ -100,14 +93,10 @@ async function main(): Promise<void> {
   // Copy to local .claude/commands for development
   console.log("📋 Updating .claude/commands (with-beads variant)...");
   fs.mkdirSync(".claude/commands", { recursive: true });
-  for (const file of fs
-    .readdirSync(".claude/commands")
-    .filter((f) => f.endsWith(".md"))) {
+  for (const file of getMarkdownFiles(".claude/commands")) {
     fs.unlinkSync(path.join(".claude/commands", file));
   }
-  for (const file of fs
-    .readdirSync(OUT_DIR_WITH_BEADS)
-    .filter((f) => f.endsWith(".md"))) {
+  for (const file of getMarkdownFiles(OUT_DIR_WITH_BEADS)) {
     fs.copyFileSync(
       path.join(OUT_DIR_WITH_BEADS, file),
       path.join(".claude/commands", file),
@@ -123,17 +112,17 @@ async function main(): Promise<void> {
   console.log("📂 Generated files:");
   console.log("");
   console.log("   With Beads (downloads/with-beads/):");
-  for (const file of listMarkdownFiles(OUT_DIR_WITH_BEADS)) {
+  for (const file of getMarkdownFiles(OUT_DIR_WITH_BEADS)) {
     console.log(`     ✓ ${file}`);
   }
   console.log("");
   console.log("   Without Beads (downloads/without-beads/):");
-  for (const file of listMarkdownFiles(OUT_DIR_WITHOUT_BEADS)) {
+  for (const file of getMarkdownFiles(OUT_DIR_WITHOUT_BEADS)) {
     console.log(`     ✓ ${file}`);
   }
   console.log("");
   console.log("   Local (.claude/commands/):");
-  for (const file of listMarkdownFiles(".claude/commands")) {
+  for (const file of getMarkdownFiles(".claude/commands")) {
     console.log(`     ✓ ${file}`);
   }
 }

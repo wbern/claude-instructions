@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { generateMarkdownTable } from "./cli-options.js";
+import { getMarkdownFiles } from "./utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -143,9 +144,7 @@ function createConfig(withBeads: boolean): TransformConfig {
       // Generate commands list
       COMMANDS_LIST(): string {
         const sourcesDir = path.join(PROJECT_ROOT, SOURCES_DIR);
-        const files = fs
-          .readdirSync(sourcesDir)
-          .filter((f) => f.endsWith(".md"));
+        const files = getMarkdownFiles(sourcesDir);
 
         const commands: Command[] = files.map((file) => {
           const content = fs.readFileSync(path.join(sourcesDir, file), "utf8");
@@ -177,9 +176,7 @@ function createConfig(withBeads: boolean): TransformConfig {
       // Generate commands count badge
       COMMANDS_BADGE(): string {
         const sourcesDir = path.join(PROJECT_ROOT, SOURCES_DIR);
-        const count = fs
-          .readdirSync(sourcesDir)
-          .filter((f) => f.endsWith(".md")).length;
+        const count = getMarkdownFiles(sourcesDir).length;
 
         return `[![Commands](https://img.shields.io/badge/commands-${count}-blue)](https://github.com/wbern/claude-instructions#available-commands)`;
       },
@@ -246,7 +243,7 @@ interface CommandMetadata {
 // Generate metadata JSON for all commands
 function generateCommandsMetadata(): Record<string, CommandMetadata> {
   const sourcesDir = path.join(PROJECT_ROOT, SOURCES_DIR);
-  const files = fs.readdirSync(sourcesDir).filter((f) => f.endsWith(".md"));
+  const files = getMarkdownFiles(sourcesDir);
 
   const metadata: Record<string, CommandMetadata> = {};
 
@@ -281,10 +278,7 @@ function generateExampleConversations(examplesDir?: string): string {
     throw new Error(`Example conversations directory '${dir}' does not exist`);
   }
 
-  const files = fs
-    .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
-    .sort();
+  const files = getMarkdownFiles(dir).sort();
 
   return files
     .map((file) => {
