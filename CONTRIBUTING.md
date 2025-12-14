@@ -16,18 +16,8 @@ pnpm install
 - **Edit command-specific content** in `src/sources/`
 - **Use markdown-magic syntax** `<!-- docs INCLUDE path='../fragments/fragment-name.md' -->` to reference fragments
 
-### 3. Build for development
+### 3. Build
 
-```bash
-pnpm build:dev
-```
-
-This will:
-- Process all source files with markdown-magic
-- Generate commands in `.claude/commands/*.md` with Beads integration
-- Remove markdown-magic comment blocks
-
-**For production builds (both variants):**
 ```bash
 pnpm build
 ```
@@ -81,11 +71,10 @@ git commit -m "feat: update TDD fundamentals fragment"
    <!-- docs INCLUDE path='src/fragments/fragment-name.md' -->
    <!-- /docs -->
    ```
-4. Run `pnpm build:dev` to test locally
+4. Run `pnpm build` to generate variants
 5. Test in Claude Code with `/new-command`
-6. Run `pnpm build` to generate production variants
-7. Run `pnpm test` to ensure snapshot tests pass
-8. Commit changes (both sources and artifacts are tracked)
+6. Run `pnpm test` to ensure snapshot tests pass
+7. Commit changes (both sources and artifacts are tracked)
 
 ## Markdown-Magic Transclusion Syntax
 
@@ -129,12 +118,11 @@ This content will only be included when building with Beads integration enabled.
 
 ## Available Build Commands
 
-- `pnpm build:dev` - Build with-beads variant to `.claude/commands/` for local testing and consumption
-- `pnpm build` - Build both variants to `downloads/` for distribution
-- `pnpm clean:dev` - Clean `.claude/commands/`
+- `pnpm build` - Build both variants to `downloads/` and copy with-beads to `.claude/commands/`
 - `pnpm clean` - Clean `downloads/`
 - `pnpm test` - Run all tests including snapshot tests
 - `pnpm test:watch` - Run tests in watch mode
+- `pnpm generate` - Run interactive command generator
 
 ## Interactive Command Generator
 
