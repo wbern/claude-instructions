@@ -124,7 +124,7 @@ Only the first file found is used.
 
 ### Main Workflow
 
-Follow this workflow from planning to shipping:
+This is the core TDD workflow. Additional utility commands (worktrees, spikes, etc.) are listed in [Available Commands](#available-commands) below.
 
 ```mermaid
 flowchart TB
@@ -167,32 +167,6 @@ flowchart TB
     style Step2 fill:#e8f5e9
     style Step3 fill:#fce4ec
     style Done fill:#c8e6c9
-```
-
-### Other Commands
-
-Available anytime during your workflow:
-
-```mermaid
-flowchart LR
-    subgraph Utils [<b>UTILITIES</b>]
-        direction TB
-        Spike[🔬 /spike<br/>Exploratory coding]
-        TDD[📚 /tdd<br/>TDD reminder]
-        AddCommand[➕ /add-command<br/>Custom commands]
-        Summarize[📄 /summarize<br/>Summarize conversation]
-        Gap[🔍 /gap<br/>Find unaddressed items]
-        Beepboop[🤖 /beepboop<br/>AI attribution]
-    end
-
-    subgraph Worktree [<b>WORKTREE</b>]
-        direction TB
-        WorktreeAdd[➕ /worktree-add<br/>Create worktree]
-        WorktreeCleanup[🧹 /worktree-cleanup<br/>Clean up merged]
-    end
-
-    style Utils fill:#fff9c4
-    style Worktree fill:#f3e5f5
 ```
 
 ## Available Commands
