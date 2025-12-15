@@ -1,5 +1,12 @@
+import { createRequire } from "node:module";
 import { main, type CliArgs } from "./cli.js";
 import { CLI_OPTIONS, generateHelpText } from "./cli-options.js";
+
+function getVersion(): string {
+  const require = createRequire(import.meta.url);
+  const packageJson = require("../package.json") as { version: string };
+  return packageJson.version;
+}
 
 export function parseArgs(argv: string[]): CliArgs {
   const args: CliArgs = {};
@@ -36,6 +43,11 @@ export function parseArgs(argv: string[]): CliArgs {
 export async function run(argv: string[]) {
   if (argv.includes("--help") || argv.includes("-h")) {
     console.log(generateHelpText());
+    return;
+  }
+
+  if (argv.includes("--version") || argv.includes("-v")) {
+    console.log(getVersion());
     return;
   }
 

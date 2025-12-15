@@ -49,6 +49,19 @@ describe("generateHelpText", () => {
     expect(help).toContain("--help");
   });
 
+  it("should include version flag", () => {
+    const help = generateHelpText();
+    expect(help).toContain("--version");
+  });
+
+  it("should have descriptions for all flags including help and version", () => {
+    const help = generateHelpText();
+    // All CLI_OPTIONS have descriptions (tested above)
+    // Verify hardcoded flags also have descriptions
+    expect(help).toMatch(/--help.*\s+\S+/); // --help followed by description
+    expect(help).toMatch(/--version.*\s+\S+/); // --version followed by description
+  });
+
   it("should format string options with =<value>", () => {
     const help = generateHelpText();
     expect(help).toContain("--variant=<value>");

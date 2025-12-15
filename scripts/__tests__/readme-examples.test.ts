@@ -78,5 +78,8 @@ describe("README example conversations", () => {
     for (const opt of CLI_OPTIONS) {
       expect(readme).toContain(opt.flag);
     }
+    // Also check hardcoded flags that aren't in CLI_OPTIONS
+    expect(readme).toContain("--help");
+    expect(readme).toContain("--version");
   });
 });

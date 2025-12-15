@@ -92,6 +92,34 @@ describe("run", () => {
     consoleSpy.mockRestore();
   });
 
+  it("should print version and not call main when --version is passed", async () => {
+    const { run } = await import("./bin.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(main).mockClear();
+    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    await run(["--version"]);
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/^\d+\.\d+\.\d+/),
+    );
+    expect(main).not.toHaveBeenCalled();
+
+    // Also test short flag -v
+    vi.mocked(main).mockClear();
+    consoleSpy.mockClear();
+
+    await run(["-v"]);
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/^\d+\.\d+\.\d+/),
+    );
+    expect(main).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
   it("should print all parameters from CLI_OPTIONS in help output", async () => {
     const { run } = await import("./bin.js");
 

@@ -86,6 +86,7 @@ export function generateHelpText(): string {
   }
 
   lines.push("  --help, -h                  Show this help message");
+  lines.push("  --version, -v               Show version number");
 
   return lines.join("\n");
 }
@@ -97,6 +98,10 @@ export function generateMarkdownTable(): string {
     const display = opt.example || opt.flag;
     lines.push(`| \`${display}\` | ${opt.description} |`);
   }
+
+  // Add hardcoded flags not in CLI_OPTIONS
+  lines.push("| `--help, -h` | Show help message |");
+  lines.push("| `--version, -v` | Show version number |");
 
   return lines.join("\n");
 }

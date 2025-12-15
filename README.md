@@ -80,6 +80,8 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 | `--update-existing` | Only update already-installed commands |
 | `--overwrite` | Overwrite conflicting files without prompting |
 | `--skip-on-conflict` | Skip conflicting files without prompting |
+| `--help, -h` | Show help message |
+| `--version, -v` | Show version number |
 
 ## Customizing Commands
 
