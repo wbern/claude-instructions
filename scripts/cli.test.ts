@@ -1018,6 +1018,32 @@ NEW LAST`;
     );
   });
 
+  it("should log overwritten files when overwrite is true", async () => {
+    const { log } = await import("@clack/prompts");
+    const { checkExistingFiles } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    // Mock that a conflicting file exists
+    vi.mocked(checkExistingFiles).mockResolvedValue([
+      {
+        filename: "commit.md",
+        existingContent: "# Old content",
+        newContent: "# New content",
+        isIdentical: false,
+      },
+    ]);
+
+    await main({
+      variant: "with-beads",
+      scope: "project",
+      prefix: "",
+      overwrite: true,
+    });
+
+    // Should log the overwritten file
+    expect(log.info).toHaveBeenCalledWith(expect.stringContaining("commit.md"));
+  });
+
   it("should skip conflicting files without prompting when skipOnConflict is true", async () => {
     const { confirm, note } = await import("@clack/prompts");
     const { checkExistingFiles, generateToDirectory } =
@@ -1604,7 +1630,6 @@ describe("non-TTY mode", () => {
 
     expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("--variant"));
     expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("--scope"));
-    expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("--prefix"));
     expect(generateToDirectory).not.toHaveBeenCalled();
   });
 
@@ -1622,5 +1647,54 @@ describe("non-TTY mode", () => {
 
     expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("--variant"));
     expect(generateToDirectory).not.toHaveBeenCalled();
+  });
+
+  it("should automatically skip conflicting files and log them in non-TTY mode", async () => {
+    const { isInteractiveTTY } = await import("./tty.js");
+    const { log, confirm, note } = await import("@clack/prompts");
+    const { checkExistingFiles, generateToDirectory } =
+      await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(isInteractiveTTY).mockReturnValue(false);
+    vi.mocked(confirm).mockClear();
+    vi.mocked(note).mockClear();
+
+    // Mock that a conflicting file exists
+    vi.mocked(checkExistingFiles).mockResolvedValue([
+      {
+        filename: "commit.md",
+        existingContent: "# Old content",
+        newContent: "# New content",
+        isIdentical: false,
+      },
+    ]);
+
+    await main({
+      variant: "with-beads",
+      scope: "project",
+    });
+
+    // Should NOT prompt for confirmation (non-TTY)
+    expect(confirm).not.toHaveBeenCalled();
+    expect(note).not.toHaveBeenCalled();
+
+    // Should skip the conflicting file
+    expect(generateToDirectory).toHaveBeenCalledWith(
+      undefined,
+      "with-beads",
+      "project",
+      expect.objectContaining({
+        skipFiles: ["commit.md"],
+      }),
+    );
+
+    // Should log the skipped file
+    expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("commit.md"));
+
+    // Should show hint about resolving conflicts
+    expect(log.info).toHaveBeenCalledWith(
+      expect.stringMatching(/interactively|--overwrite/),
+    );
   });
 });

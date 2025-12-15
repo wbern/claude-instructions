@@ -30,7 +30,6 @@ export const CLI_OPTIONS: CliOption[] = [
     type: "string",
     description: "Add prefix to command names",
     example: "--prefix=my-",
-    requiredForNonInteractive: true,
   },
   {
     flag: "--commands",

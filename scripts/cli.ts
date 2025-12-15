@@ -203,10 +203,10 @@ export async function main(args?: CliArgs): Promise<void> {
   let selectedAllowedTools: string[] | symbol | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
 
-  if (args?.variant && args?.scope && args?.prefix !== undefined) {
+  if (args?.variant && args?.scope) {
     variant = args.variant;
     scope = args.scope;
-    commandPrefix = args.prefix;
+    commandPrefix = args.prefix ?? "";
     selectedCommands = args.commands;
 
     if (args.updateExisting) {
@@ -338,7 +338,14 @@ export async function main(args?: CliArgs): Promise<void> {
     }));
 
   const skipFiles: string[] = [];
-  if (!args?.overwrite && !args?.skipOnConflict) {
+  const shouldSkipConflicts = args?.skipOnConflict || !isInteractiveTTY();
+  if (args?.overwrite) {
+    for (const file of existingFiles) {
+      if (!file.isIdentical) {
+        log.info(`Overwriting ${file.filename}`);
+      }
+    }
+  } else if (!shouldSkipConflicts) {
     const conflictingFiles = existingFiles.filter((f) => !f.isIdentical);
     const hasMultipleConflicts = conflictingFiles.length > 1;
     let overwriteAllSelected = false;
@@ -401,11 +408,17 @@ export async function main(args?: CliArgs): Promise<void> {
         }
       }
     }
-  } else if (args?.skipOnConflict) {
+  } else if (shouldSkipConflicts) {
     for (const file of existingFiles) {
       if (!file.isIdentical) {
         skipFiles.push(file.filename);
+        log.warn(`Skipping ${file.filename} (conflict)`);
       }
+    }
+    if (skipFiles.length > 0 && !isInteractiveTTY()) {
+      log.info(
+        "To resolve conflicts, run interactively or use --overwrite to overwrite",
+      );
     }
   }
 
