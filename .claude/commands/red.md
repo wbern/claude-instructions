@@ -93,3 +93,11 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - In the refactor phase, it is perfectly fine to refactor both test and implementation code. That said, completely new functionality is not allowed. Types, clean up, abstractions, and helpers are allowed as long as they do not introduce new behavior.
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
+
+### Test Structure (AAA Pattern)
+
+Structure each test with clear phases:
+
+- **Arrange**: Set up test data and preconditions (keep minimal)
+- **Act**: Execute the single action being tested
+- **Assert**: Verify the expected outcome with specific assertions

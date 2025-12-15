@@ -169,9 +169,8 @@ For each detected category with changes, run a targeted review. Skip categories 
 
 ### Tests Review Criteria
 
-- Coverage: Edge cases, error paths, boundaries
-- Assertion quality: Specific assertions, not just "no error"
-- Flaky patterns: Timing dependencies, order dependencies, shared state
+<!-- docs INCLUDE path='src/fragments/test-quality-criteria.md' -->
+<!-- /docs -->
 
 ### Docs Review Criteria
 

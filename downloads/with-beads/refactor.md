@@ -92,4 +92,14 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
+### Watch for Brittle Tests
+
+When refactoring implementation, watch for **Peeping Tom** tests that:
+
+- Test private methods or internal state directly
+- Assert on implementation details rather than behavior
+- Break on any refactoring even when behavior is preserved
+
+If tests fail after a pure refactoring (no behavior change), consider whether the tests are testing implementation rather than behavior.
+
 1. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase

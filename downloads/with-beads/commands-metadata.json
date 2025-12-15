@@ -128,6 +128,12 @@
     "category": "Workflow",
     "order": 10
   },
+  "tdd-review.md": {
+    "description": "Review test suite quality against FIRST principles and TDD anti-patterns",
+    "hint": "Review tests",
+    "category": "Test-Driven Development",
+    "order": 45
+  },
   "tdd.md": {
     "description": "Remind agent about TDD approach and continue conversation",
     "hint": "TDD reminder",

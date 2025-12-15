@@ -1,7 +1,7 @@
 {
   "threshold": 0,
   "minTokens": 40,
-  "include": ["scripts/**/*.{ts,js}", "src/**/*.{ts,js}"],
+  "include": ["scripts/**/*.{ts,js}", "src/**/*.{ts,js}", "src/**/*.md"],
   "ignore": [
     "**/node_modules/**",
     "**/*.test.{ts,js}",
@@ -12,10 +12,20 @@
     "**/build/**",
     "**/coverage/**",
     "**/downloads/**",
-    "**/bin/**"
+    "**/bin/**",
+    "**/.claude/**",
+    "**/README.md",
+    "**/example-conversations/**"
   ],
-  "format": ["javascript", "typescript"],
+  "format": ["javascript", "typescript", "markdown"],
   "reporters": ["console"],
   "skipComments": true,
-  "gitignore": true
+  "gitignore": true,
+  "overrides": [
+    {
+      "pattern": "**/*.md",
+      "minTokens": 100,
+      "minLines": 8
+    }
+  ]
 }

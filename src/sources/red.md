@@ -21,3 +21,6 @@ $ARGUMENTS
 
 <!-- docs INCLUDE path='src/fragments/tdd-fundamentals.md' -->
 <!-- /docs -->
+
+<!-- docs INCLUDE path='src/fragments/aaa-pattern.md' -->
+<!-- /docs -->

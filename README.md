@@ -9,7 +9,7 @@
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
 [![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
-[![Commands](https://img.shields.io/badge/commands-22-blue)](https://github.com/wbern/claude-instructions#available-commands)
+[![Commands](https://img.shields.io/badge/commands-23-blue)](https://github.com/wbern/claude-instructions#available-commands)
 
 ```
        _==/          i     i          \==_
@@ -214,6 +214,7 @@ flowchart TB
 - `/green` - Execute TDD Green Phase - write minimal implementation to pass the failing test
 - `/refactor` - Execute TDD Refactor Phase - improve code structure while keeping tests green
 - `/cycle` - Execute complete TDD cycle - Red, Green, and Refactor phases in sequence
+- `/tdd-review` - Review test suite quality against FIRST principles and TDD anti-patterns
 
 ### Workflow
 
@@ -475,3 +476,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, build system, a
 ## Credits
 
 TDD workflow instructions adapted from [TDD Guard](https://github.com/nizos/tdd-guard) by Nizar.
+
+FIRST principles and test quality criteria from [TDD Manifesto](https://tddmanifesto.com/).
+
+Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
