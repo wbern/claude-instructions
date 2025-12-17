@@ -143,3 +143,16 @@ Content lives in `src/fragments/tdd-fundamentals.md`
 ### Check MCP Integration
 MCP validation step fragment: `src/fragments/mcp-validation-step.md`
 - We always try to avoid adding fallback logic and values unless the technical design explicitly needs it
+
+<claude-commands-template>
+## Testing Requirements
+
+| Change | Required |
+|--------|----------|
+| Content (fragment/source) | Snapshot update |
+| Feature flag | Conditional test (enabled + disabled), FLAG_OPTIONS, CLI mock |
+| CLI option | `cli.test.ts` mock |
+| Generation logic | Unit test |
+
+Existing tests cover: fragment references, $ARGUMENTS, no nested fragments. Snapshots cover content. TypeScript covers structure. Don't duplicate.
+</claude-commands-template>
