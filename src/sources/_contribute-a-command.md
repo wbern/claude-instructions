@@ -9,6 +9,12 @@ _order: 99
 <!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
 <!-- /docs -->
 
+<!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
+<!-- /docs -->
+
+<!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
+<!-- /docs -->
+
 Create a new custom command in `src/sources/` following the patterns below. Assess the structure carefully using the below info but also researching the repo.
 
 Command to create: $ARGUMENTS

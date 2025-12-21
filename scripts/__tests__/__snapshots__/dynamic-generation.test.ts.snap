@@ -20,6 +20,8 @@ _order: 3
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 # Slash Command Creator Guide
 
 ## How This Command Works
@@ -173,6 +175,8 @@ _selectedByDefault: false
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 **Ship/Show/Ask Pattern - ASK**
@@ -329,6 +333,8 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 ## Instructions
 
 Arguments: $ARGUMENTS
@@ -378,6 +384,8 @@ _order: 2
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
@@ -472,6 +480,8 @@ _requested-tools:
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 # Code Review
@@ -810,6 +820,8 @@ $ARGUMENTS
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -910,6 +922,8 @@ _order: 11
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 Analyze the current conversation context and identify things that have not yet been addressed. Look for:
 
 1. **Incomplete implementations** - Code that was started but not finished
@@ -959,6 +973,8 @@ $ARGUMENTS
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 (If there was no info above, fallback to:
@@ -1061,6 +1077,8 @@ Analyze GitHub issue and create TDD implementation plan.
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 Process:
@@ -1227,6 +1245,8 @@ Generate a complete TDD practice setup:
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 ## Input
@@ -1675,6 +1695,8 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 ## Input
 
 $ARGUMENTS
@@ -1853,6 +1875,8 @@ _order: 5
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 Create a pull request for the current branch using GitHub MCP tools.
 
 ## Workflow
@@ -1943,6 +1967,8 @@ $ARGUMENTS
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 (If there was no info above, fallback to:
@@ -2054,6 +2080,8 @@ Apply this document (specifically the Refactor phase), to the info given by user
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 (If there was no info above, fallback to:
@@ -2173,6 +2201,8 @@ _selectedByDefault: false
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 **Ship/Show/Ask Pattern - SHIP**
 
 Ship is for small, obvious changes that don't need code review. Examples:
@@ -2278,6 +2308,8 @@ _selectedByDefault: false
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 **Ship/Show/Ask Pattern - SHOW**
@@ -2404,6 +2436,8 @@ $ARGUMENTS
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 (If there was no info above, fallback to:
 1. Context of the conversation, if there's an immediate thing
 2. \`bd ready\` to see what to work on next and start from there)
@@ -2504,6 +2538,8 @@ _order: 10
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
 Additional info: $ARGUMENTS
@@ -2563,6 +2599,8 @@ _order: 1
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 ## TDD Fundamentals
@@ -2664,6 +2702,8 @@ _order: 45
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 (If there was no info above, fallback to:
@@ -2777,6 +2817,8 @@ _order: 1
 
 
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
 
 
 Create a new git worktree for branch: $ARGUMENTS
@@ -3143,6 +3185,8 @@ _order: 2
 Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
 
 
+
+
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
 Additional info: $ARGUMENTS
@@ -3397,6 +3441,8 @@ _order: 3
 
 
 
+
+
 # Slash Command Creator Guide
 
 ## How This Command Works
@@ -3551,6 +3597,8 @@ _selectedByDefault: false
 
 
 
+
+
 **Ship/Show/Ask Pattern - ASK**
 
 Ask is for complex changes that need team discussion and approval. Examples:
@@ -3696,6 +3744,8 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 
 
 
+
+
 ## Instructions
 
 Arguments: $ARGUMENTS
@@ -3742,6 +3792,8 @@ _order: 2
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -3835,6 +3887,8 @@ _requested-tools:
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -4173,6 +4227,8 @@ $ARGUMENTS
 
 
 
+
+
 (If there was no info above, fallback to the context of the conversation)
 
 
@@ -4270,6 +4326,8 @@ _order: 11
 
 
 
+
+
 Analyze the current conversation context and identify things that have not yet been addressed. Look for:
 
 1. **Incomplete implementations** - Code that was started but not finished
@@ -4315,6 +4373,8 @@ $ARGUMENTS
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -4414,6 +4474,8 @@ Analyze GitHub issue and create TDD implementation plan.
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -4571,6 +4633,8 @@ Generate a complete TDD practice setup:
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -5020,6 +5084,8 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 
 
 
+
+
 ## Input
 
 $ARGUMENTS
@@ -5138,6 +5204,8 @@ _order: 5
 
 
 
+
+
 Create a pull request for the current branch using GitHub MCP tools.
 
 ## Workflow
@@ -5217,6 +5285,8 @@ $ARGUMENTS
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -5325,6 +5395,8 @@ Apply this document (specifically the Refactor phase), to the info given by user
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -5443,6 +5515,8 @@ _selectedByDefault: false
 
 
 
+
+
 **Ship/Show/Ask Pattern - SHIP**
 
 Ship is for small, obvious changes that don't need code review. Examples:
@@ -5537,6 +5611,8 @@ _selectedByDefault: false
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -5656,6 +5732,8 @@ $ARGUMENTS
 
 
 
+
+
 (If there was no info above, fallback to the context of the conversation)
 
 
@@ -5753,6 +5831,8 @@ _order: 10
 
 
 
+
+
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
 Additional info: $ARGUMENTS
@@ -5802,6 +5882,8 @@ _order: 1
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -5902,6 +5984,8 @@ _order: 45
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -6012,6 +6096,8 @@ _order: 1
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 
@@ -6375,6 +6461,8 @@ _order: 2
 - **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
+
+
 
 
 

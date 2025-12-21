@@ -15,6 +15,10 @@ argument-hint: [optional-pr-title-and-description]
 
 Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
 
+## Plan File Restriction
+
+**NEVER create, read, or update plan.md files.** Claude Code's internal planning files are disabled for this project. Use other methods to track implementation progress (e.g., comments, todo lists, or external tools).
+
 Create a pull request for the current branch using GitHub MCP tools.
 
 ## Workflow

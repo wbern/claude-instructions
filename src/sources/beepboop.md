@@ -16,6 +16,9 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 <!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
 <!-- /docs -->
 
+<!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
+<!-- /docs -->
+
 ## Instructions
 
 Arguments: $ARGUMENTS

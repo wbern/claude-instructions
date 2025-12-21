@@ -12,6 +12,9 @@ _order: 2
 <!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
 <!-- /docs -->
 
+<!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
+<!-- /docs -->
+
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
 Include any of the following info if specified: $ARGUMENTS

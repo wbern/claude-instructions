@@ -12,6 +12,9 @@ _order: 10
 <!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
 <!-- /docs -->
 
+<!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
+<!-- /docs -->
+
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
 Additional info: $ARGUMENTS

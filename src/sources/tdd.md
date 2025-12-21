@@ -14,6 +14,9 @@ _order: 1
 <!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
 <!-- /docs -->
 
+<!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
+<!-- /docs -->
+
 <!-- docs INCLUDE path='src/fragments/tdd-fundamentals.md' -->
 <!-- /docs -->
 

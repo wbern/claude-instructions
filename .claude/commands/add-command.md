@@ -13,6 +13,10 @@ argument-hint: <command-name> <description>
 
 Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
 
+## Plan File Restriction
+
+**NEVER create, read, or update plan.md files.** Claude Code's internal planning files are disabled for this project. Use other methods to track implementation progress (e.g., comments, todo lists, or external tools).
+
 # Slash Command Creator Guide
 
 ## How This Command Works

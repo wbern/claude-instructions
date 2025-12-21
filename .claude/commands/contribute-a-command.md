@@ -11,6 +11,12 @@ argument-hint: <command-name> <command-info>
 - Write natural, descriptive code without meta-commentary about the development process
 - The code should speak for itself - TDD is the process, not the product
 
+Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
+
+## Plan File Restriction
+
+**NEVER create, read, or update plan.md files.** Claude Code's internal planning files are disabled for this project. Use other methods to track implementation progress (e.g., comments, todo lists, or external tools).
+
 Create a new custom command in `src/sources/` following the patterns below. Assess the structure carefully using the below info but also researching the repo.
 
 Command to create: $ARGUMENTS
