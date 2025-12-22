@@ -3,6 +3,8 @@
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
+**GitHub URL:** `https://github.com/wbern/claude-instructions` (NOT KenDev-AB)
+
 This repository contains a fragment-based system for generating Claude Code slash commands with TDD focus.
 
 ## Architecture

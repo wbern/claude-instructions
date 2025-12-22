@@ -455,6 +455,18 @@ export async function main(args?: CliArgs): Promise<void> {
       : `${os.homedir()}/.claude/commands`;
 
   outro(
-    `Installed ${result.filesGenerated} commands to ${fullPath}\n\nIf Claude Code is already running, restart it to pick up the new commands.\n\nTry it out: /red clicking submit with empty email shows validation error\n\nHappy TDD'ing!`,
+    `Installed ${result.filesGenerated} commands to ${fullPath}
+
+If Claude Code is already running, restart it to pick up the new commands.
+
+Try it out:
+
+  /kata                  → Pick a practice challenge
+  /red 1 returns "1"     → Write first failing test for your kata
+  /green                 → Make it pass
+
+See a full example: https://github.com/wbern/claude-instructions#example-conversations
+
+Happy coding!`,
   );
 }

@@ -232,7 +232,7 @@ describe("CLI", () => {
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("restart"));
   });
 
-  it("should show example command in success message", async () => {
+  it("should show kata workflow example in success message", async () => {
     const { outro } = await import("@clack/prompts");
     const { main } = await import("./cli.js");
 
@@ -240,10 +240,17 @@ describe("CLI", () => {
 
     await main();
 
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining("/kata"));
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining("/red"));
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining("/green"));
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "/red clicking submit with empty email shows validation error",
-      ),
+      expect.stringContaining("for your kata"),
+    );
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining("See a full example:"),
+    );
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining("#example-conversations"),
     );
   });
 

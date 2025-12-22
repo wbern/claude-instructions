@@ -3,6 +3,6 @@
   "entry": ["scripts/bin.ts", "scripts/generate-readme.ts", "scripts/build.ts"],
   "project": ["scripts/**/*.ts"],
   "ignore": ["scripts/**/*.test.ts", "scripts/__tests__/**"],
-  "ignoreDependencies": ["markdownlint-cli"],
+  "ignoreDependencies": ["markdownlint-cli", "@semantic-release/git"],
   "ignoreBinaries": ["semantic-release", "mktemp", "tar"]
 }
