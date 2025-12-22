@@ -173,12 +173,6 @@ flowchart TB
     Ship --> Done([✅ Done])
     Show --> Done
     Ask --> Done
-
-    style Start fill:#e1f5ff
-    style Step1 fill:#fff4e6
-    style Step2 fill:#e8f5e9
-    style Step3 fill:#fce4ec
-    style Done fill:#c8e6c9
 ```
 
 ## Available Commands
