@@ -472,8 +472,9 @@ export async function main(args?: CliArgs): Promise<void> {
       parts.push(`--commands=${(selectedCommands as string[]).join(",")}`);
     }
     if (selectedAllowedTools && (selectedAllowedTools as string[]).length > 0) {
+      // Quote value to protect shell special characters (*, parentheses)
       parts.push(
-        `--allowed-tools=${(selectedAllowedTools as string[]).join(",")}`,
+        `--allowed-tools="${(selectedAllowedTools as string[]).join(",")}"`,
       );
     }
     automationNote = `

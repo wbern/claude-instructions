@@ -322,9 +322,10 @@ describe("CLI", () => {
 
     await main();
 
+    // Value is quoted to protect shell special characters (*, parentheses)
     expect(outro).toHaveBeenCalledWith(
       expect.stringContaining(
-        "--allowed-tools=Bash(git diff:*),Bash(git status:*)",
+        '--allowed-tools="Bash(git diff:*),Bash(git status:*)"',
       ),
     );
   });
