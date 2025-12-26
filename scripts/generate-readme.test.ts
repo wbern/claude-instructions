@@ -507,6 +507,17 @@ describe("createConfig", () => {
       }),
     ).toThrow("INCLUDE transform: Failed to read elsePath");
   });
+
+  it("VERSION transform should return package version", () => {
+    const config = createConfig(true);
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
+    );
+
+    const result = config.transforms.VERSION();
+
+    expect(result).toBe(packageJson.version);
+  });
 });
 
 describe("writeCommandsMetadata", () => {
@@ -763,6 +774,23 @@ Content here`,
     await expect(processMarkdownFiles([inputFile])).rejects.toThrow(
       "Unknown transform: UNKNOWN_TRANSFORM",
     );
+  });
+
+  it("should expand VERSION transform", async () => {
+    const inputFile = path.join(tempDir, "test.md");
+    fs.writeFileSync(
+      inputFile,
+      `# Test
+Version: <!-- docs VERSION --><!-- /docs -->`,
+    );
+
+    await processMarkdownFiles([inputFile]);
+
+    const result = fs.readFileSync(inputFile, "utf8");
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"),
+    );
+    expect(result).toContain(`Version: ${packageJson.version}`);
   });
 });
 

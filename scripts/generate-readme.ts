@@ -71,6 +71,7 @@ interface TransformConfig {
     EXAMPLE_CONVERSATIONS: () => string;
     CLI_OPTIONS: () => string;
     COMMANDS_BADGE: () => string;
+    VERSION: () => string;
   };
 }
 
@@ -213,6 +214,15 @@ function createConfig(withBeads: boolean): TransformConfig {
         const count = getMarkdownFiles(sourcesDir).length;
 
         return `[![Commands](https://img.shields.io/badge/commands-${count}-blue)](https://github.com/wbern/claude-instructions#available-commands)`;
+      },
+
+      // Get current package version
+      VERSION(): string {
+        const packageJsonPath = path.join(PROJECT_ROOT, "package.json");
+        const packageJson = JSON.parse(
+          fs.readFileSync(packageJsonPath, "utf8"),
+        );
+        return packageJson.version;
       },
     },
   };
@@ -389,6 +399,8 @@ function processFile(
           return transforms.CLI_OPTIONS();
         case "COMMANDS_BADGE":
           return transforms.COMMANDS_BADGE();
+        case "VERSION":
+          return transforms.VERSION();
         default:
           throw new Error(`Unknown transform: ${transformName}`);
       }

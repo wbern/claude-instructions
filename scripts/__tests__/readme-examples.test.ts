@@ -83,4 +83,15 @@ describe("README example conversations", () => {
     expect(readme).toContain("--help");
     expect(readme).toContain("--version");
   });
+
+  it("should use current version in devDependency example", () => {
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(process.cwd(), "package.json"), "utf-8"),
+    );
+    const currentVersion = packageJson.version;
+
+    // The README should have the devDependency example with the current version
+    const expectedVersionPattern = `"@wbern/claude-instructions": "^${currentVersion}"`;
+    expect(readme).toContain(expectedVersionPattern);
+  });
 });
