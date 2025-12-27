@@ -14,7 +14,7 @@
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
 [![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
-[![Commands](https://img.shields.io/badge/commands-24-blue)](https://github.com/wbern/claude-instructions#available-commands)
+[![Commands](https://img.shields.io/badge/commands-25-blue)](https://github.com/wbern/claude-instructions#available-commands)
 
 ```
        _==/          i     i          \==_
@@ -202,6 +202,7 @@ flowchart TB
 - `/green` - Execute TDD Green Phase - write minimal implementation to pass the failing test
 - `/refactor` - Execute TDD Refactor Phase - improve code structure while keeping tests green
 - `/cycle` - Execute complete TDD cycle - Red, Green, and Refactor phases in sequence
+- `/simplify` - Reduce code complexity while keeping tests green
 - `/tdd-review` - Review test suite quality against FIRST principles and TDD anti-patterns
 
 ### Workflow

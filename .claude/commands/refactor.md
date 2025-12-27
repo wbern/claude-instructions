@@ -96,6 +96,18 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 - Adding types, interfaces, or a constant in order to replace magic values is perfectly fine during refactoring.
 - Provide the agent with helpful directions so that they do not get stuck when blocking them.
 
+## Code Complexity Signals
+
+Look for these refactoring opportunities:
+
+- [ ] Nesting > 3 levels deep
+- [ ] Functions > 20 lines
+- [ ] Duplicate code blocks
+- [ ] Abstractions with single implementation
+- [ ] "Just in case" parameters or config
+- [ ] Magic values without names
+- [ ] Dead/unused code
+
 ### Watch for Brittle Tests
 
 When refactoring implementation, watch for **Peeping Tom** tests that:

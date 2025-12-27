@@ -80,3 +80,4 @@ List all source links with brief descriptions. This section is required.
 - Flag conflicting information across sources
 - Write concise, actionable content
 - Use active voice throughout
+- **Do not create output files** - present findings directly in conversation unless user explicitly requests a file
