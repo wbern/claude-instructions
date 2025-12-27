@@ -74,7 +74,7 @@ Then add a postinstall script to your `package.json`:
     "postinstall": "npx @wbern/claude-instructions --scope=project --overwrite"
   },
   "devDependencies": {
-    "@wbern/claude-instructions": "^2.6.0"
+    "@wbern/claude-instructions": "^2.7.0"
   }
 }
 ```
