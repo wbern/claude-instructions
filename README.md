@@ -14,7 +14,7 @@
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
 [![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
-[![Commands](https://img.shields.io/badge/commands-23-blue)](https://github.com/wbern/claude-instructions#available-commands)
+[![Commands](https://img.shields.io/badge/commands-24-blue)](https://github.com/wbern/claude-instructions#available-commands)
 
 ```
        _==/          i     i          \==_
@@ -229,6 +229,7 @@ flowchart TB
 - `/beepboop` - Communicate AI-generated content with transparent attribution
 - `/add-command` - Guide for creating new slash commands
 - `/kata` - Generate a TDD practice challenge with boilerplate test setup
+- `/research` - Research a problem in parallel via web docs, web search, codebase exploration, and deep ultrathink
 
 ## Getting Started
 
