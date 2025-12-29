@@ -461,7 +461,11 @@ export async function main(args?: CliArgs): Promise<void> {
   const isInteractiveMode = !args?.scope;
   let automationNote = "";
   if (isInteractiveMode) {
-    const parts = ["npx @wbern/claude-instructions"];
+    const userAgent = process.env.npm_config_user_agent || "";
+    const runCommand = userAgent.startsWith("pnpm/")
+      ? "pnpm dlx @wbern/claude-instructions"
+      : "npx @wbern/claude-instructions";
+    const parts = [runCommand];
     parts.push(`--scope=${scope as string}`);
     if (commandPrefix) {
       parts.push(`--prefix=${commandPrefix as string}`);

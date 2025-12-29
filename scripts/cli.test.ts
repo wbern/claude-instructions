@@ -268,7 +268,7 @@ describe("CLI", () => {
     await main();
 
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining("npx @wbern/claude-instructions"),
+      expect.stringContaining("@wbern/claude-instructions"),
     );
     expect(outro).toHaveBeenCalledWith(
       expect.stringContaining("--scope=project"),
@@ -328,6 +328,95 @@ describe("CLI", () => {
         '--allowed-tools="Bash(git diff:*),Bash(git status:*)"',
       ),
     );
+  });
+
+  it("should use pnpm dlx in automation note when run via pnpm", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    // Simulate running via pnpm by setting npm_config_user_agent
+    const originalUserAgent = process.env.npm_config_user_agent;
+    process.env.npm_config_user_agent =
+      "pnpm/10.0.0 npm/? node/v22.0.0 darwin arm64";
+
+    try {
+      await setupInteractiveMocks({
+        scope: "project",
+      });
+
+      await main();
+
+      expect(outro).toHaveBeenCalledWith(
+        expect.stringContaining("pnpm dlx @wbern/claude-instructions"),
+      );
+      expect(outro).not.toHaveBeenCalledWith(
+        expect.stringContaining("npx @wbern/claude-instructions"),
+      );
+    } finally {
+      // Restore original user agent
+      if (originalUserAgent === undefined) {
+        delete process.env.npm_config_user_agent;
+      } else {
+        process.env.npm_config_user_agent = originalUserAgent;
+      }
+    }
+  });
+
+  it("should use npx in automation note when not run via pnpm", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    // Simulate running via npm by setting npm_config_user_agent
+    const originalUserAgent = process.env.npm_config_user_agent;
+    process.env.npm_config_user_agent = "npm/10.0.0 node/v22.0.0 darwin arm64";
+
+    try {
+      await setupInteractiveMocks({
+        scope: "project",
+      });
+
+      await main();
+
+      expect(outro).toHaveBeenCalledWith(
+        expect.stringContaining("npx @wbern/claude-instructions"),
+      );
+      expect(outro).not.toHaveBeenCalledWith(
+        expect.stringContaining("pnpm dlx @wbern/claude-instructions"),
+      );
+    } finally {
+      // Restore original user agent
+      if (originalUserAgent === undefined) {
+        delete process.env.npm_config_user_agent;
+      } else {
+        process.env.npm_config_user_agent = originalUserAgent;
+      }
+    }
+  });
+
+  it("should use npx in automation note when npm_config_user_agent is undefined", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    // Simulate missing user agent (covers || "" fallback branch)
+    const originalUserAgent = process.env.npm_config_user_agent;
+    delete process.env.npm_config_user_agent;
+
+    try {
+      await setupInteractiveMocks({
+        scope: "project",
+      });
+
+      await main();
+
+      expect(outro).toHaveBeenCalledWith(
+        expect.stringContaining("npx @wbern/claude-instructions"),
+      );
+    } finally {
+      // Restore original user agent
+      if (originalUserAgent !== undefined) {
+        process.env.npm_config_user_agent = originalUserAgent;
+      }
+    }
   });
 
   it("should NOT show automation note in non-interactive mode", async () => {
