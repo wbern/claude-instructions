@@ -377,6 +377,54 @@ describe("Allowed Tools Conflict Detection E2E", () => {
     );
     expect(redContent).not.toContain("allowed-tools:");
   });
+
+  it("should detect files as identical when using prefix and all requested tools", async () => {
+    await withCwd(tempDir, async () => {
+      const { checkExistingFiles } = await import("../cli-generator.js");
+      const outputDir = path.join(tempDir, ".claude", "commands");
+      // Use ALL tools that code-review.md requests in _requested-tools
+      const allRequestedTools = [
+        "Bash(git diff:*)",
+        "Bash(git status:*)",
+        "Bash(git log:*)",
+        "Bash(git rev-parse:*)",
+        "Bash(git merge-base:*)",
+        "Bash(git branch:*)",
+      ];
+
+      // First generation with prefix and all allowed tools
+      await generateToDirectory(outputDir, undefined, {
+        flags: [],
+        commands: ["code-review.md"],
+        commandPrefix: "my-",
+        allowedTools: allRequestedTools,
+      });
+
+      // Verify file was created with ALL tools in allowed-tools header
+      const firstContent = await fs.readFile(
+        path.join(outputDir, "my-code-review.md"),
+        "utf-8",
+      );
+      expect(firstContent).toContain(
+        `allowed-tools: ${allRequestedTools.join(", ")}`,
+      );
+
+      // Check for conflicts with same prefix and allowed tools - should be identical
+      const existingFiles = await checkExistingFiles(outputDir, undefined, {
+        flags: [],
+        commands: ["code-review.md"],
+        commandPrefix: "my-",
+        allowedTools: allRequestedTools,
+      });
+
+      expect(existingFiles).toHaveLength(1);
+      expect(existingFiles[0].filename).toBe("my-code-review.md");
+      expect(existingFiles[0].newContent).toContain(
+        `allowed-tools: ${allRequestedTools.join(", ")}`,
+      );
+      expect(existingFiles[0].isIdentical).toBe(true);
+    });
+  });
 });
 
 describe("Postinstall Workflow E2E", () => {

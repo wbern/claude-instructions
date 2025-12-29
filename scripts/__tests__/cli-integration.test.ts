@@ -129,4 +129,49 @@ describe("CLI Integration", () => {
       "This repo's .claude/commands/ should include contributor commands (from underscore-prefixed sources)",
     ).toBeDefined();
   });
+
+  it("should produce identical output when re-running with same allowed-tools via CLI", async () => {
+    // This test simulates the exact user scenario:
+    // 1. Run CLI with --allowed-tools
+    // 2. Copy the "reuse" command and run it again
+    // 3. Files should be identical (no conflicts)
+    const outputDir = path.join(tempDir, ".claude", "commands");
+    const allRequestedTools = [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)",
+    ];
+
+    const allowedToolsArg = `--allowed-tools="${allRequestedTools.join(",")}"`;
+
+    // First run - generate files
+    const firstCmd = `node ${BIN_PATH} --commands=code-review.md --prefix=my- ${allowedToolsArg} --scope=project --overwrite`;
+    execSync(firstCmd, {
+      cwd: tempDir,
+      stdio: "pipe",
+    });
+
+    // Verify file was created with all tools
+    const firstContent = fs.readFileSync(
+      path.join(outputDir, "my-code-review.md"),
+      "utf-8",
+    );
+    expect(firstContent).toContain(
+      `allowed-tools: ${allRequestedTools.join(", ")}`,
+    );
+
+    // Second run with exact same command - should not show conflicts
+    const { checkExistingFiles } = await import("../cli-generator.js");
+    const existingFiles = await checkExistingFiles(outputDir, undefined, {
+      commands: ["code-review.md"],
+      commandPrefix: "my-",
+      allowedTools: allRequestedTools,
+    });
+
+    expect(existingFiles).toHaveLength(1);
+    expect(existingFiles[0].isIdentical).toBe(true);
+  });
 });

@@ -561,6 +561,108 @@ describe("checkExistingFiles", () => {
     expect(files[0].isIdentical).toBe(true);
   });
 
+  it("should produce identical output when re-running with same allowedTools", async () => {
+    // Simulates: run CLI, select all tools, copy reuse command, paste it
+    const sourceContent = "---\ndescription: Code review\n---\n# Code Review";
+    const allRequestedTools = [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)",
+    ];
+    // Existing file has all tools (from first run)
+    const existingWithAllTools = `---\nallowed-tools: ${allRequestedTools.join(", ")}\ndescription: Code review\n---\n# Code Review`;
+    const mockMetadata = {
+      "code-review.md": {
+        description: "Code review",
+        category: "Workflow",
+        order: 1,
+        "_requested-tools": allRequestedTools,
+      },
+    };
+
+    const { generateCommandsMetadata } = await import("./generate-readme.js");
+    vi.mocked(generateCommandsMetadata).mockReturnValue(mockMetadata);
+
+    vi.mocked(fs.readdir).mockResolvedValue(["code-review.md"] as never);
+    vi.mocked(fs.pathExists).mockResolvedValue(true as never);
+    vi.mocked(fs.readFile).mockImplementation(async (filePath: unknown) => {
+      if (String(filePath).includes(MOCK_OUTPUT_PATH)) {
+        return existingWithAllTools;
+      }
+      return sourceContent;
+    });
+
+    const { checkExistingFiles } = await import("./cli-generator.js");
+    // Pass ALL the same tools that were selected in first run
+    const files = await checkExistingFiles(MOCK_OUTPUT_PATH, undefined, {
+      allowedTools: allRequestedTools,
+    });
+
+    expect(files).toHaveLength(1);
+    // newContent should have ALL tools
+    expect(files[0].newContent).toContain(
+      `allowed-tools: ${allRequestedTools.join(", ")}`,
+    );
+    // Should be identical since we're passing the same tools
+    expect(files[0].isIdentical).toBe(true);
+  });
+
+  it("should produce identical output when re-running with prefix and same allowedTools", async () => {
+    // Simulates the exact user scenario: --prefix=my- --allowed-tools="..."
+    const sourceContent = "---\ndescription: Code review\n---\n# Code Review";
+    const allRequestedTools = [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)",
+    ];
+    // Existing file has all tools (from first run) - note the PREFIX in path
+    const existingWithAllTools = `---\nallowed-tools: ${allRequestedTools.join(", ")}\ndescription: Code review\n---\n# Code Review`;
+    const mockMetadata = {
+      "code-review.md": {
+        description: "Code review",
+        category: "Workflow",
+        order: 1,
+        "_requested-tools": allRequestedTools,
+      },
+    };
+
+    const { generateCommandsMetadata } = await import("./generate-readme.js");
+    vi.mocked(generateCommandsMetadata).mockReturnValue(mockMetadata);
+
+    vi.mocked(fs.readdir).mockResolvedValue(["code-review.md"] as never);
+    vi.mocked(fs.pathExists).mockImplementation(async (filePath: unknown) => {
+      // Only match the PREFIXED file path
+      return String(filePath).includes("my-code-review.md");
+    });
+    vi.mocked(fs.readFile).mockImplementation(async (filePath: unknown) => {
+      if (String(filePath).includes("my-code-review.md")) {
+        return existingWithAllTools;
+      }
+      return sourceContent;
+    });
+
+    const { checkExistingFiles } = await import("./cli-generator.js");
+    const files = await checkExistingFiles(MOCK_OUTPUT_PATH, undefined, {
+      commandPrefix: "my-",
+      allowedTools: allRequestedTools,
+    });
+
+    expect(files).toHaveLength(1);
+    expect(files[0].filename).toBe("my-code-review.md");
+    // newContent should have ALL tools
+    expect(files[0].newContent).toContain(
+      `allowed-tools: ${allRequestedTools.join(", ")}`,
+    );
+    // Should be identical
+    expect(files[0].isIdentical).toBe(true);
+  });
+
   it("should NOT include allowedTools in newContent when command has no _requested-tools", async () => {
     const sourceContent = "---\ndescription: Red phase\n---\n# Red";
     const mockMetadata = {
@@ -592,6 +694,49 @@ describe("checkExistingFiles", () => {
     expect(files).toHaveLength(1);
     // newContent should NOT include allowedTools (command has no _requested-tools)
     expect(files[0].newContent).not.toContain("allowed-tools:");
+  });
+
+  it("should include allowedTools in newContent when using commandPrefix", async () => {
+    const sourceContent = "---\ndescription: Code review\n---\n# Code Review";
+    const existingWithAllowedTools =
+      "---\nallowed-tools: Bash(git diff:*), Bash(git status:*)\ndescription: Code review\n---\n# Code Review";
+    const mockMetadata = {
+      "code-review.md": {
+        description: "Code review",
+        category: "Workflow",
+        order: 1,
+        "_requested-tools": ["Bash(git diff:*)", "Bash(git status:*)"],
+      },
+    };
+
+    const { generateCommandsMetadata } = await import("./generate-readme.js");
+    vi.mocked(generateCommandsMetadata).mockReturnValue(mockMetadata);
+
+    vi.mocked(fs.readdir).mockResolvedValue(["code-review.md"] as never);
+    vi.mocked(fs.pathExists).mockImplementation(async (filePath: unknown) => {
+      // Only match prefixed file at destination
+      return String(filePath).includes("my-code-review.md");
+    });
+    vi.mocked(fs.readFile).mockImplementation(async (filePath: unknown) => {
+      if (String(filePath).includes("my-code-review.md")) {
+        return existingWithAllowedTools;
+      }
+      return sourceContent;
+    });
+
+    const { checkExistingFiles } = await import("./cli-generator.js");
+    const files = await checkExistingFiles(MOCK_OUTPUT_PATH, undefined, {
+      commandPrefix: "my-",
+      allowedTools: ["Bash(git diff:*)", "Bash(git status:*)"],
+    });
+
+    expect(files).toHaveLength(1);
+    expect(files[0].filename).toBe("my-code-review.md");
+    // newContent should include allowedTools header
+    expect(files[0].newContent).toContain(
+      "allowed-tools: Bash(git diff:*), Bash(git status:*)",
+    );
+    expect(files[0].isIdentical).toBe(true);
   });
 
   it("should skip files that don't exist at destination", async () => {
