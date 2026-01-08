@@ -33,11 +33,15 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 **TDD workflow commands for Claude Code CLI.**
 
+> "TDD helps you to pay attention to the right issues at the right time so you can make your designs cleaner, you can refine your designs as you learn." — Kent Beck
+
 Claude Code supports [custom slash commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands)—type `/foo` and Claude receives the contents of `foo.md` as instructions (from `.claude/commands/` in your repo or `~/.claude/commands/` in your home directory). This repo provides ready-made commands for Test-Driven Development workflows.
 
-While custom commands themselves is really just a glorified method of copy-paste, the way they can be used to bring stability to software development is what's worth trying out.
+Custom commands are just a glorified copy-paste mechanism—but that simplicity is what makes them effective for establishing consistent development practices.
 
 Instead of explaining TDD principles each session, type `/red` to write a failing test, `/green` to make it pass, `/refactor` to clean up. The commands guide Claude through each step methodically—you focus on what to build, Claude handles the how.
+
+Want to go faster? Use `/cycle` to let Claude run the entire red-green-refactor sequence before checking in with you. For even more autonomy (your mileage may vary), `/tdd` gives Claude full discretion on when to advance between phases.
 
 Also included are commands for commits, PRs, code reviews, and other tasks that come up during day-to-day development.
 
