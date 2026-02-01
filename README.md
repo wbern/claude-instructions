@@ -78,7 +78,7 @@ Then add a postinstall script to your `package.json`:
     "postinstall": "claude-instructions --scope=project --overwrite"
   },
   "devDependencies": {
-    "@wbern/claude-instructions": "^2.9.0"
+    "@wbern/claude-instructions": "^2.9.1"
   }
 }
 ```
