@@ -38,8 +38,7 @@ Present findings as a prioritized list with:
 
 If there are no gaps, confirm that everything discussed has been addressed.
 
-Additional info:
-$ARGUMENTS
+Gap: $ARGUMENTS
 
 ## Testing Requirements
 

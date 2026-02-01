@@ -48,7 +48,7 @@ Current branch status:
 Recent commits:
 !`git log --oneline -5`
 
-Arguments: $ARGUMENTS
+Ask: $ARGUMENTS
 
 **This is the traditional Pull Request workflow**, but with explicit intent that review and approval are required.
 

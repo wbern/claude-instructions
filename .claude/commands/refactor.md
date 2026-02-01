@@ -3,7 +3,9 @@ description: Execute TDD Refactor Phase - improve code structure while keeping t
 argument-hint: <refactoring description>
 ---
 
-Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+Refactor: $ARGUMENTS
+
+Apply this document (specifically the Refactor phase) to the info given by user input.
 
 ## General Guidelines
 

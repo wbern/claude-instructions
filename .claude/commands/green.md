@@ -3,9 +3,9 @@ description: Execute TDD Green Phase - write minimal implementation to pass the 
 argument-hint: <implementation description>
 ---
 
-GREEN PHASE! Apply the below to the info given by user input here:
+Green: $ARGUMENTS
 
-$ARGUMENTS
+GREEN PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 

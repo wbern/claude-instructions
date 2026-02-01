@@ -48,7 +48,7 @@ argument-hint: [required-arg] [optional-arg]
 
 Your command instructions here.
 
-Arguments: $ARGUMENTS
+Add-command: $ARGUMENTS
 
 File reference: @path/to/file.js
 

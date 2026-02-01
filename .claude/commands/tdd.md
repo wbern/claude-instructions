@@ -93,9 +93,9 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 ## Continue Conversation
 
-User response to the last message: $ARGUMENTS
+TDD: $ARGUMENTS
 
-Please continue with TDD approach based on the above response.
+Please continue with the above response, applying TDD approach.
 
 ## Testing Requirements
 

@@ -14,7 +14,7 @@
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
 [![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
-[![Commands](https://img.shields.io/badge/commands-27-blue)](https://github.com/wbern/claude-instructions#available-commands)
+[![Commands](https://img.shields.io/badge/commands-29-blue)](https://github.com/wbern/claude-instructions#available-commands)
 
 ```
        _==/          i     i          \==_
@@ -218,6 +218,7 @@ flowchart TB
 - `/gap` - Analyze conversation context for unaddressed items and gaps
 - `/forever` - Run autonomously until stopped or stuck
 - `/code-review` - Code review using dynamic category detection and domain-specific analysis
+- `/polish` - Review and address issues in existing code - fix problems or justify skipping
 
 ### Ship / Show / Ask
 
@@ -237,6 +238,7 @@ flowchart TB
 - `/kata` - Generate a TDD practice challenge with boilerplate test setup
 - `/research` - Research a problem in parallel via web docs, web search, codebase exploration, and deep ultrathink
 - `/commitlint-checklist-nodejs` - Audit commit hook automation for Node.js projects
+- `/upgrade-deps` - Check for dependency upgrades and assess safety before updating
 
 ## Getting Started
 

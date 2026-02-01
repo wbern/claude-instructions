@@ -17,7 +17,7 @@ Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues
 
 Scan the Node.js repository and report what commit automation is in place.
 
-$ARGUMENTS
+Commitlint-checklist: $ARGUMENTS
 
 ## Checks to Scan
 

@@ -21,7 +21,7 @@ Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
-Additional info: $ARGUMENTS
+Worktree-cleanup: $ARGUMENTS
 
 <current_state>
 Current branch: `git branch --show-current`

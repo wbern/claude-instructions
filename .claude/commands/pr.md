@@ -29,7 +29,7 @@ Current branch status:
 Recent commits:
 !`git log --oneline -5`
 
-Arguments: $ARGUMENTS
+PR: $ARGUMENTS
 
 **Process:**
 
