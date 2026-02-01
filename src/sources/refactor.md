@@ -6,7 +6,9 @@ _category: Test-Driven Development
 _order: 4
 ---
 
-Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+Refactor: $ARGUMENTS
+
+Apply this document (specifically the Refactor phase) to the info given by user input.
 
 <!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
 <!-- /docs -->

@@ -50,7 +50,7 @@ argument-hint: [required-arg] [optional-arg]
 
 Your command instructions here.
 
-Arguments: $ARGUMENTS
+Add-command: $ARGUMENTS
 
 File reference: @path/to/file.js
 
@@ -208,7 +208,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Ask: $ARGUMENTS
 
 **This is the traditional Pull Request workflow**, but with explicit intent that review and approval are required.
 
@@ -337,7 +337,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 ## Instructions
 
-Arguments: $ARGUMENTS
+Beepboop: $ARGUMENTS
 
 **IMPORTANT Communication Format:**
 
@@ -390,7 +390,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
-Include any of the following info if specified: $ARGUMENTS
+Busycommit: $ARGUMENTS
 
 ## Commit Message Rules
 
@@ -556,6 +556,7 @@ Categorize each changed file into ONE primary category based on these patterns:
 | CI/CD | \`.github/\`, \`.gitlab-ci.*\`, \`Dockerfile\`, \`docker-compose.*\`, \`*.yml\` in CI paths |
 | Tests | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\`, \`__mocks__/\`, \`*.stories.*\` |
 | Docs | \`*.md\`, \`docs/\`, \`README*\`, \`CHANGELOG*\` |
+
 
 Output the categorization:
 
@@ -760,7 +761,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 Create a git commit following project standards
 
-Include any of the following info if specified: $ARGUMENTS
+Commit: $ARGUMENTS
 
 ## Commit Message Rules
 
@@ -820,7 +821,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 Scan the Node.js repository and report what commit automation is in place.
 
-$ARGUMENTS
+Commitlint-checklist: $ARGUMENTS
 
 ## Checks to Scan
 
@@ -903,9 +904,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 
 
-## Input
-
-$ARGUMENTS
+Create-issues: $ARGUMENTS
 
 (If no input provided, check conversation context or run \`bd ready\` to see existing work)
 
@@ -1068,9 +1067,9 @@ _category: Test-Driven Development
 _order: 5
 ---
 
-RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input here:
+Cycle: $ARGUMENTS
 
-$ARGUMENTS
+RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -1309,8 +1308,7 @@ Present findings as a prioritized list with:
 
 If there are no gaps, confirm that everything discussed has been addressed.
 
-Additional info:
-$ARGUMENTS
+Gap: $ARGUMENTS
 "
 `;
 
@@ -1323,9 +1321,9 @@ _category: Test-Driven Development
 _order: 3
 ---
 
-GREEN PHASE! Apply the below to the info given by user input here:
+Green: $ARGUMENTS
 
-$ARGUMENTS
+GREEN PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -1448,9 +1446,10 @@ Process:
 
 1. Get Issue Number
 
-- Either from branch name use that issue number
-  - Patterns: issue-123, 123-feature, feature/123, fix/123
-- Or from this bullet point with custom info: $ARGUMENTS
+Issue: $ARGUMENTS
+
+- Check if argument is an issue number
+- Otherwise try branch name patterns: issue-123, 123-feature, feature/123, fix/123
 - If not found: ask user
 
 2. Fetch Issue
@@ -1612,9 +1611,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 
 
-## Input
-
-$ARGUMENTS
+Kata: $ARGUMENTS
 
 (This command is interactive - arguments are ignored)
 
@@ -2034,6 +2031,195 @@ class TestKata:
 "
 `;
 
+exports[`dynamic generation snapshots > with beads flag > should match snapshot for polish.md 1`] = `
+"---
+description: Review and address issues in existing code - fix problems or justify skipping
+argument-hint: [branch, PR#, file, or area to polish]
+_hint: Fix or skip issues
+_category: Workflow
+_order: 36
+_requested-tools:
+  - Bash(git diff:*)
+  - Bash(git status:*)
+  - Bash(git log:*)
+  - Bash(git rev-parse:*)
+  - Bash(git merge-base:*)
+  - Bash(git branch:*)
+---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
+
+
+# Polish
+
+Take another pass at existing work to address issues. Unlike \`/code-review\` which only identifies problems, \`/polish\` resolves each finding by either:
+
+1. **Fixing** - Implement the improvement
+2. **Skipping with justification** - Document why the issue can be deferred or ignored
+
+## Phase 0: Determine Scope
+
+Parse the argument to determine what to polish:
+
+| Input | Action |
+|-------|--------|
+| No argument | Detect divergence point, review uncommitted + committed changes |
+| Branch name | Changes from that branch to HEAD |
+| PR number (e.g., \`123\`) | Fetch PR diff from GitHub |
+| PR URL (e.g., \`github.com/.../pull/123\`) | Extract PR number and fetch diff |
+| File/path | Focus on specific file(s) |
+
+**For GitHub PRs:**
+
+1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
+2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
+3. If neither works, report error and stop
+
+**For local branches:**
+
+1. Get current branch: \`git rev-parse --abbrev-ref HEAD\`
+2. Detect divergence point (same logic as \`/code-review\`)
+3. Collect changed files from diff and uncommitted changes
+
+## Phase 1: Identify Issues
+
+Categorize files based on these patterns:
+
+| Category | File Patterns |
+|----------|---------------|
+| Frontend/UI | \`*.tsx\`, \`*.jsx\`, \`components/\`, \`pages/\`, \`views/\`, \`*.vue\` |
+| Frontend/Styling | \`*.css\`, \`*.scss\`, \`*.less\`, \`styles/\`, \`*.tailwind*\`, \`*.styled.*\` |
+| Backend/API | \`routes/\`, \`api/\`, \`controllers/\`, \`services/\`, \`*.controller.*\`, \`*.service.*\`, \`*.resolver.*\` |
+| Backend/Data | \`migrations/\`, \`models/\`, \`prisma/\`, \`schema.*\`, \`*.model.*\`, \`*.entity.*\` |
+| Tooling/Config | \`scripts/\`, \`*.config.*\`, \`package.json\`, \`tsconfig.*\`, \`vite.*\`, \`webpack.*\`, \`eslint.*\` |
+| CI/CD | \`.github/\`, \`.gitlab-ci.*\`, \`Dockerfile\`, \`docker-compose.*\`, \`*.yml\` in CI paths |
+| Tests | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\`, \`__mocks__/\`, \`*.stories.*\` |
+| Docs | \`*.md\`, \`docs/\`, \`README*\`, \`CHANGELOG*\` |
+
+
+For each category, identify issues at these severity levels:
+
+- **blocker** - Must fix before merge
+- **risky** - Should fix or have strong justification
+- **nit** - Nice to have, easily skippable
+
+## Phase 2: Address Each Issue
+
+For each identified issue, present it and then take action:
+
+### Format
+
+\`\`\`
+### [file:line] [severity] Title
+
+**Issue:** Description of the problem
+
+**Action taken:**
+- [ ] Fixed: [what was done]
+- [ ] Skipped: [justification]
+\`\`\`
+
+### Decision Guidelines
+
+**Fix when:**
+
+- Security vulnerability
+- Correctness bug
+- Missing error handling that could crash
+- Breaking API changes without migration
+- Tests that don't actually test anything
+
+**Skip with justification when:**
+
+- Stylistic preference with no functional impact
+- Optimization for unlikely hot paths
+- Refactoring that would expand scope significantly
+- Issue exists in code outside the change scope
+- Technical debt documented for future sprint
+
+### Fixing Issues
+
+When fixing:
+
+1. Make the minimal change to address the issue
+2. Ensure tests still pass (run them if needed)
+3. Don't expand scope beyond the identified issue
+
+### Watch for Brittle Tests
+
+When refactoring implementation, watch for **Peeping Tom** tests that:
+
+- Test private methods or internal state directly
+- Assert on implementation details rather than behavior
+- Break on any refactoring even when behavior is preserved
+
+If tests fail after a pure refactoring (no behavior change), consider whether the tests are testing implementation rather than behavior.
+
+
+### Skipping Issues
+
+Valid skip justifications:
+
+- "Out of scope - exists in unchanged code"
+- "Performance optimization unnecessary - called N times per request"
+- "Tracked for future work - see issue #X"
+- "Intentional design decision - [reason]"
+- "Would require significant refactoring - defer to dedicated PR"
+
+Invalid skip justifications:
+
+- "Too hard to fix"
+- "It works fine"
+- "No time"
+
+## Phase 3: Cross-Cutting Check
+
+After addressing individual issues:
+
+8. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+
+
+Additional cross-cutting checks:
+
+- Did fixes introduce new inconsistencies?
+- Are skip justifications consistent with each other?
+- Any patterns in what was skipped that suggest a bigger issue?
+
+## Phase 4: Summary
+
+\`\`\`
+## Polish Summary
+
+### Fixed
+- [list of fixes applied]
+
+### Skipped (with justification)
+- [issue]: [justification]
+
+### Tests
+- [ ] All tests passing
+- [ ] No new warnings introduced
+
+### Remaining Work
+- [any follow-up items identified]
+\`\`\`
+
+---
+
+Polish: $ARGUMENTS
+"
+`;
+
 exports[`dynamic generation snapshots > with beads flag > should match snapshot for pr.md 1`] = `
 "---
 description: Creates a pull request using GitHub MCP
@@ -2068,7 +2254,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+PR: $ARGUMENTS
 
 **Process:**
 
@@ -2135,9 +2321,9 @@ _category: Test-Driven Development
 _order: 2
 ---
 
-RED PHASE! Apply the below to the info given by user input here:
+Red: $ARGUMENTS
 
-$ARGUMENTS
+RED PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -2250,7 +2436,9 @@ _category: Test-Driven Development
 _order: 4
 ---
 
-Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+Refactor: $ARGUMENTS
+
+Apply this document (specifically the Refactor phase) to the info given by user input.
 
 ## General Guidelines
 
@@ -2516,7 +2704,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Ship: $ARGUMENTS
 
 **Process:**
 
@@ -2624,7 +2812,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Show: $ARGUMENTS
 
 **Process:**
 
@@ -2798,9 +2986,9 @@ _category: Test-Driven Development
 _order: 1
 ---
 
-SPIKE PHASE! Apply the below to the info given by user input here:
+Spike: $ARGUMENTS
 
-$ARGUMENTS
+SPIKE PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -2919,7 +3107,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
-Additional info: $ARGUMENTS
+Summarize: $ARGUMENTS
 
 ## Summary Structure
 
@@ -3055,9 +3243,9 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 ## Continue Conversation
 
-User response to the last message: $ARGUMENTS
+TDD: $ARGUMENTS
 
-Please continue with TDD approach based on the above response.
+Please continue with the above response, applying TDD approach.
 "
 `;
 
@@ -3171,6 +3359,196 @@ Output a structured report:
 ---
 
 Test path (leave empty for all tests): $ARGUMENTS
+"
+`;
+
+exports[`dynamic generation snapshots > with beads flag > should match snapshot for upgrade-deps.md 1`] = `
+"---
+description: Check for dependency upgrades and assess safety before updating
+argument-hint: (no arguments - interactive)
+_hint: Upgrade packages
+_category: Utilities
+_order: 50
+---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
+
+
+# Upgrade Dependencies
+
+Analyze available dependency upgrades, assess codebase safety signals, and guide the user through upgrade decisions.
+
+## Phase 1: Detect Environment
+
+Scan for package manager and project setup:
+
+| Check | How |
+|-------|-----|
+| Package manager | Look for \`pnpm-lock.yaml\`, \`yarn.lock\`, \`package-lock.json\`, \`bun.lockb\` |
+| Lockfile present | Exists and tracked in git |
+| Test script | \`package.json\` has \`test\` script |
+| Test files | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\` exist |
+| CI config | \`.github/workflows/\`, \`.gitlab-ci.yml\`, etc. |
+| Type checking | \`tsconfig.json\` or \`jsconfig.json\` present |
+
+Output:
+
+\`\`\`
+## Environment
+
+Package manager: pnpm
+Lockfile: ✓ pnpm-lock.yaml (tracked)
+Test script: ✓ "vitest run"
+Test files: ✓ 16 test files found
+CI config: ✓ .github/workflows/release.yml
+Types: ✓ tsconfig.json
+\`\`\`
+
+## Phase 2: List Available Upgrades
+
+Run the appropriate outdated command:
+
+| Manager | Command |
+|---------|---------|
+| pnpm | \`pnpm outdated --format json\` |
+| npm | \`npm outdated --json\` |
+| yarn | \`yarn outdated --json\` |
+| bun | \`bun outdated\` |
+
+Group results by semver level:
+
+\`\`\`
+## Available Upgrades
+
+### Patch (low risk)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| lodash | 4.17.20 | 4.17.21 | 6 months |
+
+### Minor (medium risk)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| vitest | 1.5.0 | 1.6.0 | 3 weeks |
+
+### Major (review changelog)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| typescript | 4.9.5 | 5.4.2 | 8 months |
+\`\`\`
+
+Note: "Age" is time since the latest version was published. Packages < 14 days old may pose supply chain risk.
+
+## Phase 3: Safety Assessment
+
+Present observable signals (not guarantees):
+
+\`\`\`
+## Safety Signals
+
+✓ Test files present (16 files)
+✓ Test script configured
+✓ CI pipeline exists
+✓ Lockfile tracked in git
+✓ TypeScript for type safety
+⚠ No pre-commit hooks detected
+✗ Coverage threshold not configured
+
+──────────────────────────────────────────────────
+⚠ DISCLAIMER: This is a surface-level check based
+on file presence, not actual test quality or
+coverage. You know your codebase best.
+──────────────────────────────────────────────────
+\`\`\`
+
+## Phase 4: Ask User
+
+Use \`AskUserQuestion\` to determine next steps:
+
+**Question: "How would you like to proceed?"** (header: "Upgrade")
+
+Options:
+1. **Patches only** - "Upgrade patch versions (X.Y.Z → X.Y.Z+1), lowest risk"
+2. **Patches + minors** - "Include minor versions (X.Y → X.Y+1), some API additions"
+3. **Interactive selection** - "Choose specific packages to upgrade"
+4. **Doctor mode** - "Test each upgrade individually, keep only working ones (slower but safest)"
+5. **Just show outdated** - "Don't upgrade, just list what's available"
+
+## Phase 5: Execute Upgrade
+
+Based on user selection:
+
+### Patches Only
+\`\`\`bash
+# pnpm
+pnpm update --no-save  # updates lockfile only for patches within range
+
+# or with ncu
+npx npm-check-updates --target patch -u && pnpm install
+\`\`\`
+
+### Patches + Minors
+\`\`\`bash
+npx npm-check-updates --target minor -u && pnpm install
+\`\`\`
+
+### Interactive Selection
+\`\`\`bash
+npx npm-check-updates -i
+\`\`\`
+
+### Doctor Mode
+\`\`\`bash
+npx npm-check-updates --doctor -u
+\`\`\`
+
+This will:
+1. Verify tests pass before starting
+2. Try upgrading all dependencies
+3. If tests fail, test each dependency individually
+4. Keep only upgrades that pass tests
+
+### After Any Upgrade
+
+1. Run tests: \`pnpm test\`
+2. Run type check if available: \`pnpm typecheck\`
+3. Run build if available: \`pnpm build\`
+4. Report results to user
+
+## Phase 6: Summary
+
+\`\`\`
+## Upgrade Summary
+
+### Upgraded
+- lodash: 4.17.20 → 4.17.21 (patch)
+- vitest: 1.5.0 → 1.6.0 (minor)
+
+### Skipped
+- typescript: 4.9.5 → 5.4.2 (major - user opted out)
+
+### Verification
+- [x] Tests passing
+- [x] Types checking
+- [x] Build successful
+
+### Next Steps
+- Review changelog for skipped major upgrades
+- Consider running full test suite in CI before merging
+\`\`\`
+
+---
+
+Upgrade: $ARGUMENTS
 "
 `;
 
@@ -3566,7 +3944,7 @@ Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issu
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
-Additional info: $ARGUMENTS
+Worktree-cleanup: $ARGUMENTS
 
 <current_state>
 Current branch: \`git branch --show-current\`
@@ -3848,7 +4226,7 @@ argument-hint: [required-arg] [optional-arg]
 
 Your command instructions here.
 
-Arguments: $ARGUMENTS
+Add-command: $ARGUMENTS
 
 File reference: @path/to/file.js
 
@@ -4005,7 +4383,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Ask: $ARGUMENTS
 
 **This is the traditional Pull Request workflow**, but with explicit intent that review and approval are required.
 
@@ -4125,7 +4503,7 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 
 ## Instructions
 
-Arguments: $ARGUMENTS
+Beepboop: $ARGUMENTS
 
 **IMPORTANT Communication Format:**
 
@@ -4177,7 +4555,7 @@ _order: 2
 
 Create multiple atomic git commits, committing the smallest possible logical unit at a time
 
-Include any of the following info if specified: $ARGUMENTS
+Busycommit: $ARGUMENTS
 
 ## Commit Message Rules
 
@@ -4342,6 +4720,7 @@ Categorize each changed file into ONE primary category based on these patterns:
 | CI/CD | \`.github/\`, \`.gitlab-ci.*\`, \`Dockerfile\`, \`docker-compose.*\`, \`*.yml\` in CI paths |
 | Tests | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\`, \`__mocks__/\`, \`*.stories.*\` |
 | Docs | \`*.md\`, \`docs/\`, \`README*\`, \`CHANGELOG*\` |
+
 
 Output the categorization:
 
@@ -4545,7 +4924,7 @@ _order: 1
 
 Create a git commit following project standards
 
-Include any of the following info if specified: $ARGUMENTS
+Commit: $ARGUMENTS
 
 ## Commit Message Rules
 
@@ -4604,7 +4983,7 @@ _order: 25
 
 Scan the Node.js repository and report what commit automation is in place.
 
-$ARGUMENTS
+Commitlint-checklist: $ARGUMENTS
 
 ## Checks to Scan
 
@@ -4686,9 +5065,7 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 
 
 
-## Input
-
-$ARGUMENTS
+Create-issues: $ARGUMENTS
 
 (If no input provided, check conversation context)
 
@@ -4792,9 +5169,9 @@ _category: Test-Driven Development
 _order: 5
 ---
 
-RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input here:
+Cycle: $ARGUMENTS
 
-$ARGUMENTS
+RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -5027,8 +5404,7 @@ Present findings as a prioritized list with:
 
 If there are no gaps, confirm that everything discussed has been addressed.
 
-Additional info:
-$ARGUMENTS
+Gap: $ARGUMENTS
 "
 `;
 
@@ -5041,9 +5417,9 @@ _category: Test-Driven Development
 _order: 3
 ---
 
-GREEN PHASE! Apply the below to the info given by user input here:
+Green: $ARGUMENTS
 
-$ARGUMENTS
+GREEN PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -5162,9 +5538,10 @@ Process:
 
 1. Get Issue Number
 
-- Either from branch name use that issue number
-  - Patterns: issue-123, 123-feature, feature/123, fix/123
-- Or from this bullet point with custom info: $ARGUMENTS
+Issue: $ARGUMENTS
+
+- Check if argument is an issue number
+- Otherwise try branch name patterns: issue-123, 123-feature, feature/123, fix/123
 - If not found: ask user
 
 2. Fetch Issue
@@ -5317,9 +5694,7 @@ Generate a complete TDD practice setup:
 
 
 
-## Input
-
-$ARGUMENTS
+Kata: $ARGUMENTS
 
 (This command is interactive - arguments are ignored)
 
@@ -5739,6 +6114,194 @@ class TestKata:
 "
 `;
 
+exports[`dynamic generation snapshots > without beads flag > should match snapshot for polish.md 1`] = `
+"---
+description: Review and address issues in existing code - fix problems or justify skipping
+argument-hint: [branch, PR#, file, or area to polish]
+_hint: Fix or skip issues
+_category: Workflow
+_order: 36
+_requested-tools:
+  - Bash(git diff:*)
+  - Bash(git status:*)
+  - Bash(git log:*)
+  - Bash(git rev-parse:*)
+  - Bash(git merge-base:*)
+  - Bash(git branch:*)
+---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+
+
+
+
+# Polish
+
+Take another pass at existing work to address issues. Unlike \`/code-review\` which only identifies problems, \`/polish\` resolves each finding by either:
+
+1. **Fixing** - Implement the improvement
+2. **Skipping with justification** - Document why the issue can be deferred or ignored
+
+## Phase 0: Determine Scope
+
+Parse the argument to determine what to polish:
+
+| Input | Action |
+|-------|--------|
+| No argument | Detect divergence point, review uncommitted + committed changes |
+| Branch name | Changes from that branch to HEAD |
+| PR number (e.g., \`123\`) | Fetch PR diff from GitHub |
+| PR URL (e.g., \`github.com/.../pull/123\`) | Extract PR number and fetch diff |
+| File/path | Focus on specific file(s) |
+
+**For GitHub PRs:**
+
+1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
+2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
+3. If neither works, report error and stop
+
+**For local branches:**
+
+1. Get current branch: \`git rev-parse --abbrev-ref HEAD\`
+2. Detect divergence point (same logic as \`/code-review\`)
+3. Collect changed files from diff and uncommitted changes
+
+## Phase 1: Identify Issues
+
+Categorize files based on these patterns:
+
+| Category | File Patterns |
+|----------|---------------|
+| Frontend/UI | \`*.tsx\`, \`*.jsx\`, \`components/\`, \`pages/\`, \`views/\`, \`*.vue\` |
+| Frontend/Styling | \`*.css\`, \`*.scss\`, \`*.less\`, \`styles/\`, \`*.tailwind*\`, \`*.styled.*\` |
+| Backend/API | \`routes/\`, \`api/\`, \`controllers/\`, \`services/\`, \`*.controller.*\`, \`*.service.*\`, \`*.resolver.*\` |
+| Backend/Data | \`migrations/\`, \`models/\`, \`prisma/\`, \`schema.*\`, \`*.model.*\`, \`*.entity.*\` |
+| Tooling/Config | \`scripts/\`, \`*.config.*\`, \`package.json\`, \`tsconfig.*\`, \`vite.*\`, \`webpack.*\`, \`eslint.*\` |
+| CI/CD | \`.github/\`, \`.gitlab-ci.*\`, \`Dockerfile\`, \`docker-compose.*\`, \`*.yml\` in CI paths |
+| Tests | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\`, \`__mocks__/\`, \`*.stories.*\` |
+| Docs | \`*.md\`, \`docs/\`, \`README*\`, \`CHANGELOG*\` |
+
+
+For each category, identify issues at these severity levels:
+
+- **blocker** - Must fix before merge
+- **risky** - Should fix or have strong justification
+- **nit** - Nice to have, easily skippable
+
+## Phase 2: Address Each Issue
+
+For each identified issue, present it and then take action:
+
+### Format
+
+\`\`\`
+### [file:line] [severity] Title
+
+**Issue:** Description of the problem
+
+**Action taken:**
+- [ ] Fixed: [what was done]
+- [ ] Skipped: [justification]
+\`\`\`
+
+### Decision Guidelines
+
+**Fix when:**
+
+- Security vulnerability
+- Correctness bug
+- Missing error handling that could crash
+- Breaking API changes without migration
+- Tests that don't actually test anything
+
+**Skip with justification when:**
+
+- Stylistic preference with no functional impact
+- Optimization for unlikely hot paths
+- Refactoring that would expand scope significantly
+- Issue exists in code outside the change scope
+- Technical debt documented for future sprint
+
+### Fixing Issues
+
+When fixing:
+
+1. Make the minimal change to address the issue
+2. Ensure tests still pass (run them if needed)
+3. Don't expand scope beyond the identified issue
+
+### Watch for Brittle Tests
+
+When refactoring implementation, watch for **Peeping Tom** tests that:
+
+- Test private methods or internal state directly
+- Assert on implementation details rather than behavior
+- Break on any refactoring even when behavior is preserved
+
+If tests fail after a pure refactoring (no behavior change), consider whether the tests are testing implementation rather than behavior.
+
+
+### Skipping Issues
+
+Valid skip justifications:
+
+- "Out of scope - exists in unchanged code"
+- "Performance optimization unnecessary - called N times per request"
+- "Tracked for future work - see issue #X"
+- "Intentional design decision - [reason]"
+- "Would require significant refactoring - defer to dedicated PR"
+
+Invalid skip justifications:
+
+- "Too hard to fix"
+- "It works fine"
+- "No time"
+
+## Phase 3: Cross-Cutting Check
+
+After addressing individual issues:
+
+8. **Consistency check** - Look for inconsistent patterns, naming conventions, or structure across the codebase
+
+
+Additional cross-cutting checks:
+
+- Did fixes introduce new inconsistencies?
+- Are skip justifications consistent with each other?
+- Any patterns in what was skipped that suggest a bigger issue?
+
+## Phase 4: Summary
+
+\`\`\`
+## Polish Summary
+
+### Fixed
+- [list of fixes applied]
+
+### Skipped (with justification)
+- [issue]: [justification]
+
+### Tests
+- [ ] All tests passing
+- [ ] No new warnings introduced
+
+### Remaining Work
+- [any follow-up items identified]
+\`\`\`
+
+---
+
+Polish: $ARGUMENTS
+"
+`;
+
 exports[`dynamic generation snapshots > without beads flag > should match snapshot for pr.md 1`] = `
 "---
 description: Creates a pull request using GitHub MCP
@@ -5772,7 +6335,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+PR: $ARGUMENTS
 
 **Process:**
 
@@ -5831,9 +6394,9 @@ _category: Test-Driven Development
 _order: 2
 ---
 
-RED PHASE! Apply the below to the info given by user input here:
+Red: $ARGUMENTS
 
-$ARGUMENTS
+RED PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -5943,7 +6506,9 @@ _category: Test-Driven Development
 _order: 4
 ---
 
-Apply this document (specifically the Refactor phase), to the info given by user input here: $ARGUMENTS
+Refactor: $ARGUMENTS
+
+Apply this document (specifically the Refactor phase) to the info given by user input.
 
 ## General Guidelines
 
@@ -6204,7 +6769,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Ship: $ARGUMENTS
 
 **Process:**
 
@@ -6303,7 +6868,7 @@ Current branch status:
 Recent commits:
 !\`git log --oneline -5\`
 
-Arguments: $ARGUMENTS
+Show: $ARGUMENTS
 
 **Process:**
 
@@ -6468,9 +7033,9 @@ _category: Test-Driven Development
 _order: 1
 ---
 
-SPIKE PHASE! Apply the below to the info given by user input here:
+Spike: $ARGUMENTS
 
-$ARGUMENTS
+SPIKE PHASE! Apply the below to the info given by user input.
 
 ## General Guidelines
 
@@ -6585,7 +7150,7 @@ _order: 10
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
-Additional info: $ARGUMENTS
+Summarize: $ARGUMENTS
 
 ## Summary Structure
 
@@ -6713,9 +7278,9 @@ This phase is **not part of the regular TDD workflow** and must only be applied 
 
 ## Continue Conversation
 
-User response to the last message: $ARGUMENTS
+TDD: $ARGUMENTS
 
-Please continue with TDD approach based on the above response.
+Please continue with the above response, applying TDD approach.
 "
 `;
 
@@ -6826,6 +7391,195 @@ Output a structured report:
 ---
 
 Test path (leave empty for all tests): $ARGUMENTS
+"
+`;
+
+exports[`dynamic generation snapshots > without beads flag > should match snapshot for upgrade-deps.md 1`] = `
+"---
+description: Check for dependency upgrades and assess safety before updating
+argument-hint: (no arguments - interactive)
+_hint: Upgrade packages
+_category: Utilities
+_order: 50
+---
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+
+
+
+
+# Upgrade Dependencies
+
+Analyze available dependency upgrades, assess codebase safety signals, and guide the user through upgrade decisions.
+
+## Phase 1: Detect Environment
+
+Scan for package manager and project setup:
+
+| Check | How |
+|-------|-----|
+| Package manager | Look for \`pnpm-lock.yaml\`, \`yarn.lock\`, \`package-lock.json\`, \`bun.lockb\` |
+| Lockfile present | Exists and tracked in git |
+| Test script | \`package.json\` has \`test\` script |
+| Test files | \`*.test.*\`, \`*.spec.*\`, \`__tests__/\` exist |
+| CI config | \`.github/workflows/\`, \`.gitlab-ci.yml\`, etc. |
+| Type checking | \`tsconfig.json\` or \`jsconfig.json\` present |
+
+Output:
+
+\`\`\`
+## Environment
+
+Package manager: pnpm
+Lockfile: ✓ pnpm-lock.yaml (tracked)
+Test script: ✓ "vitest run"
+Test files: ✓ 16 test files found
+CI config: ✓ .github/workflows/release.yml
+Types: ✓ tsconfig.json
+\`\`\`
+
+## Phase 2: List Available Upgrades
+
+Run the appropriate outdated command:
+
+| Manager | Command |
+|---------|---------|
+| pnpm | \`pnpm outdated --format json\` |
+| npm | \`npm outdated --json\` |
+| yarn | \`yarn outdated --json\` |
+| bun | \`bun outdated\` |
+
+Group results by semver level:
+
+\`\`\`
+## Available Upgrades
+
+### Patch (low risk)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| lodash | 4.17.20 | 4.17.21 | 6 months |
+
+### Minor (medium risk)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| vitest | 1.5.0 | 1.6.0 | 3 weeks |
+
+### Major (review changelog)
+| Package | Current | Latest | Age |
+|---------|---------|--------|-----|
+| typescript | 4.9.5 | 5.4.2 | 8 months |
+\`\`\`
+
+Note: "Age" is time since the latest version was published. Packages < 14 days old may pose supply chain risk.
+
+## Phase 3: Safety Assessment
+
+Present observable signals (not guarantees):
+
+\`\`\`
+## Safety Signals
+
+✓ Test files present (16 files)
+✓ Test script configured
+✓ CI pipeline exists
+✓ Lockfile tracked in git
+✓ TypeScript for type safety
+⚠ No pre-commit hooks detected
+✗ Coverage threshold not configured
+
+──────────────────────────────────────────────────
+⚠ DISCLAIMER: This is a surface-level check based
+on file presence, not actual test quality or
+coverage. You know your codebase best.
+──────────────────────────────────────────────────
+\`\`\`
+
+## Phase 4: Ask User
+
+Use \`AskUserQuestion\` to determine next steps:
+
+**Question: "How would you like to proceed?"** (header: "Upgrade")
+
+Options:
+1. **Patches only** - "Upgrade patch versions (X.Y.Z → X.Y.Z+1), lowest risk"
+2. **Patches + minors** - "Include minor versions (X.Y → X.Y+1), some API additions"
+3. **Interactive selection** - "Choose specific packages to upgrade"
+4. **Doctor mode** - "Test each upgrade individually, keep only working ones (slower but safest)"
+5. **Just show outdated** - "Don't upgrade, just list what's available"
+
+## Phase 5: Execute Upgrade
+
+Based on user selection:
+
+### Patches Only
+\`\`\`bash
+# pnpm
+pnpm update --no-save  # updates lockfile only for patches within range
+
+# or with ncu
+npx npm-check-updates --target patch -u && pnpm install
+\`\`\`
+
+### Patches + Minors
+\`\`\`bash
+npx npm-check-updates --target minor -u && pnpm install
+\`\`\`
+
+### Interactive Selection
+\`\`\`bash
+npx npm-check-updates -i
+\`\`\`
+
+### Doctor Mode
+\`\`\`bash
+npx npm-check-updates --doctor -u
+\`\`\`
+
+This will:
+1. Verify tests pass before starting
+2. Try upgrading all dependencies
+3. If tests fail, test each dependency individually
+4. Keep only upgrades that pass tests
+
+### After Any Upgrade
+
+1. Run tests: \`pnpm test\`
+2. Run type check if available: \`pnpm typecheck\`
+3. Run build if available: \`pnpm build\`
+4. Report results to user
+
+## Phase 6: Summary
+
+\`\`\`
+## Upgrade Summary
+
+### Upgraded
+- lodash: 4.17.20 → 4.17.21 (patch)
+- vitest: 1.5.0 → 1.6.0 (minor)
+
+### Skipped
+- typescript: 4.9.5 → 5.4.2 (major - user opted out)
+
+### Verification
+- [x] Tests passing
+- [x] Types checking
+- [x] Build successful
+
+### Next Steps
+- Review changelog for skipped major upgrades
+- Consider running full test suite in CI before merging
+\`\`\`
+
+---
+
+Upgrade: $ARGUMENTS
 "
 `;
 
@@ -7219,7 +7973,7 @@ _order: 2
 
 Clean up merged worktrees by finding the oldest merged branch, consolidating settings, and removing stale worktrees.
 
-Additional info: $ARGUMENTS
+Worktree-cleanup: $ARGUMENTS
 
 <current_state>
 Current branch: \`git branch --show-current\`

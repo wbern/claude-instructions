@@ -21,9 +21,10 @@ Process:
 
 1. Get Issue Number
 
-- Either from branch name use that issue number
-  - Patterns: issue-123, 123-feature, feature/123, fix/123
-- Or from this bullet point with custom info: $ARGUMENTS
+Issue: $ARGUMENTS
+
+- Check if argument is an issue number
+- Otherwise try branch name patterns: issue-123, 123-feature, feature/123, fix/123
 - If not found: ask user
 
 2. Fetch Issue

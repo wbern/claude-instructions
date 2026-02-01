@@ -17,7 +17,7 @@ _order: 1
 
 Create a git commit following project standards
 
-Include any of the following info if specified: $ARGUMENTS
+Commit: $ARGUMENTS
 
 <!-- docs INCLUDE path='src/fragments/commit-process.md' -->
 <!-- /docs -->

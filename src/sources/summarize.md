@@ -17,7 +17,7 @@ _order: 10
 
 Create a concise summary of the current conversation suitable for transferring context to a new conversation.
 
-Additional info: $ARGUMENTS
+Summarize: $ARGUMENTS
 
 <!-- docs INCLUDE path='src/fragments/summarize-structure.md' -->
 <!-- /docs -->

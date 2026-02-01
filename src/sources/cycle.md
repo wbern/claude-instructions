@@ -6,9 +6,9 @@ _category: Test-Driven Development
 _order: 5
 ---
 
-RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input here:
+Cycle: $ARGUMENTS
 
-$ARGUMENTS
+RED+GREEN+REFACTOR (one cycle) PHASE! Apply the below to the info given by user input.
 
 <!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
 <!-- /docs -->

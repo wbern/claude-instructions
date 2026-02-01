@@ -21,7 +21,7 @@ Execute the user's requested task (e.g., posting PR comments, GitHub issue comme
 
 ## Instructions
 
-Arguments: $ARGUMENTS
+Beepboop: $ARGUMENTS
 
 **IMPORTANT Communication Format:**
 

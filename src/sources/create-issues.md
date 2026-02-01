@@ -19,9 +19,7 @@ Create structured implementation plan that bridges product thinking (PRD) with t
 <!-- docs INCLUDE path='src/fragments/no-plan-files.md' featureFlag='no-plan-files' -->
 <!-- /docs -->
 
-## Input
-
-$ARGUMENTS
+Create-issues: $ARGUMENTS
 
 (If no input provided, check conversation context<!-- docs INCLUDE path='src/fragments/create-issues-beads-context-hint.md' featureFlag='beads' -->
 <!-- /docs -->)
