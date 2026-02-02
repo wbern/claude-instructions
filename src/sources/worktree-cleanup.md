@@ -33,7 +33,11 @@ Current worktrees: `git worktree list`
 <execution_steps>
 <step_0>
   <description>Detect git hosting provider and available tools</description>
-<!-- docs INCLUDE path='src/fragments/git-host-detection.md' -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection-gh-mcp.md' featureFlag='gh-mcp' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection-gh-cli.md' featureFlag='gh-cli' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection.md' unlessFlags='gh-cli,gh-mcp' -->
 <!-- /docs -->
   <purpose>Detect git hosting provider and select appropriate tool for PR verification</purpose>
 </step_0>

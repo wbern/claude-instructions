@@ -49,6 +49,91 @@ describe("dynamic generation snapshots", () => {
       });
     });
   });
+
+  describe("gh-mcp flag produces different output", () => {
+    const ghMcpAffectedFiles = [
+      "issue.md",
+      "create-issues.md",
+      "code-review.md",
+      "polish.md",
+      "worktree-add.md",
+      "worktree-cleanup.md",
+    ];
+
+    ghMcpAffectedFiles.forEach((file) => {
+      it(`${file} should differ with and without gh-mcp flag`, () => {
+        const source = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const withGhMcp = expandContent(source, {
+          flags: ["gh-mcp"],
+          baseDir: PROJECT_ROOT,
+        });
+        const withoutGhMcp = expandContent(source, {
+          flags: [],
+          baseDir: PROJECT_ROOT,
+        });
+        // The two outputs should be different
+        expect(withGhMcp).not.toEqual(withoutGhMcp);
+      });
+
+      it(`${file} with gh-mcp should include MCP-only instructions`, () => {
+        const source = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const expanded = expandContent(source, {
+          flags: ["gh-mcp"],
+          baseDir: PROJECT_ROOT,
+        });
+        // gh-mcp flag should include MCP tool references without CLI fallback
+        expect(expanded).toMatch(/mcp__github/);
+      });
+    });
+  });
+
+  describe("gh-cli flag produces different output", () => {
+    const ghCliAffectedFiles = [
+      "issue.md",
+      "create-issues.md",
+      "code-review.md",
+      "polish.md",
+      "worktree-add.md",
+      "worktree-cleanup.md",
+    ];
+
+    ghCliAffectedFiles.forEach((file) => {
+      it(`${file} should differ with and without gh-cli flag`, () => {
+        const source = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const withGhCli = expandContent(source, {
+          flags: ["gh-cli"],
+          baseDir: PROJECT_ROOT,
+        });
+        const withoutGhCli = expandContent(source, {
+          flags: [],
+          baseDir: PROJECT_ROOT,
+        });
+        // The two outputs should be different
+        expect(withGhCli).not.toEqual(withoutGhCli);
+      });
+
+      it(`${file} with gh-cli should include gh CLI instructions`, () => {
+        const source = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const expanded = expandContent(source, {
+          flags: ["gh-cli"],
+          baseDir: PROJECT_ROOT,
+        });
+        // gh-cli flag should include gh CLI instructions
+        expect(expanded).toMatch(/gh (issue|pr|auth)/);
+      });
+
+      it(`${file} without gh-cli should include MCP references`, () => {
+        const source = fs.readFileSync(path.join(SOURCES_DIR, file), "utf8");
+        const expanded = expandContent(source, {
+          flags: [],
+          baseDir: PROJECT_ROOT,
+        });
+        // Without gh-cli flag should include MCP tool references
+        // Some files use "mcp__github", others use generic "MCP servers"
+        expect(expanded).toMatch(/mcp__github|GitHub MCP|MCP servers/i);
+      });
+    });
+  });
 });
 
 describe("dynamic generation content validation", () => {

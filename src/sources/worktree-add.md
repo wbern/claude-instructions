@@ -53,7 +53,11 @@ Uncommitted changes: `git status --short`
 <step_0b>
   <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
   <condition>Only run this step if first argument looks like a git hosting URL</condition>
-<!-- docs INCLUDE path='src/fragments/git-host-detection.md' -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection-gh-mcp.md' featureFlag='gh-mcp' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection-gh-cli.md' featureFlag='gh-cli' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/git-host-detection.md' unlessFlags='gh-cli,gh-mcp' -->
 <!-- /docs -->
   <purpose>Detect git hosting provider and select appropriate tool for issue lookup</purpose>
 </step_0b>

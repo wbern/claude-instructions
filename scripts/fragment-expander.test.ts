@@ -142,4 +142,40 @@ describe("expandContent", () => {
       expandContent(content, { flags: [], baseDir: "/project" }),
     ).toThrow("INCLUDE directive missing required 'path' attribute");
   });
+
+  it("should skip content when unlessFlags matches any enabled flag", async () => {
+    const fs = await import("fs-extra");
+    vi.mocked(fs.default.readFileSync).mockClear();
+
+    const content = `# Header
+<!-- docs INCLUDE path='src/fragments/default.md' unlessFlags='gh-cli,gh-mcp' -->
+<!-- /docs -->
+# Footer`;
+
+    const result = expandContent(content, {
+      flags: ["gh-cli"],
+      baseDir: "/project",
+    });
+
+    expect(fs.default.readFileSync).not.toHaveBeenCalled();
+    expect(result).toBe("# Header\n\n# Footer");
+  });
+
+  it("should include content when unlessFlags does not match any enabled flag", async () => {
+    const fs = await import("fs-extra");
+    vi.mocked(fs.default.readFileSync).mockReturnValue("Default content");
+
+    const content = `# Header
+<!-- docs INCLUDE path='src/fragments/default.md' unlessFlags='gh-cli,gh-mcp' -->
+<!-- /docs -->
+# Footer`;
+
+    const result = expandContent(content, { flags: [], baseDir: "/project" });
+
+    expect(fs.default.readFileSync).toHaveBeenCalledWith(
+      "/project/src/fragments/default.md",
+      "utf8",
+    );
+    expect(result).toContain("Default content");
+  });
 });

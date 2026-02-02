@@ -41,11 +41,12 @@ Parse the argument to determine what to polish:
 | PR URL (e.g., `github.com/.../pull/123`) | Extract PR number and fetch diff |
 | File/path | Focus on specific file(s) |
 
-**For GitHub PRs:**
-
-1. Try GitHub MCP first: `mcp__github__pull_request_read` with `method: "get_diff"`
-2. Fall back to `gh` CLI: `gh pr diff <number>`
-3. If neither works, report error and stop
+<!-- docs INCLUDE path='src/fragments/github-pr-fetch-gh-mcp.md' featureFlag='gh-mcp' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-pr-fetch-gh-cli.md' featureFlag='gh-cli' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-pr-fetch.md' unlessFlags='gh-cli,gh-mcp' -->
+<!-- /docs -->
 
 **For local branches:**
 

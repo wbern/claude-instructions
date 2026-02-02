@@ -72,6 +72,18 @@ vi.mock("./cli-generator.js", () => ({
       hint: "Forbid Claude Code's internal plan.md",
       category: "Feature Flags",
     },
+    {
+      value: "gh-cli",
+      label: "GitHub CLI",
+      hint: "Use gh CLI instead of GitHub MCP",
+      category: "Feature Flags",
+    },
+    {
+      value: "gh-mcp",
+      label: "GitHub MCP",
+      hint: "Use GitHub MCP only (no CLI fallback)",
+      category: "Feature Flags",
+    },
   ],
   SCOPES: {
     PROJECT: "project",
@@ -1749,6 +1761,47 @@ Line 10`;
 describe("flags selection (dynamic generation)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("should warn and re-prompt when both gh-cli and gh-mcp flags are selected", async () => {
+    const { select, text, groupMultiselect, log } = await import(
+      "@clack/prompts"
+    );
+    const { main } = await import("./cli.js");
+
+    // Set up the full interactive flow manually
+    vi.mocked(select).mockResolvedValueOnce("project"); // scope
+    vi.mocked(text).mockResolvedValueOnce(""); // prefix
+    vi.mocked(groupMultiselect)
+      .mockResolvedValueOnce(["gh-cli", "gh-mcp"]) // First flags attempt: both selected (invalid)
+      .mockResolvedValueOnce(["gh-cli"]) // Second flags attempt: only one (valid)
+      .mockResolvedValueOnce(["red.md"]) // commands
+      .mockResolvedValueOnce([]); // allowed tools
+
+    await main();
+
+    // Should warn about mutual exclusivity
+    expect(log.warn).toHaveBeenCalledWith(
+      expect.stringContaining("mutually exclusive"),
+    );
+  });
+
+  it("should error when both gh-cli and gh-mcp flags are passed via CLI args", async () => {
+    const { log } = await import("@clack/prompts");
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    await main({
+      scope: "project",
+      flags: ["gh-cli", "gh-mcp"],
+    });
+
+    // Should warn about mutual exclusivity
+    expect(log.warn).toHaveBeenCalledWith(
+      expect.stringContaining("mutually exclusive"),
+    );
+    // Should not generate anything
+    expect(generateToDirectory).not.toHaveBeenCalled();
   });
 
   it("should prompt for flags instead of variant in interactive mode", async () => {

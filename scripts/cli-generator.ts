@@ -94,6 +94,18 @@ export const FLAG_OPTIONS = [
     hint: "Forbid Claude Code's internal plan.md",
     category: "Feature Flags",
   },
+  {
+    value: "gh-cli",
+    label: "GitHub CLI",
+    hint: "Use gh CLI instead of GitHub MCP",
+    category: "Feature Flags",
+  },
+  {
+    value: "gh-mcp",
+    label: "GitHub MCP",
+    hint: "Use GitHub MCP only (no CLI fallback)",
+    category: "Feature Flags",
+  },
 ] as const;
 
 export function getScopeOptions(terminalWidth: number = 80) {

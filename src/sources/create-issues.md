@@ -46,15 +46,13 @@ If input looks like a GitHub issue:
 - From branch name: check patterns like `issue-123`, `123-feature`, `feature/123`
 
 **Step 2: Fetch Issue**
-Try GitHub MCP first:
-- If available: use `mcp__github__issue_read` to fetch issue details
-- If not available: show message and try `gh issue view <number>`
 
-```
-GitHub MCP not configured!
-See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
-Trying GitHub CLI fallback...
-```
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch-gh-mcp.md' featureFlag='gh-mcp' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch-gh-cli.md' featureFlag='gh-cli' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch.md' unlessFlags='gh-cli,gh-mcp' -->
+<!-- /docs -->
 
 **Step 3: Use Issue as Discovery Input**
 - Title → Feature name

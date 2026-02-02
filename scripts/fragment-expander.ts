@@ -31,7 +31,7 @@ export function expandContent(content: string, options: ExpandOptions): string {
       }
 
       const attrs = parseOptions(attrString);
-      const { path: includePath, featureFlag, elsePath } = attrs;
+      const { path: includePath, featureFlag, elsePath, unlessFlags } = attrs;
 
       // Check feature flag condition
       if (featureFlag && !flags.includes(featureFlag)) {
@@ -46,6 +46,14 @@ export function expandContent(content: string, options: ExpandOptions): string {
           }
         }
         return "";
+      }
+
+      // Check unlessFlags - skip if ANY of these flags are set
+      if (unlessFlags) {
+        const excludeFlags = unlessFlags.split(",").map((f) => f.trim());
+        if (excludeFlags.some((f) => flags.includes(f))) {
+          return "";
+        }
       }
 
       if (!includePath) {

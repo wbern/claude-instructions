@@ -150,7 +150,15 @@ Flexible structure. Interactive commands use `(no arguments - interactive)` hint
 | `beads-integration.md` | PR, planning (featureFlag='beads') |
 | `commit-process.md` | Commit |
 | `no-plan-files.md` | Commit (featureFlag='no-plan-files') |
-| `github-issue-fetch.md` | Issue fetching |
+| `github-issue-fetch.md` | Issue fetching (MCP-first with CLI fallback, default) |
+| `github-issue-fetch-gh-mcp.md` | Issue fetching (MCP only, featureFlag='gh-mcp') |
+| `github-issue-fetch-gh-cli.md` | Issue fetching (CLI only, featureFlag='gh-cli') |
+| `github-pr-fetch.md` | PR fetching (MCP-first with CLI fallback, default) |
+| `github-pr-fetch-gh-mcp.md` | PR fetching (MCP only, featureFlag='gh-mcp') |
+| `github-pr-fetch-gh-cli.md` | PR fetching (CLI only, featureFlag='gh-cli') |
+| `git-host-detection.md` | Multi-host detection (MCP+CLI, default) |
+| `git-host-detection-gh-mcp.md` | Multi-host detection (MCP only, featureFlag='gh-mcp') |
+| `git-host-detection-gh-cli.md` | Multi-host detection (CLI only, featureFlag='gh-cli') |
 | `test-quality-criteria.md` | Code review |
 
 ## Rules

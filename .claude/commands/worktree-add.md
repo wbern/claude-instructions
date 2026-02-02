@@ -55,6 +55,7 @@ Uncommitted changes: `git status --short`
 <step_0b>
   <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
   <condition>Only run this step if first argument looks like a git hosting URL</condition>
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>

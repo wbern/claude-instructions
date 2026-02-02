@@ -33,7 +33,11 @@ Issue: $ARGUMENTS
 
 2. Fetch Issue
 
-<!-- docs INCLUDE path='src/fragments/github-issue-fetch.md' -->
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch-gh-mcp.md' featureFlag='gh-mcp' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch-gh-cli.md' featureFlag='gh-cli' -->
+<!-- /docs -->
+<!-- docs INCLUDE path='src/fragments/github-issue-fetch.md' unlessFlags='gh-cli,gh-mcp' -->
 <!-- /docs -->
 
 3. Analyze and Plan

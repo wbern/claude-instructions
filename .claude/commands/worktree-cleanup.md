@@ -35,6 +35,7 @@ Current worktrees: `git worktree list`
 <execution_steps>
 <step_0>
   <description>Detect git hosting provider and available tools</description>
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>

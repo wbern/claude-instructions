@@ -49,16 +49,18 @@ If input looks like a GitHub issue:
 - From branch name: check patterns like `issue-123`, `123-feature`, `feature/123`
 
 **Step 2: Fetch Issue**
-Try GitHub MCP first:
 
-- If available: use `mcp__github__issue_read` to fetch issue details
-- If not available: show message and try `gh issue view <number>`
+Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
+
+If GitHub MCP is not configured, show:
 
 ```
 GitHub MCP not configured!
 See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
 Trying GitHub CLI fallback...
 ```
+
+Then try using `gh issue view [ISSUE_NUMBER] --json` as fallback.
 
 **Step 3: Use Issue as Discovery Input**
 

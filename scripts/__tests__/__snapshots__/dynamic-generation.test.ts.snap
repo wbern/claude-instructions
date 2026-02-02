@@ -158,6 +158,203 @@ Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
 "
 `;
 
+exports[`dynamic generation snapshots > with beads flag > should match snapshot for adr.md 1`] = `
+"---
+description: Create an Architecture Decision Record
+argument-hint: [decision topic or title]
+_hint: Create ADR
+_category: Utilities
+_order: 20
+---
+
+# ADR: Architecture Decision Record Creator
+
+Create a structured ADR to document architectural decisions with context, rationale, and consequences.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+Beads is available for task tracking. Use \`mcp__beads__*\` tools to manage issues (the user interacts via \`bd\` commands).
+
+
+
+
+**User arguments:**
+
+ADR: $ARGUMENTS
+
+**End of user arguments**
+
+(If no input provided, ask user for the architectural decision topic)
+
+## Process
+
+### Step 1: Detect ADR Directory and Determine Number
+
+Find existing ADR location and calculate next number:
+
+\`\`\`bash
+# Check common ADR directories (in order of preference)
+for dir in doc/adr docs/adr decisions doc/architecture/decisions; do
+  if [ -d "$dir" ]; then
+    echo "Found: $dir"
+    ls "$dir"/*.md 2>/dev/null | grep -E '/[0-9]{4}-' | sort | tail -1
+    break
+  fi
+done
+\`\`\`
+
+If no ADR directory exists:
+1. Ask user which location to use (default: \`doc/adr/\`)
+2. Create the directory
+
+Calculate next number:
+1. Extract highest existing number
+2. Increment by 1
+3. Format as 4-digit zero-padded (e.g., \`0001\`, \`0012\`)
+
+### Step 2: Discovery Questions
+
+Gather context through conversation (use AskUserQuestion for structured choices):
+
+**Context & Problem**
+- What problem, pattern, or situation prompted this decision?
+- What triggered the need to decide now? (bug, confusion, inconsistency, new requirement)
+- Are there related PRs, issues, or prior discussions to reference?
+
+**The Decision**
+- What are we deciding to do (or not do)?
+- What alternatives were considered?
+- Why was this approach chosen over alternatives?
+
+**Consequences**
+- What becomes easier or more consistent with this decision?
+- What becomes harder, more constrained, or riskier?
+- What tradeoffs are we explicitly accepting?
+
+**Scope**
+- Which parts of the codebase does this apply to?
+- Are there exceptions or areas where this doesn't apply?
+
+### Step 3: Generate ADR File
+
+Create \`{adr_directory}/NNNN-title-slug.md\`:
+
+- Convert title to kebab-case slug (lowercase, hyphens, no special chars)
+- Use today's date for the \`date\` field
+- Default status to \`accepted\` (most ADRs are written after the decision is made)
+
+**ADR Template:**
+
+\`\`\`markdown
+---
+status: accepted
+date: YYYY-MM-DD
+applies_to:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+# N. Title
+
+## Context
+
+[Forces at play - technological, social, project constraints.
+What problem prompted this? Value-neutral description of the situation.]
+
+## Decision
+
+We will [decision statement in active voice].
+
+[If useful, include concrete examples:]
+
+**Forbidden pattern:**
+\`\`\`typescript
+// ❌ BAD - [explanation]
+[example of what NOT to do]
+\`\`\`
+
+**Required pattern:**
+\`\`\`typescript
+// ✅ GOOD - [explanation]
+[example of what TO do]
+\`\`\`
+
+## Consequences
+
+**Positive:**
+- [What becomes easier]
+- [What becomes more consistent]
+
+**Negative:**
+- [What becomes harder]
+- [What constraints we accept]
+
+**Neutral:**
+- [Other impacts worth noting]
+
+## References
+
+- [Related PRs, issues, or documentation]
+\`\`\`
+
+### Step 4: Refine applies_to Scope
+
+Help user define which files this decision applies to using glob patterns:
+
+| Pattern | Meaning |
+|---------|---------|
+| \`**/*.ts\` | All TypeScript files |
+| \`**/*.tsx\` | All React component files |
+| \`src/components/**\` | Only files in components directory |
+| \`!**/*.test.ts\` | Exclude test files (prefix with \`!\`) |
+| \`!**/*.d.ts\` | Exclude type definition files |
+| \`packages/api/**\` | Specific package only |
+
+If the decision applies broadly, use \`["**/*"]\` or omit \`applies_to\` entirely.
+
+### Step 5: Confirm and Write
+
+Show the complete ADR content and ask user to confirm before writing.
+
+After creation, suggest:
+- Review the ADR for completeness
+- Commit with \`/commit\`
+
+## Tips for Good ADRs
+
+1. **Focus on the "why"** - The decision itself may be obvious; the reasoning often isn't
+2. **Keep it concise** - 1-2 pages maximum; should be readable in 5 minutes
+3. **Include concrete examples** - Code examples make abstract decisions tangible
+4. **Document tradeoffs** - Every decision has costs; be honest about them
+5. **Link to context** - Reference PRs, issues, or discussions where the decision was made
+6. **Be specific about scope** - Use \`applies_to\` patterns to clarify affected code
+
+## Status Values
+
+| Status | When to Use |
+|--------|-------------|
+| \`proposed\` | Under discussion, not yet agreed |
+| \`accepted\` | Agreed upon and should be followed |
+| \`deprecated\` | No longer relevant (context changed) |
+| \`superseded\` | Replaced by another ADR (link to it) |
+
+To supersede an existing ADR:
+1. Create new ADR with the updated decision
+2. Update old ADR's status to \`superseded by ADR-NNNN\`
+
+## Integration with Other Commands
+
+- After creating: Commit with \`/commit\`
+- If decision needs discussion: Create issue with \`/create-issues\`
+"
+`;
+
 exports[`dynamic generation snapshots > with beads flag > should match snapshot for ask.md 1`] = `
 "---
 description: Request team review and approval - for complex changes needing discussion
@@ -517,11 +714,14 @@ Parse the argument to determine the review target:
 | PR number (e.g., \`123\`) | Fetch PR diff from GitHub |
 | PR URL (e.g., \`https://github.com/owner/repo/pull/123\`) | Extract PR number and fetch diff |
 
+
+
 **For GitHub PRs:**
 
 1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
 2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
 3. If neither works, report error and stop
+
 
 **For local branches (no argument or branch name provided):**
 
@@ -958,15 +1158,20 @@ If input looks like a GitHub issue:
 - From branch name: check patterns like \`issue-123\`, \`123-feature\`, \`feature/123\`
 
 **Step 2: Fetch Issue**
-Try GitHub MCP first:
-- If available: use \`mcp__github__issue_read\` to fetch issue details
-- If not available: show message and try \`gh issue view <number>\`
 
+
+
+Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
+
+If GitHub MCP is not configured, show:
 \`\`\`
 GitHub MCP not configured!
 See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
 Trying GitHub CLI fallback...
 \`\`\`
+
+Then try using \`gh issue view [ISSUE_NUMBER] --json\` as fallback.
+
 
 **Step 3: Use Issue as Discovery Input**
 - Title → Feature name
@@ -1505,6 +1710,8 @@ Issue: $ARGUMENTS
 - If not found: ask user
 
 2. Fetch Issue
+
+
 
 Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
 
@@ -2135,11 +2342,14 @@ Parse the argument to determine what to polish:
 | PR URL (e.g., \`github.com/.../pull/123\`) | Extract PR number and fetch diff |
 | File/path | Focus on specific file(s) |
 
+
+
 **For GitHub PRs:**
 
 1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
 2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
 3. If neither works, report error and stop
+
 
 **For local branches:**
 
@@ -3720,6 +3930,8 @@ Uncommitted changes: \`git status --short\`
 <step_0b>
   <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
   <condition>Only run this step if first argument looks like a git hosting URL</condition>
+
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>
@@ -4070,6 +4282,8 @@ Current worktrees: \`git worktree list\`
 <execution_steps>
 <step_0>
   <description>Detect git hosting provider and available tools</description>
+
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>
@@ -4450,6 +4664,202 @@ Example: \`/review\` or \`/ai:gpt5 "explain this code"\`
 "
 `;
 
+exports[`dynamic generation snapshots > without beads flag > should match snapshot for adr.md 1`] = `
+"---
+description: Create an Architecture Decision Record
+argument-hint: [decision topic or title]
+_hint: Create ADR
+_category: Utilities
+_order: 20
+---
+
+# ADR: Architecture Decision Record Creator
+
+Create a structured ADR to document architectural decisions with context, rationale, and consequences.
+
+## General Guidelines
+
+### Output Style
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+
+
+
+
+
+**User arguments:**
+
+ADR: $ARGUMENTS
+
+**End of user arguments**
+
+(If no input provided, ask user for the architectural decision topic)
+
+## Process
+
+### Step 1: Detect ADR Directory and Determine Number
+
+Find existing ADR location and calculate next number:
+
+\`\`\`bash
+# Check common ADR directories (in order of preference)
+for dir in doc/adr docs/adr decisions doc/architecture/decisions; do
+  if [ -d "$dir" ]; then
+    echo "Found: $dir"
+    ls "$dir"/*.md 2>/dev/null | grep -E '/[0-9]{4}-' | sort | tail -1
+    break
+  fi
+done
+\`\`\`
+
+If no ADR directory exists:
+1. Ask user which location to use (default: \`doc/adr/\`)
+2. Create the directory
+
+Calculate next number:
+1. Extract highest existing number
+2. Increment by 1
+3. Format as 4-digit zero-padded (e.g., \`0001\`, \`0012\`)
+
+### Step 2: Discovery Questions
+
+Gather context through conversation (use AskUserQuestion for structured choices):
+
+**Context & Problem**
+- What problem, pattern, or situation prompted this decision?
+- What triggered the need to decide now? (bug, confusion, inconsistency, new requirement)
+- Are there related PRs, issues, or prior discussions to reference?
+
+**The Decision**
+- What are we deciding to do (or not do)?
+- What alternatives were considered?
+- Why was this approach chosen over alternatives?
+
+**Consequences**
+- What becomes easier or more consistent with this decision?
+- What becomes harder, more constrained, or riskier?
+- What tradeoffs are we explicitly accepting?
+
+**Scope**
+- Which parts of the codebase does this apply to?
+- Are there exceptions or areas where this doesn't apply?
+
+### Step 3: Generate ADR File
+
+Create \`{adr_directory}/NNNN-title-slug.md\`:
+
+- Convert title to kebab-case slug (lowercase, hyphens, no special chars)
+- Use today's date for the \`date\` field
+- Default status to \`accepted\` (most ADRs are written after the decision is made)
+
+**ADR Template:**
+
+\`\`\`markdown
+---
+status: accepted
+date: YYYY-MM-DD
+applies_to:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+# N. Title
+
+## Context
+
+[Forces at play - technological, social, project constraints.
+What problem prompted this? Value-neutral description of the situation.]
+
+## Decision
+
+We will [decision statement in active voice].
+
+[If useful, include concrete examples:]
+
+**Forbidden pattern:**
+\`\`\`typescript
+// ❌ BAD - [explanation]
+[example of what NOT to do]
+\`\`\`
+
+**Required pattern:**
+\`\`\`typescript
+// ✅ GOOD - [explanation]
+[example of what TO do]
+\`\`\`
+
+## Consequences
+
+**Positive:**
+- [What becomes easier]
+- [What becomes more consistent]
+
+**Negative:**
+- [What becomes harder]
+- [What constraints we accept]
+
+**Neutral:**
+- [Other impacts worth noting]
+
+## References
+
+- [Related PRs, issues, or documentation]
+\`\`\`
+
+### Step 4: Refine applies_to Scope
+
+Help user define which files this decision applies to using glob patterns:
+
+| Pattern | Meaning |
+|---------|---------|
+| \`**/*.ts\` | All TypeScript files |
+| \`**/*.tsx\` | All React component files |
+| \`src/components/**\` | Only files in components directory |
+| \`!**/*.test.ts\` | Exclude test files (prefix with \`!\`) |
+| \`!**/*.d.ts\` | Exclude type definition files |
+| \`packages/api/**\` | Specific package only |
+
+If the decision applies broadly, use \`["**/*"]\` or omit \`applies_to\` entirely.
+
+### Step 5: Confirm and Write
+
+Show the complete ADR content and ask user to confirm before writing.
+
+After creation, suggest:
+- Review the ADR for completeness
+- Commit with \`/commit\`
+
+## Tips for Good ADRs
+
+1. **Focus on the "why"** - The decision itself may be obvious; the reasoning often isn't
+2. **Keep it concise** - 1-2 pages maximum; should be readable in 5 minutes
+3. **Include concrete examples** - Code examples make abstract decisions tangible
+4. **Document tradeoffs** - Every decision has costs; be honest about them
+5. **Link to context** - Reference PRs, issues, or discussions where the decision was made
+6. **Be specific about scope** - Use \`applies_to\` patterns to clarify affected code
+
+## Status Values
+
+| Status | When to Use |
+|--------|-------------|
+| \`proposed\` | Under discussion, not yet agreed |
+| \`accepted\` | Agreed upon and should be followed |
+| \`deprecated\` | No longer relevant (context changed) |
+| \`superseded\` | Replaced by another ADR (link to it) |
+
+To supersede an existing ADR:
+1. Create new ADR with the updated decision
+2. Update old ADR's status to \`superseded by ADR-NNNN\`
+
+## Integration with Other Commands
+
+- After creating: Commit with \`/commit\`
+- If decision needs discussion: Create issue with \`/create-issues\`
+"
+`;
+
 exports[`dynamic generation snapshots > without beads flag > should match snapshot for ask.md 1`] = `
 "---
 description: Request team review and approval - for complex changes needing discussion
@@ -4797,11 +5207,14 @@ Parse the argument to determine the review target:
 | PR number (e.g., \`123\`) | Fetch PR diff from GitHub |
 | PR URL (e.g., \`https://github.com/owner/repo/pull/123\`) | Extract PR number and fetch diff |
 
+
+
 **For GitHub PRs:**
 
 1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
 2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
 3. If neither works, report error and stop
+
 
 **For local branches (no argument or branch name provided):**
 
@@ -5235,15 +5648,20 @@ If input looks like a GitHub issue:
 - From branch name: check patterns like \`issue-123\`, \`123-feature\`, \`feature/123\`
 
 **Step 2: Fetch Issue**
-Try GitHub MCP first:
-- If available: use \`mcp__github__issue_read\` to fetch issue details
-- If not available: show message and try \`gh issue view <number>\`
 
+
+
+Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
+
+If GitHub MCP is not configured, show:
 \`\`\`
 GitHub MCP not configured!
 See: https://github.com/modelcontextprotocol/servers/tree/main/src/github
 Trying GitHub CLI fallback...
 \`\`\`
+
+Then try using \`gh issue view [ISSUE_NUMBER] --json\` as fallback.
+
 
 **Step 3: Use Issue as Discovery Input**
 - Title → Feature name
@@ -5713,6 +6131,8 @@ Issue: $ARGUMENTS
 - If not found: ask user
 
 2. Fetch Issue
+
+
 
 Try to fetch the issue using GitHub MCP (mcp__github__issue_read tool).
 
@@ -6333,11 +6753,14 @@ Parse the argument to determine what to polish:
 | PR URL (e.g., \`github.com/.../pull/123\`) | Extract PR number and fetch diff |
 | File/path | Focus on specific file(s) |
 
+
+
 **For GitHub PRs:**
 
 1. Try GitHub MCP first: \`mcp__github__pull_request_read\` with \`method: "get_diff"\`
 2. Fall back to \`gh\` CLI: \`gh pr diff <number>\`
 3. If neither works, report error and stop
+
 
 **For local branches:**
 
@@ -7866,6 +8289,8 @@ Uncommitted changes: \`git status --short\`
 <step_0b>
   <description>Detect git hosting provider and available tools (only needed if argument is an issue URL)</description>
   <condition>Only run this step if first argument looks like a git hosting URL</condition>
+
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>
@@ -8215,6 +8640,8 @@ Current worktrees: \`git worktree list\`
 <execution_steps>
 <step_0>
   <description>Detect git hosting provider and available tools</description>
+
+
 <detect_provider>
   <check_remote_url>git remote get-url origin</check_remote_url>
   <identify_host>

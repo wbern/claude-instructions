@@ -223,6 +223,17 @@ export async function main(args?: CliArgs): Promise<void> {
     selectedFlags = args.flags ? v.parse(FlagsSchema, args.flags) : undefined;
     selectedAllowedTools = args.allowedTools;
 
+    // Validate mutually exclusive flags in non-interactive mode
+    if (selectedFlags) {
+      const flags = selectedFlags as string[];
+      if (flags.includes("gh-cli") && flags.includes("gh-mcp")) {
+        log.warn(
+          "gh-cli and gh-mcp are mutually exclusive. Please select only one.",
+        );
+        return;
+      }
+    }
+
     if (args.updateExisting) {
       cachedExistingFiles = await checkExistingFiles(undefined, scope, {
         commandPrefix: commandPrefix || "",
@@ -270,20 +281,34 @@ export async function main(args?: CliArgs): Promise<void> {
     }
 
     // Select feature flags (replaces variant selection)
-    selectedFlags = await groupMultiselect({
-      message: "Select feature flags (optional)",
-      options: {
-        "Feature Flags": FLAG_OPTIONS.map(({ value, label, hint }) => ({
-          value,
-          label,
-          hint,
-        })),
-      },
-      required: false,
-    });
+    // Loop to allow re-prompting if mutually exclusive flags are selected
+    while (true) {
+      selectedFlags = await groupMultiselect({
+        message: "Select feature flags (optional)",
+        options: {
+          "Feature Flags": FLAG_OPTIONS.map(({ value, label, hint }) => ({
+            value,
+            label,
+            hint,
+          })),
+        },
+        required: false,
+      });
 
-    if (isCancel(selectedFlags)) {
-      return;
+      if (isCancel(selectedFlags)) {
+        return;
+      }
+
+      // Validate mutually exclusive flags: gh-cli and gh-mcp cannot both be selected
+      const flags = selectedFlags as string[];
+      if (flags.includes("gh-cli") && flags.includes("gh-mcp")) {
+        log.warn(
+          "gh-cli and gh-mcp are mutually exclusive. Please select only one.",
+        );
+        continue;
+      }
+
+      break;
     }
 
     let groupedCommands = await getCommandsGroupedByCategory();
