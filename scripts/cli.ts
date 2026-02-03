@@ -1,4 +1,5 @@
 import os from "node:os";
+import path from "node:path";
 import {
   confirm,
   groupMultiselect,
@@ -18,8 +19,10 @@ const pc = process.env.FORCE_COLOR ? picocolors.createColors(true) : picocolors;
 
 import {
   checkExistingFiles,
+  DIRECTORIES,
   type ExistingFile,
   FLAG_OPTIONS,
+  generateSkillsToDirectory,
   generateToDirectory,
   getCommandsGroupedByCategory,
   getRequestedToolsOptions,
@@ -203,6 +206,7 @@ export interface CliArgs {
   flags?: string[];
   allowedTools?: string[];
   includeContribCommands?: boolean;
+  skills?: string[];
 }
 
 export async function main(args?: CliArgs): Promise<void> {
@@ -213,6 +217,7 @@ export async function main(args?: CliArgs): Promise<void> {
   let selectedCommands: string[] | symbol | undefined;
   let selectedAllowedTools: string[] | symbol | undefined;
   let selectedFlags: string[] | symbol | undefined;
+  let selectedSkills: string[] | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
 
   if (args?.scope) {
@@ -373,6 +378,26 @@ export async function main(args?: CliArgs): Promise<void> {
         return;
       }
     }
+
+    // Skills selection - allow users to generate selected commands as skills
+    const commandsForSkills = (selectedCommands as string[]).map((cmd) => ({
+      value: cmd,
+      label: cmd.replace(/\.md$/, ""),
+      hint: "Generate as skill in .claude/skills/",
+    }));
+    const selectedSkillsResult = await groupMultiselect({
+      message: "Select commands to also generate as skills (optional)",
+      options: {
+        "Available commands": commandsForSkills,
+      },
+      initialValues: ["tdd.md"].filter((s) =>
+        (selectedCommands as string[]).includes(s),
+      ),
+      required: false,
+    });
+
+    if (isCancel(selectedSkillsResult)) return;
+    selectedSkills = selectedSkillsResult as string[];
   }
 
   const existingFiles =
@@ -477,6 +502,21 @@ export async function main(args?: CliArgs): Promise<void> {
     includeContribCommands: args?.includeContribCommands,
   });
 
+  // Generate skills (from interactive selection or --skills CLI option)
+  let skillsGenerated = 0;
+  const skillsToGenerate = selectedSkills ?? args?.skills;
+  if (skillsToGenerate && skillsToGenerate.length > 0) {
+    const skillsBasePath = scope === "project" ? process.cwd() : os.homedir();
+    const skillsPath = path.join(skillsBasePath, DIRECTORIES.CLAUDE, "skills");
+
+    const skillsResult = await generateSkillsToDirectory(
+      skillsPath,
+      skillsToGenerate,
+      { flags: selectedFlags as string[] | undefined },
+    );
+    skillsGenerated = skillsResult.skillsGenerated;
+  }
+
   const fullPath =
     scope === "project"
       ? `${process.cwd()}/.claude/commands`
@@ -503,14 +543,22 @@ export async function main(args?: CliArgs): Promise<void> {
         `--allowed-tools="${(selectedAllowedTools as string[]).join(",")}"`,
       );
     }
+    if (selectedSkills && selectedSkills.length > 0) {
+      parts.push(`--skills=${selectedSkills.join(",")}`);
+    }
     automationNote = `
 
 To automate this setup:
   ${parts.join(" ")}`;
   }
 
+  const skillsMessage =
+    skillsGenerated > 0
+      ? `\nInstalled ${skillsGenerated} skills to ${fullPath.replace("/commands", "/skills")}`
+      : "";
+
   outro(
-    `Installed ${result.filesGenerated} commands to ${fullPath}
+    `Installed ${result.filesGenerated} commands to ${fullPath}${skillsMessage}
 
 If Claude Code is already running, restart it to pick up the new commands.
 

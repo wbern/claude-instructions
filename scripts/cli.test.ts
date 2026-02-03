@@ -5,7 +5,13 @@ const mockCancel = Symbol("cancel");
 
 // Flow configuration as data - change this array when the interactive flow changes
 type MockFn = "select" | "text" | "groupMultiselect";
-type StepKey = "scope" | "prefix" | "flags" | "commands" | "allowedTools";
+type StepKey =
+  | "scope"
+  | "prefix"
+  | "flags"
+  | "commands"
+  | "allowedTools"
+  | "skills";
 
 interface FlowStep {
   key: StepKey;
@@ -25,6 +31,7 @@ const INTERACTIVE_FLOW: FlowStep[] = [
     default: [],
     optional: true,
   },
+  { key: "skills", mock: "groupMultiselect", default: [] },
 ];
 
 vi.mock("@clack/prompts", () => ({
@@ -44,8 +51,12 @@ vi.mock("./cli-generator.js", () => ({
   generateToDirectory: vi
     .fn()
     .mockResolvedValue({ success: true, filesGenerated: 5 }),
+  generateSkillsToDirectory: vi
+    .fn()
+    .mockResolvedValue({ success: true, skillsGenerated: 1 }),
   checkForConflicts: vi.fn().mockResolvedValue([]),
   checkExistingFiles: vi.fn().mockResolvedValue([]),
+  DIRECTORIES: { CLAUDE: ".claude" },
   getCommandsGroupedByCategory: vi.fn().mockResolvedValue({
     "TDD Cycle": [
       { value: "red.md", label: "red.md", hint: "Red phase" },
@@ -114,6 +125,7 @@ interface InteractiveFlowOptions {
   flags?: string[];
   commands?: string[];
   allowedTools?: string[];
+  skills?: string[];
   existingFiles?: ExistingFile[];
   cancelAt?: StepKey;
 }
@@ -288,6 +300,46 @@ describe("CLI", () => {
     );
   });
 
+  it("should prompt for skills selection in interactive mode", async () => {
+    const { groupMultiselect } = await import("@clack/prompts");
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks({
+      commands: ["red.md", "tdd.md"],
+      allowedTools: [],
+      skills: ["tdd.md"],
+    });
+
+    await main();
+
+    // Should prompt for skills selection after commands
+    expect(groupMultiselect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: expect.stringContaining("skills"),
+      }),
+    );
+
+    // Should generate skills for selected commands
+    expect(generateSkillsToDirectory).toHaveBeenCalledWith(
+      expect.stringContaining(".claude/skills"),
+      ["tdd.md"],
+      expect.any(Object),
+    );
+  });
+
+  it("should exit gracefully when user cancels on skills selection", async () => {
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    // Must explicitly set allowedTools so the mock for skills isn't consumed by allowedTools prompt
+    await setupInteractiveMocks({ allowedTools: [], cancelAt: "skills" });
+
+    await main();
+
+    expect(generateToDirectory).not.toHaveBeenCalled();
+  });
+
   it("should include --commands in automation note when specific commands selected", async () => {
     const { outro } = await import("@clack/prompts");
     const { main } = await import("./cli.js");
@@ -336,6 +388,41 @@ describe("CLI", () => {
       expect.stringContaining(
         '--allowed-tools="Bash(git diff:*),Bash(git status:*)"',
       ),
+    );
+  });
+
+  it("should include --skills in automation note when skills selected", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks({
+      scope: "project",
+      commands: ["red.md", "tdd.md"],
+      allowedTools: [],
+      skills: ["tdd.md"],
+    });
+
+    await main();
+
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining("--skills=tdd.md"),
+    );
+  });
+
+  it("should generate skills to user scope when scope is user", async () => {
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    await main({
+      scope: "user",
+      skills: ["tdd.md"],
+    });
+
+    // Should call with user home directory path
+    expect(generateSkillsToDirectory).toHaveBeenCalledWith(
+      expect.stringContaining(".claude/skills"),
+      ["tdd.md"],
+      expect.any(Object),
     );
   });
 

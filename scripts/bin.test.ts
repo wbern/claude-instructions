@@ -165,6 +165,7 @@ describe("CLI_OPTIONS consistency", () => {
       flags: undefined,
       allowedTools: undefined,
       includeContribCommands: undefined,
+      skills: undefined,
     } satisfies Record<keyof Required<CliArgs>, undefined>;
 
     const cliArgsKeys = Object.keys(cliArgsKeysObject).sort();

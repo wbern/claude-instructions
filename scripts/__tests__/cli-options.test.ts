@@ -24,6 +24,13 @@ describe("CLI_OPTIONS", () => {
       true,
     );
   });
+
+  it("should have skills option for selecting commands to generate as skills", () => {
+    const skillsOpt = CLI_OPTIONS.find((o) => o.key === "skills");
+    expect(skillsOpt).toBeDefined();
+    expect(skillsOpt?.type).toBe("array");
+    expect(skillsOpt?.flag).toBe("--skills");
+  });
 });
 
 describe("generateHelpText", () => {

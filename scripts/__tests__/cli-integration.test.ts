@@ -174,4 +174,43 @@ describe("CLI Integration", () => {
     expect(existingFiles).toHaveLength(1);
     expect(existingFiles[0].isIdentical).toBe(true);
   });
+
+  it("should generate skill to .claude/skills/{name}/SKILL.md with proper frontmatter", async () => {
+    const { generateSkillsToDirectory } = await import("../cli-generator.js");
+
+    const skillsDir = path.join(tempDir, ".claude", "skills");
+
+    await generateSkillsToDirectory(skillsDir, ["tdd.md"]);
+
+    // Skill should be in a directory named after the command (without .md)
+    const skillDir = path.join(skillsDir, "tdd");
+    expect(fs.existsSync(skillDir)).toBe(true);
+
+    // SKILL.md should exist inside the directory
+    const skillFile = path.join(skillDir, "SKILL.md");
+    expect(fs.existsSync(skillFile)).toBe(true);
+
+    // Verify frontmatter has required Skills format fields
+    const content = fs.readFileSync(skillFile, "utf-8");
+    expect(content).toMatch(/^---\n/);
+    expect(content).toMatch(/\nname: tdd\n/);
+    expect(content).toMatch(/\ndescription: /);
+  });
+
+  it("should generate skills via CLI --skills option", async () => {
+    const skillsDir = path.join(tempDir, ".claude", "skills");
+
+    // Run CLI with --skills option
+    execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
+      cwd: tempDir,
+      stdio: "pipe",
+    });
+
+    // Skill should be generated
+    const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
+    expect(fs.existsSync(skillFile)).toBe(true);
+
+    const content = fs.readFileSync(skillFile, "utf-8");
+    expect(content).toMatch(/\nname: tdd\n/);
+  });
 });

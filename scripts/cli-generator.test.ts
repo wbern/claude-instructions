@@ -1361,6 +1361,67 @@ describe("getScopeOptions", () => {
   });
 });
 
+describe("generateSkillsToDirectory", () => {
+  const MOCK_OUTPUT_PATH = "/mock/output/path";
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("should handle skill source with no description in frontmatter", async () => {
+    // Source has frontmatter but no description field
+    const sourceContent = `---
+argument-hint: [optional]
+---
+
+# Test Skill
+
+Content here.`;
+
+    vi.mocked(fs.readFile).mockResolvedValue(sourceContent as never);
+
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    const result = await generateSkillsToDirectory(MOCK_OUTPUT_PATH, [
+      "test.md",
+    ]);
+
+    expect(result.success).toBe(true);
+    expect(result.skillsGenerated).toBe(1);
+
+    // Should write SKILL.md with empty description
+    expect(fs.writeFile).toHaveBeenCalledWith(
+      expect.stringContaining("SKILL.md"),
+      expect.stringContaining("name: test"),
+    );
+    // Description should be empty (not undefined or missing)
+    const writtenContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+    expect(writtenContent).toContain("description: ");
+  });
+
+  it("should handle skill source with no frontmatter at all", async () => {
+    // Source has no frontmatter
+    const sourceContent = `# Test Skill
+
+Just content, no frontmatter.`;
+
+    vi.mocked(fs.readFile).mockResolvedValue(sourceContent as never);
+
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    const result = await generateSkillsToDirectory(MOCK_OUTPUT_PATH, [
+      "test.md",
+    ]);
+
+    expect(result.success).toBe(true);
+    expect(result.skillsGenerated).toBe(1);
+
+    // Should write SKILL.md with empty description and full body
+    const writtenContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+    expect(writtenContent).toContain("name: test");
+    expect(writtenContent).toContain("description: ");
+    expect(writtenContent).toContain("# Test Skill");
+  });
+});
+
 describe("generateToDirectory with flags option", () => {
   const MOCK_OUTPUT_PATH = "/mock/output/path";
 

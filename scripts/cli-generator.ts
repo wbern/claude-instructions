@@ -578,3 +578,78 @@ export async function generateToDirectory(
     flags: options?.flags,
   };
 }
+
+export interface GenerateSkillsOptions {
+  flags?: string[];
+}
+
+export interface GenerateSkillsResult {
+  success: boolean;
+  skillsGenerated: number;
+}
+
+/**
+ * Generates skills to .claude/skills/{skill-name}/SKILL.md format.
+ * Skills use the Agent Skills standard with name and description in frontmatter.
+ */
+export async function generateSkillsToDirectory(
+  outputPath: string,
+  skills: string[],
+  options?: GenerateSkillsOptions,
+): Promise<GenerateSkillsResult> {
+  const sourcePath = path.join(__dirname, "..", DIRECTORIES.SOURCES);
+  const flags = options?.flags ?? [];
+  const baseDir = path.join(__dirname, "..");
+
+  await fs.ensureDir(outputPath);
+
+  for (const skill of skills) {
+    const sourceFilePath = path.join(sourcePath, skill);
+    const sourceContent = await fs.readFile(sourceFilePath, "utf-8");
+
+    // Expand fragments and strip internal metadata
+    const expandedContent = expandContent(sourceContent, {
+      flags,
+      baseDir,
+    });
+    const cleanedContent = stripInternalMetadata(expandedContent);
+
+    // Extract description from existing frontmatter
+    const frontmatterMatch = cleanedContent.match(/^---\n([\s\S]*?)\n---/);
+    let description = "";
+    let bodyContent = cleanedContent;
+
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1];
+      const descMatch = frontmatter.match(/^description:\s*(.*)$/m);
+      if (descMatch) {
+        description = descMatch[1];
+      }
+      // Remove old frontmatter from body
+      bodyContent = cleanedContent.replace(/^---\n[\s\S]*?\n---\n*/, "");
+    }
+
+    // Skill name is the filename without .md
+    const skillName = skill.replace(/\.md$/, "");
+
+    // Create skill directory
+    const skillDir = path.join(outputPath, skillName);
+    await fs.ensureDir(skillDir);
+
+    // Build SKILL.md with Agent Skills frontmatter format
+    const skillContent = `---
+name: ${skillName}
+description: ${description}
+---
+
+${bodyContent}`;
+
+    const skillFilePath = path.join(skillDir, "SKILL.md");
+    await fs.writeFile(skillFilePath, applyMarkdownFixes(skillContent));
+  }
+
+  return {
+    success: true,
+    skillsGenerated: skills.length,
+  };
+}

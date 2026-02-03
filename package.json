@@ -29,7 +29,7 @@
   "scripts": {
     "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .claude/commands/*.md",
     "build:readme": "tsx scripts/build.ts",
-    "build:commands": "pnpm build:cli && rm -f .claude/commands/*.md && node bin/cli.js --scope=project --flags=beads,no-plan-files --include-contrib-commands --overwrite",
+    "build:commands": "pnpm build:cli && rm -f .claude/commands/*.md && rm -rf .claude/skills && node bin/cli.js --scope=project --flags=beads,no-plan-files --skills=tdd.md --include-contrib-commands --overwrite",
     "build:cli": "tsup",
     "test:manual": "pnpm build:cli && TMPDIR=$(mktemp -d) && pnpm pack --pack-destination $TMPDIR && cd $TMPDIR && tar -xzf *.tgz && cd package && pnpm i && node bin/cli.js",
     "test:quick-manual": "pnpm build:cli && node bin/cli.js",

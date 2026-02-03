@@ -76,6 +76,13 @@ export const CLI_OPTIONS: CliOption[] = [
     description: "Include underscore-prefixed contributor commands",
     internal: true,
   },
+  {
+    flag: "--skills",
+    key: "skills",
+    type: "array",
+    description: "Generate selected commands as skills (.claude/skills/)",
+    example: "--skills=tdd,commit",
+  },
 ];
 
 export function generateHelpText(): string {
