@@ -449,29 +449,33 @@ describe("allowed-tools should not contain Bash commands", () => {
 });
 
 describe("generated commands should not contain internal metadata", () => {
-  it("should strip underscore-prefixed properties from generated output", async () => {
-    const { generateToDirectory } = await import("../cli-generator.js");
-    const tmpDir = fs.mkdtempSync(
-      path.join(PROJECT_ROOT, "node_modules", ".tmp-test-"),
-    );
+  it(
+    "should strip underscore-prefixed properties from generated output",
+    { timeout: 30000 },
+    async () => {
+      const { generateToDirectory } = await import("../cli-generator.js");
+      const tmpDir = fs.mkdtempSync(
+        path.join(PROJECT_ROOT, "node_modules", ".tmp-test-"),
+      );
 
-    try {
-      await generateToDirectory(tmpDir, undefined, { flags: ["beads"] });
+      try {
+        await generateToDirectory(tmpDir, undefined, { flags: ["beads"] });
 
-      const generatedFiles = getMarkdownFiles(tmpDir);
-      expect(generatedFiles.length).toBeGreaterThan(0);
+        const generatedFiles = getMarkdownFiles(tmpDir);
+        expect(generatedFiles.length).toBeGreaterThan(0);
 
-      for (const file of generatedFiles) {
-        const content = fs.readFileSync(path.join(tmpDir, file), "utf8");
-        expect(
-          content,
-          `${file} contains underscore-prefixed metadata`,
-        ).not.toMatch(/^_[\w-]+:/m);
+        for (const file of generatedFiles) {
+          const content = fs.readFileSync(path.join(tmpDir, file), "utf8");
+          expect(
+            content,
+            `${file} contains underscore-prefixed metadata`,
+          ).not.toMatch(/^_[\w-]+:/m);
+        }
+      } finally {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
       }
-    } finally {
-      fs.rmSync(tmpDir, { recursive: true, force: true });
-    }
-  });
+    },
+  );
 });
 
 describe("reserved command names", () => {

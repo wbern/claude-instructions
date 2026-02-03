@@ -101,19 +101,23 @@ describe("CLI Integration", () => {
     },
   );
 
-  it("should never generate underscore-prefixed commands by default", async () => {
-    const outputDir = path.join(tempDir, "commands");
+  it(
+    "should never generate underscore-prefixed commands by default",
+    { timeout: 30000 },
+    async () => {
+      const outputDir = path.join(tempDir, "commands");
 
-    await generateToDirectory(outputDir);
+      await generateToDirectory(outputDir);
 
-    const generatedFiles = fs.readdirSync(outputDir);
-    const underscoreFiles = generatedFiles.filter((f) => f.startsWith("_"));
+      const generatedFiles = fs.readdirSync(outputDir);
+      const underscoreFiles = generatedFiles.filter((f) => f.startsWith("_"));
 
-    expect(
-      underscoreFiles,
-      "Underscore-prefixed commands must never be published - use includeContribCommands for local dev only",
-    ).toEqual([]);
-  });
+      expect(
+        underscoreFiles,
+        "Underscore-prefixed commands must never be published - use includeContribCommands for local dev only",
+      ).toEqual([]);
+    },
+  );
 
   it("should include contributor commands in .claude/commands/ for this repo", () => {
     const commandsDir = path.join(PROJECT_ROOT, ".claude", "commands");

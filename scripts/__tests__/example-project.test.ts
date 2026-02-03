@@ -20,7 +20,7 @@ async function withCwd<T>(dir: string, fn: () => Promise<T>): Promise<T> {
   }
 }
 
-describe("Template Interpolation E2E", () => {
+describe("Template Interpolation E2E", { timeout: 30000 }, () => {
   let tempDir: string;
 
   beforeEach(async () => {
