@@ -213,4 +213,91 @@ describe("CLI Integration", () => {
     const content = fs.readFileSync(skillFile, "utf-8");
     expect(content).toMatch(/\nname: tdd\n/);
   });
+
+  it("should handle full user-scope command with all options combined", async () => {
+    // This tests the exact CLI command a user might run with all options
+    const commandsDir = path.join(tempDir, ".claude", "commands");
+    const skillsDir = path.join(tempDir, ".claude", "skills");
+
+    const commands = [
+      "spike.md",
+      "tdd.md",
+      "red.md",
+      "green.md",
+      "refactor.md",
+      "cycle.md",
+      "simplify.md",
+      "tdd-review.md",
+      "issue.md",
+      "create-issues.md",
+      "commit.md",
+      "busycommit.md",
+      "pr.md",
+      "summarize.md",
+      "gap.md",
+      "forever.md",
+      "code-review.md",
+      "polish.md",
+      "worktree-add.md",
+      "worktree-cleanup.md",
+      "beepboop.md",
+      "add-command.md",
+      "kata.md",
+      "create-adr.md",
+      "research.md",
+      "commitlint-checklist-nodejs.md",
+      "upgrade-deps.md",
+    ];
+
+    const allowedTools = [
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(git merge-base:*)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+    ];
+
+    const cmd = [
+      `node ${BIN_PATH}`,
+      "--scope=user",
+      "--flags=gh-cli,no-plan-files,beads",
+      `--commands=${commands.join(",")}`,
+      `--allowed-tools="${allowedTools.join(",")}"`,
+      "--skills=tdd.md",
+      "--overwrite",
+    ].join(" ");
+
+    // Override HOME to use tempDir so user-scope writes to our temp directory
+    execSync(cmd, {
+      cwd: tempDir,
+      stdio: "pipe",
+      env: { ...process.env, HOME: tempDir },
+    });
+
+    // Verify commands were generated
+    expect(fs.existsSync(commandsDir)).toBe(true);
+    const generatedCommands = fs.readdirSync(commandsDir);
+    expect(generatedCommands.length).toBe(commands.length);
+
+    // Verify skill was generated
+    const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
+    expect(fs.existsSync(skillFile)).toBe(true);
+
+    // Verify code-review has the allowed-tools (it has _requested-tools in frontmatter)
+    const codeReviewContent = fs.readFileSync(
+      path.join(commandsDir, "code-review.md"),
+      "utf-8",
+    );
+    expect(codeReviewContent).toContain("Bash(git diff:*)");
+
+    // Verify beads flag content is injected (create-issues uses beads)
+    const createIssuesContent = fs.readFileSync(
+      path.join(commandsDir, "create-issues.md"),
+      "utf-8",
+    );
+    expect(createIssuesContent).toContain("beads"); // beads flag should inject content
+  });
 });
