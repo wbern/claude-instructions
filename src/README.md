@@ -27,11 +27,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
        "\       "      \X/      "       /"
 ```
 
-**TDD workflow commands for Claude Code CLI.**
+**TDD workflow commands for OpenCode CLI.**
 
 > "TDD helps you to pay attention to the right issues at the right time so you can make your designs cleaner, you can refine your designs as you learn." — Kent Beck
 
-Claude Code supports [custom slash commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands)—type `/foo` and Claude receives the contents of `foo.md` as instructions (from `.claude/commands/` in your repo or `~/.claude/commands/` in your home directory). This repo provides ready-made commands for Test-Driven Development workflows.
+OpenCode supports [custom slash commands](https://opencode.ai/docs/commands/)-type `/foo` and Claude receives the contents of `foo.md` as instructions (from `.opencode/commands/` in your repo or `~/.opencode/commands/` in your home directory). This repo provides ready-made commands for Test-Driven Development workflows.
 
 Custom commands are just a glorified copy-paste mechanism—but that simplicity is what makes them effective for establishing consistent development practices.
 
@@ -56,7 +56,7 @@ The interactive installer lets you choose:
 - **Feature flags**: Enable optional integrations like [Beads MCP](https://github.com/steveyegge/beads)
 - **Scope**: User-level (global) or project-level installation
 
-After installation, restart Claude Code if it's currently running.
+After installation, restart OpenCode if it's currently running.
 
 ### Adding to Your Repository
 
@@ -88,23 +88,23 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 
 ## Customizing Commands
 
-You can inject project-specific instructions into generated commands by adding a `<claude-commands-template>` block to your `CLAUDE.md` or `AGENTS.md` file.
+You can inject project-specific instructions into generated commands by adding a `<agent-commands-template>` block to your `AGENT.md` file.
 
 ### Basic Usage
 
-Add this to your project's `CLAUDE.md`:
+Add this to your project's `AGENT.md`:
 
 ```markdown
 # My Project
 
 Other instructions here...
 
-<claude-commands-template>
+<agent-commands-template>
 ## Project-Specific Rules
 
 - Always use pnpm instead of npm
 - Run tests with `pnpm test`
-</claude-commands-template>
+</agent-commands-template>
 ```
 
 When you run `claude-instructions`, the template content is appended to all generated commands.
@@ -114,12 +114,12 @@ When you run `claude-instructions`, the template content is appended to all gene
 Use the `commands` attribute to inject content only into specific commands:
 
 ```markdown
-<claude-commands-template commands="commit,ask">
+<agent-commands-template commands="commit,ask">
 ## Git Conventions
 
 - Use conventional commits format
 - Reference issue numbers in commits
-</claude-commands-template>
+</agent-commands-template>
 ```
 
 This injects the content only into `commit.md` and `ask.md`.
@@ -127,6 +127,7 @@ This injects the content only into `commit.md` and `ask.md`.
 ### File Priority
 
 The generator looks for template blocks in this order:
+
 1. `CLAUDE.md` (checked first)
 2. `AGENTS.md` (fallback)
 
@@ -270,23 +271,6 @@ The commands enforce TDD discipline: you can't refactor with failing tests, can'
 <!-- docs EXAMPLE_CONVERSATIONS -->
 <!-- /docs -->
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, build system, and fragment management.
-
-## Credits
-
-TDD workflow instructions adapted from [TDD Guard](https://github.com/nizos/tdd-guard) by Nizar.
-
-FIRST principles and test quality criteria from [TDD Manifesto](https://tddmanifesto.com/).
-
-Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
-
-## Related Projects
-
-- [citypaul/.dotfiles](https://github.com/citypaul/.dotfiles) - Claude Code configuration with TDD workflows and custom commands
-- [nizos/tdd-guard](https://github.com/nizos/tdd-guard) - Original TDD Guard instructions for Claude
-
 ## Transparency: @wbern's Usage Stats (Jan 20 - Feb 3, 2025)
 
 | Command | Usage |
@@ -308,3 +292,20 @@ Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
 | /tdd-review | 1% |
 | /create-adr | 1% |
 | Other | 1% |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, build system, and fragment management.
+
+## Credits
+
+TDD workflow instructions adapted from [TDD Guard](https://github.com/nizos/tdd-guard) by Nizar.
+
+FIRST principles and test quality criteria from [TDD Manifesto](https://tddmanifesto.com/).
+
+Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
+
+## Related Projects
+
+- [citypaul/.dotfiles](https://github.com/citypaul/.dotfiles) - Claude Code configuration with TDD workflows and custom commands
+- [nizos/tdd-guard](https://github.com/nizos/tdd-guard) - Original TDD Guard instructions for Claude

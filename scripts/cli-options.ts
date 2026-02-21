@@ -18,6 +18,13 @@ export const CLI_OPTIONS: CliOption[] = [
     requiredForNonInteractive: true,
   },
   {
+    flag: "--agent",
+    key: "agent",
+    type: "string",
+    description: "Target agent (opencode, claude, both)",
+    example: "--agent=opencode",
+  },
+  {
     flag: "--prefix",
     key: "prefix",
     type: "string",

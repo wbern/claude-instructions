@@ -156,6 +156,7 @@ describe("CLI_OPTIONS consistency", () => {
     // that all CliArgs keys are present. At runtime, we extract and compare.
     const cliArgsKeysObject: Record<string, undefined> = {
       scope: undefined,
+      agent: undefined,
       prefix: undefined,
       commands: undefined,
       skipTemplateInjection: undefined,

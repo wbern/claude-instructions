@@ -15,9 +15,19 @@ export const SCOPES = {
   USER: "user",
 } as const;
 
+export const AGENTS = {
+  CLAUDE: "claude",
+  OPENCODE: "opencode",
+  BOTH: "both",
+} as const;
+
+export type Agent = (typeof AGENTS)[keyof typeof AGENTS];
+
 export const DIRECTORIES = {
   CLAUDE: ".claude",
+  OPENCODE: ".opencode",
   COMMANDS: "commands",
+  SKILLS: "skills",
   SOURCES: "src/sources",
 } as const;
 
@@ -108,17 +118,19 @@ export const FLAG_OPTIONS = [
   },
 ] as const;
 
-export function getScopeOptions(terminalWidth: number = 80) {
-  const projectPath = path.join(
-    process.cwd(),
-    DIRECTORIES.CLAUDE,
-    DIRECTORIES.COMMANDS,
-  );
-  const userPath = path.join(
-    os.homedir(),
-    DIRECTORIES.CLAUDE,
-    DIRECTORIES.COMMANDS,
-  );
+export function getScopeOptions(
+  terminalWidth: number = 80,
+  agent: Agent = AGENTS.OPENCODE,
+) {
+  const agentDir =
+    agent === AGENTS.CLAUDE ? DIRECTORIES.CLAUDE : DIRECTORIES.OPENCODE;
+  const userConfigDir =
+    agent === AGENTS.CLAUDE
+      ? path.join(os.homedir(), DIRECTORIES.CLAUDE)
+      : path.join(os.homedir(), ".config", "opencode");
+
+  const projectPath = path.join(process.cwd(), agentDir, DIRECTORIES.COMMANDS);
+  const userPath = path.join(userConfigDir, DIRECTORIES.COMMANDS);
 
   return [
     {
@@ -142,6 +154,7 @@ export interface GenerateOptions {
   allowedTools?: string[];
   flags?: string[];
   includeContribCommands?: boolean;
+  agent?: Agent;
 }
 
 export interface FileConflict {
@@ -163,7 +176,7 @@ export async function checkExistingFiles(
   options?: GenerateOptions,
 ): Promise<ExistingFile[]> {
   const sourcePath = path.join(__dirname, "..", DIRECTORIES.SOURCES);
-  const destinationPath = getDestinationPath(outputPath, scope);
+  const destinationPath = getDestinationPath(outputPath, scope, options?.agent);
   const flags = options?.flags ?? [];
 
   const allFiles = await getSourceFiles(options?.includeContribCommands);
@@ -369,20 +382,83 @@ export async function getRequestedToolsOptions(): Promise<
 function getDestinationPath(
   outputPath: string | undefined,
   scope: string | undefined,
+  agent: Agent = AGENTS.OPENCODE,
 ): string {
   if (outputPath) {
     return outputPath;
   }
 
   if (scope === SCOPES.PROJECT) {
-    return path.join(process.cwd(), DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS);
+    const agentDir =
+      agent === AGENTS.CLAUDE ? DIRECTORIES.CLAUDE : DIRECTORIES.OPENCODE;
+    return path.join(process.cwd(), agentDir, DIRECTORIES.COMMANDS);
   }
 
   if (scope === SCOPES.USER) {
-    return path.join(os.homedir(), DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS);
+    if (agent === AGENTS.CLAUDE) {
+      return path.join(os.homedir(), DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS);
+    }
+    // OpenCode user-level: ~/.config/opencode/commands/
+    return path.join(os.homedir(), ".config", "opencode", DIRECTORIES.COMMANDS);
   }
 
   throw new Error("Either outputPath or scope must be provided");
+}
+
+/**
+ * Get the skills output path for the given scope and agent.
+ */
+export function getSkillsPath(
+  scope: string,
+  agent: Agent = AGENTS.OPENCODE,
+): string {
+  if (scope === SCOPES.PROJECT) {
+    const agentDir =
+      agent === AGENTS.CLAUDE ? DIRECTORIES.CLAUDE : DIRECTORIES.OPENCODE;
+    return path.join(process.cwd(), agentDir, DIRECTORIES.SKILLS);
+  }
+  if (agent === AGENTS.CLAUDE) {
+    return path.join(os.homedir(), DIRECTORIES.CLAUDE, DIRECTORIES.SKILLS);
+  }
+  // OpenCode user-level: ~/.config/opencode/skills/
+  return path.join(os.homedir(), ".config", "opencode", DIRECTORIES.SKILLS);
+}
+
+/**
+ * Claude Code frontmatter keys not supported by OpenCode.
+ * These are stripped when generating for OpenCode targets.
+ */
+const CLAUDE_ONLY_FRONTMATTER_KEYS = ["allowed-tools"] as const;
+
+/**
+ * Parse and transform frontmatter lines, returning the modified content.
+ * Returns the original content unchanged if no frontmatter is present.
+ */
+function transformFrontmatter(
+  content: string,
+  transformLines: (lines: string[]) => string[],
+): string {
+  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!frontmatterMatch) {
+    return content;
+  }
+  const lines = frontmatterMatch[1].split("\n");
+  const newFrontmatter = transformLines(lines).join("\n");
+  return content.replace(/^---\n[\s\S]*?\n---/, `---\n${newFrontmatter}\n---`);
+}
+
+/**
+ * Strip Claude Code-specific frontmatter keys for OpenCode compatibility.
+ * OpenCode supports: description, agent, model, subtask.
+ * Claude Code-only keys (e.g. allowed-tools) are removed.
+ */
+export function stripClaudeOnlyFrontmatter(content: string): string {
+  return transformFrontmatter(content, (lines) =>
+    lines.filter(
+      (line) =>
+        !CLAUDE_ONLY_FRONTMATTER_KEYS.some((key) => line.startsWith(`${key}:`)),
+    ),
+  );
 }
 
 /**
@@ -391,35 +467,29 @@ function getDestinationPath(
  * that should not appear in generated output.
  */
 export function stripInternalMetadata(content: string): string {
-  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!frontmatterMatch) {
-    return content;
-  }
+  return transformFrontmatter(content, (lines) => {
+    const filteredLines: string[] = [];
+    let skipMultiline = false;
 
-  const frontmatter = frontmatterMatch[1];
-  const lines = frontmatter.split("\n");
-  const filteredLines: string[] = [];
-  let skipMultiline = false;
+    for (const line of lines) {
+      // Check if this is a top-level underscore property (includes hyphens like _requested-tools)
+      if (/^_[\w-]+:/.test(line)) {
+        // Check if it's a multiline value (ends with nothing after colon or has array indicator)
+        skipMultiline = line.endsWith(":") || /^_[\w-]+:\s*$/.test(line);
+        continue;
+      }
 
-  for (const line of lines) {
-    // Check if this is a top-level underscore property (includes hyphens like _requested-tools)
-    if (/^_[\w-]+:/.test(line)) {
-      // Check if it's a multiline value (ends with nothing after colon or has array indicator)
-      skipMultiline = line.endsWith(":") || /^_[\w-]+:\s*$/.test(line);
-      continue;
+      // Skip continuation lines of multiline values (indented lines)
+      if (skipMultiline && /^\s+/.test(line)) {
+        continue;
+      }
+
+      skipMultiline = false;
+      filteredLines.push(line);
     }
 
-    // Skip continuation lines of multiline values (indented lines)
-    if (skipMultiline && /^\s+/.test(line)) {
-      continue;
-    }
-
-    skipMultiline = false;
-    filteredLines.push(line);
-  }
-
-  const newFrontmatter = filteredLines.join("\n");
-  return content.replace(/^---\n[\s\S]*?\n---/, `---\n${newFrontmatter}\n---`);
+    return filteredLines;
+  });
 }
 
 /**
@@ -464,7 +534,7 @@ export async function generateToDirectory(
   scope?: Scope,
   options?: GenerateOptions,
 ): Promise<GenerateResult> {
-  const destinationPath = getDestinationPath(outputPath, scope);
+  const destinationPath = getDestinationPath(outputPath, scope, options?.agent);
   const sourcePath = path.join(__dirname, "..", DIRECTORIES.SOURCES);
   const flags = options?.flags ?? [];
 
@@ -483,6 +553,7 @@ export async function generateToDirectory(
   // Read source, expand with flags, strip internal metadata, fix lists, write to destination
   await fs.ensureDir(destinationPath);
   const baseDir = path.join(__dirname, "..");
+  const targetAgent = options?.agent ?? AGENTS.OPENCODE;
   for (const file of files) {
     const sourceFilePath = path.join(sourcePath, file);
     const sourceContent = await fs.readFile(sourceFilePath, "utf-8");
@@ -490,9 +561,12 @@ export async function generateToDirectory(
       flags,
       baseDir,
     });
-    const cleanedContent = applyMarkdownFixes(
-      stripInternalMetadata(expandedContent),
-    );
+    let processedContent = stripInternalMetadata(expandedContent);
+    // Strip Claude Code-specific frontmatter when generating for OpenCode
+    if (targetAgent !== AGENTS.CLAUDE) {
+      processedContent = stripClaudeOnlyFrontmatter(processedContent);
+    }
+    const cleanedContent = applyMarkdownFixes(processedContent);
     const outputFileName = stripContribPrefix(file);
     await fs.writeFile(
       path.join(destinationPath, prefix + outputFileName),
@@ -500,7 +574,12 @@ export async function generateToDirectory(
     );
   }
 
-  if (options?.allowedTools && options.allowedTools.length > 0) {
+  // allowed-tools is a Claude Code-specific frontmatter feature; skip for OpenCode
+  if (
+    options?.allowedTools &&
+    options.allowedTools.length > 0 &&
+    targetAgent === AGENTS.CLAUDE
+  ) {
     const metadata = await loadCommandsMetadata();
     const allowedToolsSet = new Set(options.allowedTools);
 
