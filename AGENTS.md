@@ -1,9 +1,9 @@
-# Claude Instructions Repository
+# Agent Instructions Repository
 
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
-**GitHub URL:** `https://github.com/wbern/claude-instructions` (NOT KenDev-AB)
+**GitHub URL:** `https://github.com/hevolx/claude-instructions`
 
 This repository contains a fragment-based system for generating Claude Code slash commands with TDD focus.
 
@@ -12,7 +12,7 @@ This repository contains a fragment-based system for generating Claude Code slas
 ### Fragment System
 - **Sources** (`src/sources/*.md`): Command templates with INCLUDE directives only
 - **Fragments** (`src/fragments/*.md`): Reusable content blocks
-- **Local commands** (`.claude/commands/`): Generated commands for local development
+- **Local commands** (`.opencode/commands/`): Generated commands for local development
 - **Dynamic generation**: CLI generates commands on-the-fly with optional feature flags (e.g., `beads`)
 
 ### Key Principles
@@ -24,7 +24,7 @@ This repository contains a fragment-based system for generating Claude Code slas
 ### Contributor Commands
 Source files prefixed with underscore (`_*.md`) are "contributor commands":
 - **Excluded** from npm package distribution (consumers never see them)
-- **Included** in this repo's `.claude/commands/` for maintainers
+- **Included** in this repo's `.opencode/commands/` for maintainers
 - Underscore prefix is stripped from output filename (`_foo.md` → `foo.md`)
 - Not listed in README command list
 - Use `--include-contrib-commands` internal flag to include them
@@ -45,7 +45,7 @@ pnpm vitest run -u  # Update snapshots
 Pre-commit hook automatically:
 1. Builds (includes markdownlint --fix)
 2. Runs tests
-3. Stages generated files (README.md, .claude/commands/)
+3. Stages generated files (README.md, .opencode/commands/)
 
 This ensures artifacts are always in sync with sources.
 
@@ -54,7 +54,7 @@ This ensures artifacts are always in sync with sources.
 2. Comment blocks are removed from output
 3. markdownlint --fix corrects formatting (list numbering, spacing)
 4. README.md automatically updated (with do-not-edit warning prepended)
-5. .claude/commands/ generated with beads flag enabled
+5. .opencode/commands/ generated with beads flag enabled
 
 ### Making Changes
 
@@ -148,7 +148,7 @@ src/
   sources/       # Command templates (INCLUDE directives only)
   fragments/     # Reusable content blocks
   README.md      # Source for generated README.md
-.claude/
+.opencode/
   commands/      # Generated commands for local development
 scripts/         # Build and test scripts
 example-conversations/  # Example TDD sessions for README
