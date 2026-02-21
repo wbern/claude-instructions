@@ -213,7 +213,7 @@ function createConfig(withBeads: boolean): TransformConfig {
         const sourcesDir = path.join(PROJECT_ROOT, SOURCES_DIR);
         const count = getMarkdownFiles(sourcesDir).length;
 
-        return `[![Commands](https://img.shields.io/badge/commands-${count}-blue)](https://github.com/hevolx/agent-instructions#available-commands)`;
+        return `[![Commands](https://img.shields.io/badge/commands-${count}-blue)](https://github.com/wbern/claude-instructions#available-commands)`;
       },
 
       // Get current package version

@@ -1,7 +1,7 @@
 {
-  "name": "@hevolx/agent-instructions",
-  "version": "1.0.0",
-  "description": "TDD workflow commands for AI coding agents (OpenCode, Claude Code)",
+  "name": "@wbern/claude-instructions",
+  "version": "2.10.0",
+  "description": "TDD workflow commands for AI coding agents (Claude Code, OpenCode)",
   "publishConfig": {
     "access": "public"
   },
@@ -13,11 +13,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hevolx/agent-instructions.git"
+    "url": "git+https://github.com/wbern/claude-instructions.git"
   },
-  "homepage": "https://github.com/hevolx/agent-instructions#readme",
+  "homepage": "https://github.com/wbern/claude-instructions#readme",
   "bugs": {
-    "url": "https://github.com/hevolx/agent-instructions/issues"
+    "url": "https://github.com/wbern/claude-instructions/issues"
   },
   "keywords": [
     "opencode",
@@ -28,7 +28,7 @@
     "ai",
     "cli"
   ],
-  "author": "hevolx",
+  "author": "wbern",
   "license": "MIT",
   "scripts": {
     "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .opencode/commands/*.md",

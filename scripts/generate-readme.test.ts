@@ -427,7 +427,7 @@ describe("createConfig", () => {
     });
 
     expect(result).toContain('"name"');
-    expect(result).toContain("agent-instructions");
+    expect(result).toContain("claude-instructions");
   });
 
   it("INCLUDE transform should return empty string for beads feature flag when withBeads is false", () => {
@@ -449,7 +449,7 @@ describe("createConfig", () => {
       },
     });
 
-    expect(result).toContain("@hevolx/agent-instructions");
+    expect(result).toContain("@wbern/claude-instructions");
   });
 
   it("INCLUDE transform should read file normally when featureFlag is beads and withBeads is true", () => {

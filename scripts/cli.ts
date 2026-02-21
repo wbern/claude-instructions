@@ -197,7 +197,7 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     \\XX\\       \\X/    \\XXX/    \\X/       /XX/
        "\\       "      \\X/      "       /"
 
-            @hevolx/agent-instructions
+            @wbern/claude-instructions
 `;
 
 export interface CliArgs {
@@ -584,7 +584,7 @@ export async function main(args?: CliArgs): Promise<void> {
   const isInteractiveMode = !args?.scope;
   let automationNote = "";
   if (isInteractiveMode) {
-    const parts = ["agent-instructions"];
+    const parts = ["claude-instructions"];
     parts.push(`--scope=${scope as string}`);
     parts.push(`--agent=${selectedAgent}`);
     if (commandPrefix) {
@@ -634,7 +634,7 @@ Try it out:
   /red 1 returns "1"     → Write first failing test for your kata
   /green                 → Make it pass
 
-See a full example: https://github.com/hevolx/agent-instructions#example-conversations${automationNote}
+See a full example: https://github.com/wbern/claude-instructions#example-conversations${automationNote}
 
 Happy coding!`,
   );

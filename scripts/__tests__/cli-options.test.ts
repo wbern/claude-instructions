@@ -36,7 +36,7 @@ describe("CLI_OPTIONS", () => {
 describe("generateHelpText", () => {
   it("should include usage line", () => {
     const help = generateHelpText();
-    expect(help).toContain("Usage: agent-instructions");
+    expect(help).toContain("Usage: claude-instructions");
   });
 
   it("should include all CLI options", () => {

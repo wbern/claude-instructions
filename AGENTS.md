@@ -3,7 +3,7 @@
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
-**GitHub URL:** `https://github.com/hevolx/agent-instructions`
+**GitHub URL:** `https://github.com/wbern/claude-instructions`
 
 This repository contains a fragment-based system for generating AI agent slash commands (OpenCode, Claude Code) with TDD focus.
 

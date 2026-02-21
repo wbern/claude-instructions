@@ -127,7 +127,7 @@ describe("README", () => {
     const readmePath = path.join(PROJECT_ROOT, "README.md");
     const content = fs.readFileSync(readmePath, "utf8");
 
-    expect(content).toContain("npx @hevolx/agent-instructions");
+    expect(content).toContain("npx @wbern/claude-instructions");
   });
 });
 

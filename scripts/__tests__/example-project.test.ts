@@ -507,10 +507,10 @@ describe("Postinstall Workflow E2E", () => {
         version: "1.0.0",
         scripts: {
           postinstall:
-            "agent-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
+            "claude-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
         },
         devDependencies: {
-          "@hevolx/agent-instructions": `file:${path.join(tempDir, tarball!)}`,
+          "@wbern/claude-instructions": `file:${path.join(tempDir, tarball!)}`,
         },
       };
       await fs.writeJson(path.join(projectDir, "package.json"), packageJson);

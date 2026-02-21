@@ -1,15 +1,14 @@
-# @hevolx/agent-instructions
-[_A fork of @wbern/claude-instructions_](https://github.com/wbern/claude-instructions)
+# @wbern/claude-instructions
 
-[![npm version](https://img.shields.io/npm/v/@hevolx/agent-instructions)](https://www.npmjs.com/package/@hevolx/agent-instructions)
-[![npm downloads](https://img.shields.io/npm/dm/@hevolx/agent-instructions)](https://www.npmjs.com/package/@hevolx/agent-instructions)
-[![CI](https://github.com/hevolx/agent-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/hevolx/agent-instructions/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/hevolx/agent-instructions/graph/badge.svg)](https://codecov.io/gh/hevolx/agent-instructions)
+[![npm version](https://img.shields.io/npm/v/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
+[![npm downloads](https://img.shields.io/npm/dm/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
+[![CI](https://github.com/wbern/claude-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/wbern/claude-instructions/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/wbern/claude-instructions/graph/badge.svg)](https://codecov.io/gh/wbern/claude-instructions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
-[![Contributors](https://img.shields.io/github/contributors/hevolx/agent-instructions)](https://github.com/hevolx/agent-instructions/graphs/contributors)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/hevolx/agent-instructions/pulls)
+[![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
 <!-- docs COMMANDS_BADGE -->
 <!-- /docs -->
 
@@ -45,11 +44,11 @@ Also included are commands for commits, PRs, code reviews, and other tasks that 
 ## Installation
 
 ```bash
-npx @hevolx/agent-instructions    # npm
+npx @wbern/claude-instructions    # npm
 ```
 
 ```bash
-pnpm dlx @hevolx/agent-instructions   # pnpm
+pnpm dlx @wbern/claude-instructions   # pnpm
 ```
 
 The interactive installer lets you choose:
@@ -64,7 +63,7 @@ After installation, restart OpenCode if it's currently running.
 To automatically regenerate commands when teammates install dependencies, add it as a dev dependency with a postinstall script:
 
 ```bash
-npm install --save-dev @hevolx/agent-instructions
+npm install --save-dev @wbern/claude-instructions
 ```
 
 Then add a postinstall script to your `package.json`:
@@ -72,10 +71,10 @@ Then add a postinstall script to your `package.json`:
 ```json
 {
   "scripts": {
-    "postinstall": "agent-instructions --scope=project --overwrite"
+    "postinstall": "claude-instructions --scope=project --overwrite"
   },
   "devDependencies": {
-    "@hevolx/agent-instructions": "^<!-- docs VERSION --><!-- /docs -->"
+    "@wbern/claude-instructions": "^<!-- docs VERSION --><!-- /docs -->"
   }
 }
 ```
@@ -108,7 +107,7 @@ Other instructions here...
 </agent-commands-template>
 ```
 
-When you run `agent-instructions`, the template content is appended to all generated commands.
+When you run `claude-instructions`, the template content is appended to all generated commands.
 
 ### Targeting Specific Commands
 
@@ -124,6 +123,15 @@ Use the `commands` attribute to inject content only into specific commands:
 ```
 
 This injects the content only into `commit.md` and `ask.md`.
+
+### File Priority
+
+The generator looks for template blocks in this order:
+
+1. `CLAUDE.md` (checked first)
+2. `AGENTS.md` (fallback)
+
+Only the first file found is used.
 
 ## Which Command Should I Use?
 
@@ -262,6 +270,28 @@ The commands enforce TDD discipline: you can't refactor with failing tests, can'
 
 <!-- docs EXAMPLE_CONVERSATIONS -->
 <!-- /docs -->
+
+## Transparency: @wbern's Usage Stats (Jan 20 - Feb 3, 2025)
+
+| Command | Usage |
+|---------|-------|
+| /tdd | 26% |
+| /gap | 15% |
+| /research | 15% |
+| /code-review | 13% |
+| /commit | 8% |
+| /refactor | 5% |
+| /create-issues | 4% |
+| /issue | 2% |
+| /red | 2% |
+| /polish | 2% |
+| /worktree-add | 2% |
+| /pr | 1% |
+| /spike | 1% |
+| /summarize | 1% |
+| /tdd-review | 1% |
+| /create-adr | 1% |
+| Other | 1% |
 
 ## Contributing
 
