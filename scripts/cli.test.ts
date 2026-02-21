@@ -6,6 +6,7 @@ const mockCancel = Symbol("cancel");
 // Flow configuration as data - change this array when the interactive flow changes
 type MockFn = "select" | "text" | "groupMultiselect";
 type StepKey =
+  | "agent"
   | "scope"
   | "prefix"
   | "flags"
@@ -21,6 +22,7 @@ interface FlowStep {
 }
 
 const INTERACTIVE_FLOW: FlowStep[] = [
+  { key: "agent", mock: "select", default: "opencode" },
   { key: "scope", mock: "select", default: "project" },
   { key: "prefix", mock: "text", default: "" },
   { key: "flags", mock: "groupMultiselect", default: [] },
@@ -56,7 +58,9 @@ vi.mock("./cli-generator.js", () => ({
     .mockResolvedValue({ success: true, skillsGenerated: 1 }),
   checkForConflicts: vi.fn().mockResolvedValue([]),
   checkExistingFiles: vi.fn().mockResolvedValue([]),
-  DIRECTORIES: { CLAUDE: ".claude" },
+  DIRECTORIES: { CLAUDE: ".claude", OPENCODE: ".opencode" },
+  AGENTS: { CLAUDE: "claude", OPENCODE: "opencode", BOTH: "both" },
+  getSkillsPath: vi.fn().mockReturnValue("/mock/path/.opencode/skills"),
   getCommandsGroupedByCategory: vi.fn().mockResolvedValue({
     "TDD Cycle": [
       { value: "red.md", label: "red.md", hint: "Red phase" },
@@ -104,12 +108,12 @@ vi.mock("./cli-generator.js", () => ({
     {
       value: "project",
       label: "Project/Repository",
-      hint: "/mock/path/.claude/commands",
+      hint: "/mock/path/.opencode/commands",
     },
     {
       value: "user",
       label: "User (Global)",
-      hint: "/home/user/.claude/commands",
+      hint: "/home/user/.config/opencode/commands",
     },
   ]),
 }));
@@ -120,6 +124,7 @@ vi.mock("./tty.js", () => ({
 
 // Generic helper to setup interactive flow mocks
 interface InteractiveFlowOptions {
+  agent?: string;
   scope?: string;
   prefix?: string;
   flags?: string[];
@@ -177,7 +182,8 @@ describe("CLI", () => {
 
     await main();
 
-    expect(select).toHaveBeenCalledTimes(1);
+    // Now select is called twice: once for agent, once for scope
+    expect(select).toHaveBeenCalledTimes(2);
     expect(generateToDirectory).toHaveBeenCalledWith(
       undefined,
       "project",
@@ -186,6 +192,54 @@ describe("CLI", () => {
         flags: ["beads"],
       }),
     );
+  });
+
+  it("should pass OPENCODE to getScopeOptions when agent is BOTH", async () => {
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks({ agent: "both" });
+
+    await main();
+
+    // With agent=both, generateToDirectory is called for each sub-agent
+    expect(generateToDirectory).toHaveBeenCalled();
+  });
+
+  it("should show .claude/skills/ hint in skills prompt when agent is claude", async () => {
+    const { groupMultiselect } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks({ agent: "claude", allowedTools: [] });
+
+    await main();
+
+    // Find the skills prompt call (it includes "skills" in the message)
+    const skillsCall = vi
+      .mocked(groupMultiselect)
+      .mock.calls.find((call) =>
+        (call[0] as { message: string }).message?.includes("skills"),
+      );
+    expect(skillsCall).toBeDefined();
+    const opts = (skillsCall![0] as { options: Record<string, unknown[]> })
+      .options;
+    const availableCommands = opts["Available commands"] as Array<{
+      hint: string;
+    }>;
+    expect(availableCommands[0].hint).toBe(
+      "Generate as skill in .claude/skills/",
+    );
+  });
+
+  it("should exit gracefully when user cancels on agent selection", async () => {
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks({ cancelAt: "agent" });
+
+    await main();
+
+    expect(generateToDirectory).not.toHaveBeenCalled();
   });
 
   it("should exit gracefully when user cancels with Ctrl+C on scope", async () => {
@@ -239,7 +293,7 @@ describe("CLI", () => {
 
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("17"));
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining(".claude/commands"),
+      expect.stringContaining(".opencode/commands"),
     );
   });
 
@@ -254,6 +308,39 @@ describe("CLI", () => {
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("Happy"));
     expect(outro).toHaveBeenCalledWith(expect.stringContaining(process.cwd()));
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("restart"));
+  });
+
+  it("should show Claude Code restart hint when agent is claude", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await main({ scope: "project", agent: "claude" });
+
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining("Claude Code is already running"),
+    );
+  });
+
+  it("should show both-agent restart hint when agent is both", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await main({ scope: "project", agent: "both" });
+
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining("OpenCode or Claude Code"),
+    );
+  });
+
+  it("should use .claude path for user-level claude agent", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await main({ scope: "user", agent: "claude" });
+
+    expect(outro).toHaveBeenCalledWith(
+      expect.stringContaining(".claude/commands"),
+    );
   });
 
   it("should show kata workflow example in success message", async () => {
@@ -292,7 +379,7 @@ describe("CLI", () => {
     await main();
 
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining("claude-instructions --scope=project"),
+      expect.stringContaining("agent-instructions --scope=project"),
     );
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("--prefix=my-"));
     expect(outro).toHaveBeenCalledWith(
@@ -322,7 +409,7 @@ describe("CLI", () => {
 
     // Should generate skills for selected commands
     expect(generateSkillsToDirectory).toHaveBeenCalledWith(
-      expect.stringContaining(".claude/skills"),
+      expect.stringContaining(".opencode/skills"),
       ["tdd.md"],
       expect.any(Object),
     );
@@ -418,9 +505,9 @@ describe("CLI", () => {
       skills: ["tdd.md"],
     });
 
-    // Should call with user home directory path
+    // Should call with user opencode directory path (default agent is opencode)
     expect(generateSkillsToDirectory).toHaveBeenCalledWith(
-      expect.stringContaining(".claude/skills"),
+      expect.stringContaining(".opencode/skills"),
       ["tdd.md"],
       expect.any(Object),
     );
@@ -1900,7 +1987,8 @@ describe("flags selection (dynamic generation)", () => {
 
     await main();
 
-    expect(select).toHaveBeenCalledTimes(1);
+    // select is called twice: once for agent, once for scope
+    expect(select).toHaveBeenCalledTimes(2);
 
     expect(groupMultiselect).toHaveBeenNthCalledWith(
       1,

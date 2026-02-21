@@ -91,7 +91,7 @@ describe("README example conversations", () => {
     const currentVersion = packageJson.version;
 
     // The README should have the devDependency example with the current version
-    const expectedVersionPattern = `"@wbern/claude-instructions": "^${currentVersion}"`;
+    const expectedVersionPattern = `"@hevolx/agent-instructions": "^${currentVersion}"`;
     expect(readme).toContain(expectedVersionPattern);
   });
 

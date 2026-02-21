@@ -1,16 +1,17 @@
 ---
 description: Audit commit hook automation for Node.js projects
 argument-hint: (no arguments - interactive)
-_hint: Audit commit hooks (Node.js)
-_category: Utilities
-_order: 25
 ---
 
-<!-- docs INCLUDE path='src/fragments/universal-guidelines.md' -->
-<!-- /docs -->
+## General Guidelines
 
-<!-- docs INCLUDE path='src/fragments/beads-awareness.md' featureFlag='beads' -->
-<!-- /docs -->
+### Output Style
+
+- **Never explicitly mention TDD** in code, comments, commits, PRs, or issues
+- Write natural, descriptive code without meta-commentary about the development process
+- The code should speak for itself - TDD is the process, not the product
+
+Beads is available for task tracking. Use `mcp__beads__*` tools to manage issues (the user interacts via `bd` commands).
 
 # Commit Hook Automation Checklist (Node.js)
 
@@ -27,11 +28,13 @@ Commitlint-checklist: $ARGUMENTS
 Scan the repository for these configurations (do not display this list to user):
 
 **🔧 Infrastructure**
+
 - Husky: `.husky/`, `package.json` → `"prepare": "husky"`
 - Pre-commit hook: `.husky/pre-commit`
 - lint-staged: `lint-staged.config.*`, `.lintstagedrc.*`, or `package.json` lint-staged key
 
 **🧹 Code Quality**
+
 - Linting: `eslint.config.*`, `biome.json`, `.eslintrc.*`
 - Formatting: `.prettierrc*`, `biome.json`
 - Type checking: `tsconfig.json` + lint-staged runs `tsc --noEmit`
@@ -39,12 +42,15 @@ Scan the repository for these configurations (do not display this list to user):
 - jscpd: `.jscpd.json` or jscpd in scripts
 
 **🔒 Security**
+
 - Secret scanning: `.secretlintrc.json`, secretlint in dependencies
 
 **📝 Commits**
+
 - Conventional commits: `.husky/commit-msg`, `commitlint.config.*`, `@commitlint/*` in deps
 
 **🧪 Testing**
+
 - Pre-commit tests: lint-staged or pre-commit hook runs test command
 - Coverage thresholds: vitest/jest config with coverage thresholds
 
@@ -74,3 +80,14 @@ After the summary, tell the user:
 > For working examples of most items above, see [hevolx/agent-instructions](https://github.com/hevolx/agent-instructions) on GitHub.
 >
 > Would you like help implementing any of the missing checks?
+
+## Testing Requirements
+
+| Change | Required |
+|--------|----------|
+| Content (fragment/source) | Snapshot update |
+| Feature flag | Conditional test (enabled + disabled), FLAG_OPTIONS, CLI mock |
+| CLI option | `cli.test.ts` mock |
+| Generation logic | Unit test |
+
+Existing tests cover: fragment references, $ARGUMENTS, no nested fragments. Snapshots cover content. TypeScript covers structure. Don't duplicate.

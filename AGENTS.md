@@ -3,9 +3,9 @@
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
-**GitHub URL:** `https://github.com/hevolx/claude-instructions`
+**GitHub URL:** `https://github.com/hevolx/agent-instructions`
 
-This repository contains a fragment-based system for generating Claude Code slash commands with TDD focus.
+This repository contains a fragment-based system for generating AI agent slash commands (OpenCode, Claude Code) with TDD focus.
 
 ## Architecture
 
@@ -91,6 +91,12 @@ With feature flag:
 - Core violations clearly documented
 - Incremental development approach
 
+### Agent Compatibility
+- **Default target**: OpenCode (`.opencode/commands/`, `.config/opencode/commands/`)
+- **Claude Code**: Use `--agent=claude` to generate for `.claude/commands/`
+- **Both agents**: Use `--agent=both` to generate for both simultaneously
+- `allowed-tools:` frontmatter is **Claude Code only** – stripped automatically for OpenCode
+
 ### Security & Safety
 - **Never** use wildcard patterns like `Bash(git:*)` or `allowed-tools: *`
 - Use specific command patterns: `Bash(git status:*)`, `Bash(npm list:*)`
@@ -140,7 +146,7 @@ Only certain commit types trigger npm releases. Use the right prefix to avoid un
 | `test:` | None | Test additions/changes |
 | `ci:` | None | GitHub Actions, workflows |
 
-**Rule of thumb**: If the change doesn't affect what users get from `claude-instructions`, use `docs:` or `chore:`.
+**Rule of thumb**: If the change doesn't affect what users get from `agent-instructions`, use `docs:` or `chore:`.
 
 ### File Organization
 ```

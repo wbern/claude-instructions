@@ -25,7 +25,7 @@ describe("Template Interpolation E2E", { timeout: 30000 }, () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "claude-instructions-test-"),
+      path.join(os.tmpdir(), "agent-instructions-test-"),
     );
   });
 
@@ -338,7 +338,7 @@ describe("Allowed Tools Conflict Detection E2E", () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "claude-instructions-allowed-tools-"),
+      path.join(os.tmpdir(), "agent-instructions-allowed-tools-"),
     );
   });
 
@@ -356,10 +356,12 @@ describe("Allowed Tools Conflict Detection E2E", () => {
       const allowedTools = ["Bash(git diff:*)", "Bash(git status:*)"];
 
       // First generation with allowed tools - use code-review.md which has _requested-tools
+      // Use agent=claude to enable allowed-tools injection (Claude Code feature)
       await generateToDirectory(outputDir, undefined, {
         flags: [],
         commands: ["code-review.md"],
         allowedTools,
+        agent: "claude" as const,
       });
 
       // Verify file was created with allowed-tools header
@@ -376,6 +378,7 @@ describe("Allowed Tools Conflict Detection E2E", () => {
         flags: [],
         commands: ["code-review.md"],
         allowedTools,
+        agent: "claude" as const,
       });
 
       expect(existingFiles).toHaveLength(1);
@@ -389,10 +392,12 @@ describe("Allowed Tools Conflict Detection E2E", () => {
     const allowedTools = ["Bash(git diff:*)", "Bash(git status:*)"];
 
     // Generate both code-review.md (has _requested-tools) and red.md (no _requested-tools)
+    // Use agent=claude to enable allowed-tools injection (Claude Code feature)
     await generateToDirectory(outputDir, undefined, {
       flags: [],
       commands: ["code-review.md", "red.md"],
       allowedTools,
+      agent: "claude" as const,
     });
 
     // code-review.md SHOULD have allowed-tools (it has matching _requested-tools)
@@ -427,11 +432,13 @@ describe("Allowed Tools Conflict Detection E2E", () => {
       ];
 
       // First generation with prefix and all allowed tools
+      // Use agent=claude to enable allowed-tools injection (Claude Code feature)
       await generateToDirectory(outputDir, undefined, {
         flags: [],
         commands: ["code-review.md"],
         commandPrefix: "my-",
         allowedTools: allRequestedTools,
+        agent: "claude" as const,
       });
 
       // Verify file was created with ALL tools in allowed-tools header
@@ -449,6 +456,7 @@ describe("Allowed Tools Conflict Detection E2E", () => {
         commands: ["code-review.md"],
         commandPrefix: "my-",
         allowedTools: allRequestedTools,
+        agent: "claude" as const,
       });
 
       expect(existingFiles).toHaveLength(1);
@@ -466,7 +474,7 @@ describe("Postinstall Workflow E2E", () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "claude-instructions-postinstall-"),
+      path.join(os.tmpdir(), "agent-instructions-postinstall-"),
     );
   });
 
@@ -499,10 +507,10 @@ describe("Postinstall Workflow E2E", () => {
         version: "1.0.0",
         scripts: {
           postinstall:
-            "claude-instructions --scope=project --prefix= --skip-template-injection",
+            "agent-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
         },
         devDependencies: {
-          "@wbern/claude-instructions": `file:${path.join(tempDir, tarball!)}`,
+          "@hevolx/agent-instructions": `file:${path.join(tempDir, tarball!)}`,
         },
       };
       await fs.writeJson(path.join(projectDir, "package.json"), packageJson);
@@ -513,8 +521,8 @@ describe("Postinstall Workflow E2E", () => {
         stdio: "pipe",
       });
 
-      // Assert: Commands were generated in .claude/commands
-      const commandsDir = path.join(projectDir, ".claude", "commands");
+      // Assert: Commands were generated in .opencode/commands (default agent)
+      const commandsDir = path.join(projectDir, ".opencode", "commands");
       expect(await fs.pathExists(commandsDir)).toBe(true);
 
       const commandFiles = await fs.readdir(commandsDir);

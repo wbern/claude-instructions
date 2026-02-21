@@ -18,6 +18,13 @@ export const CLI_OPTIONS: CliOption[] = [
     requiredForNonInteractive: true,
   },
   {
+    flag: "--agent",
+    key: "agent",
+    type: "string",
+    description: "Target agent (opencode, claude, both)",
+    example: "--agent=opencode",
+  },
+  {
     flag: "--prefix",
     key: "prefix",
     type: "string",
@@ -86,7 +93,7 @@ export const CLI_OPTIONS: CliOption[] = [
 ];
 
 export function generateHelpText(): string {
-  const lines = ["Usage: claude-instructions [options]", "", "Options:"];
+  const lines = ["Usage: agent-instructions [options]", "", "Options:"];
 
   for (const opt of CLI_OPTIONS) {
     const suffix =

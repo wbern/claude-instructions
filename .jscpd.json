@@ -13,6 +13,7 @@
     "**/coverage/**",
     "**/bin/**",
     "**/.claude/**",
+    "**/.opencode/**",
     "**/README.md",
     "**/example-conversations/**"
   ],
