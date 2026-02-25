@@ -458,38 +458,22 @@ function transformFrontmatter(
 }
 
 /**
- * Strip Claude Code-specific frontmatter keys for OpenCode compatibility.
- * OpenCode supports: description, agent, model, subtask.
- * Claude Code-only keys (e.g. allowed-tools) are removed.
+ * Strip frontmatter keys matching a predicate, including multiline values.
  */
-export function stripClaudeOnlyFrontmatter(content: string): string {
-  return transformFrontmatter(content, (lines) =>
-    lines.filter(
-      (line) =>
-        !CLAUDE_ONLY_FRONTMATTER_KEYS.some((key) => line.startsWith(`${key}:`)),
-    ),
-  );
-}
-
-/**
- * Strips underscore-prefixed metadata from YAML frontmatter.
- * These are internal properties (e.g., _hint, _category, _order, _requested-tools)
- * that should not appear in generated output.
- */
-export function stripInternalMetadata(content: string): string {
+function stripFrontmatterKeys(
+  content: string,
+  isTargetKey: (line: string) => boolean,
+): string {
   return transformFrontmatter(content, (lines) => {
     const filteredLines: string[] = [];
     let skipMultiline = false;
 
     for (const line of lines) {
-      // Check if this is a top-level underscore property (includes hyphens like _requested-tools)
-      if (/^_[\w-]+:/.test(line)) {
-        // Check if it's a multiline value (ends with nothing after colon or has array indicator)
-        skipMultiline = line.endsWith(":") || /^_[\w-]+:\s*$/.test(line);
+      if (isTargetKey(line)) {
+        skipMultiline = line.endsWith(":") || /:\s*$/.test(line);
         continue;
       }
 
-      // Skip continuation lines of multiline values (indented lines)
       if (skipMultiline && /^\s+/.test(line)) {
         continue;
       }
@@ -500,6 +484,26 @@ export function stripInternalMetadata(content: string): string {
 
     return filteredLines;
   });
+}
+
+/**
+ * Strip Claude Code-specific frontmatter keys for OpenCode compatibility.
+ * OpenCode supports: description, agent, model, subtask.
+ * Claude Code-only keys (e.g. allowed-tools) are removed.
+ */
+export function stripClaudeOnlyFrontmatter(content: string): string {
+  return stripFrontmatterKeys(content, (line) =>
+    CLAUDE_ONLY_FRONTMATTER_KEYS.some((key) => line.startsWith(`${key}:`)),
+  );
+}
+
+/**
+ * Strips underscore-prefixed metadata from YAML frontmatter.
+ * These are internal properties (e.g., _hint, _category, _order, _requested-tools)
+ * that should not appear in generated output.
+ */
+export function stripInternalMetadata(content: string): string {
+  return stripFrontmatterKeys(content, (line) => /^_[\w-]+:/.test(line));
 }
 
 /**
@@ -517,9 +521,13 @@ export function applyMarkdownFixes(content: string): string {
 export function extractTemplateBlocks(content: string): TemplateBlock[] {
   const blocks: TemplateBlock[] = [];
 
+  const tagPattern = "(?:claude|agent)-commands-template";
+
   // Match templates with commands attribute
-  const withCommandsRegex =
-    /<claude-commands-template\s+commands="([^"]+)">([\s\S]*?)<\/claude-commands-template>/g;
+  const withCommandsRegex = new RegExp(
+    `<${tagPattern}\\s+commands="([^"]+)">([\\s\\S]*?)<\\/${tagPattern}>`,
+    "g",
+  );
   for (const match of content.matchAll(withCommandsRegex)) {
     blocks.push({
       content: match[2].trim(),
@@ -528,8 +536,10 @@ export function extractTemplateBlocks(content: string): TemplateBlock[] {
   }
 
   // Match templates without commands attribute
-  const withoutCommandsRegex =
-    /<claude-commands-template>([\s\S]*?)<\/claude-commands-template>/g;
+  const withoutCommandsRegex = new RegExp(
+    `<${tagPattern}>([\\s\\S]*?)<\\/${tagPattern}>`,
+    "g",
+  );
   for (const match of content.matchAll(withoutCommandsRegex)) {
     blocks.push({
       content: match[1].trim(),

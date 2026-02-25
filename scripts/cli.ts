@@ -61,6 +61,33 @@ function getAgentDir(agent: Agent): string {
   return agent === AGENTS.CLAUDE ? DIRECTORIES.CLAUDE : DIRECTORIES.OPENCODE;
 }
 
+function getAgentOutputPath(scope: string, agent: Agent): string | undefined {
+  return isCustomPath(scope)
+    ? path.join(scope, getAgentDir(agent), DIRECTORIES.COMMANDS)
+    : undefined;
+}
+
+function agentTargets(agent: Agent): Agent[] {
+  return agent === AGENTS.BOTH ? [AGENTS.OPENCODE, AGENTS.CLAUDE] : [agent];
+}
+
+async function checkExistingFilesForAgents(
+  scope: string,
+  agent: Agent,
+  options: Parameters<typeof checkExistingFiles>[2],
+): Promise<ExistingFile[]> {
+  const results: ExistingFile[] = [];
+  for (const target of agentTargets(agent)) {
+    const files = await checkExistingFiles(
+      getAgentOutputPath(scope, target),
+      scope as Scope,
+      { ...options, agent: target },
+    );
+    results.push(...files);
+  }
+  return results;
+}
+
 // Schema for validating CLI flags
 const FlagValues = FLAG_OPTIONS.map((f) => f.value) as [string, ...string[]];
 const FlagsSchema = v.array(v.picklist(FlagValues));
@@ -248,7 +275,6 @@ export async function main(args?: CliArgs): Promise<void> {
   let selectedFlags: string[] | symbol | undefined;
   let selectedSkills: string[] | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
-  let customOutputPath: string | undefined;
   let selectedAgent: Agent = AGENTS.OPENCODE;
 
   if (args?.scope) {
@@ -258,16 +284,12 @@ export async function main(args?: CliArgs): Promise<void> {
     selectedCommands = args.commands;
     selectedFlags = args.flags ? v.parse(FlagsSchema, args.flags) : undefined;
     selectedAllowedTools = args.allowedTools;
-    selectedAgent = args.agent
-      ? v.parse(AgentSchema, args.agent)
-      : AGENTS.OPENCODE;
-
-    // If scope is a custom path, compute the output path
-    if (isCustomPath(scope as string)) {
-      customOutputPath = path.join(
-        scope as string,
-        getAgentDir(selectedAgent),
-        DIRECTORIES.COMMANDS,
+    if (args.agent) {
+      selectedAgent = v.parse(AgentSchema, args.agent);
+    } else {
+      selectedAgent = AGENTS.OPENCODE;
+      log.warn(
+        "No --agent specified. Defaulting to opencode. Pass --agent=claude or --agent=opencode explicitly.",
       );
     }
 
@@ -283,16 +305,19 @@ export async function main(args?: CliArgs): Promise<void> {
     }
 
     if (args.updateExisting) {
-      cachedExistingFiles = await checkExistingFiles(
-        customOutputPath,
-        scope as Scope,
+      cachedExistingFiles = await checkExistingFilesForAgents(
+        scope as string,
+        selectedAgent,
         {
           commandPrefix: commandPrefix || "",
           flags: selectedFlags,
           includeContribCommands: args.includeContribCommands,
         },
       );
-      selectedCommands = cachedExistingFiles.map((f) => f.filename);
+      // Deduplicate filenames (same command may exist in both agent dirs)
+      selectedCommands = [
+        ...new Set(cachedExistingFiles.map((f) => f.filename)),
+      ];
 
       if (selectedCommands.length === 0) {
         log.warn("No existing commands found in target directory");
@@ -392,9 +417,9 @@ export async function main(args?: CliArgs): Promise<void> {
     let groupedCommands = await getCommandsGroupedByCategory();
 
     if (args?.updateExisting) {
-      cachedExistingFiles = await checkExistingFiles(
-        undefined,
-        scope as Scope,
+      cachedExistingFiles = await checkExistingFilesForAgents(
+        scope as string,
+        selectedAgent,
         {
           commandPrefix: (commandPrefix as string) || "",
           flags: selectedFlags as string[],
@@ -479,13 +504,12 @@ export async function main(args?: CliArgs): Promise<void> {
 
   const existingFiles =
     cachedExistingFiles ??
-    (await checkExistingFiles(customOutputPath, scope as Scope, {
+    (await checkExistingFilesForAgents(scope as string, selectedAgent, {
       commandPrefix: commandPrefix as string,
       commands: selectedCommands as string[],
       allowedTools: selectedAllowedTools as string[] | undefined,
       flags: selectedFlags as string[] | undefined,
       includeContribCommands: args?.includeContribCommands,
-      agent: selectedAgent,
     }));
 
   const skipFiles: string[] = [];

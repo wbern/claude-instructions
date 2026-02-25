@@ -1,18 +1,18 @@
-# Agent Instructions Repository
+# Claude Instructions Repository
 
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
-**GitHub URL:** `https://github.com/wbern/claude-instructions`
+**GitHub URL:** `https://github.com/wbern/claude-instructions` (NOT KenDev-AB)
 
-This repository contains a fragment-based system for generating AI agent slash commands (OpenCode, Claude Code) with TDD focus.
+This repository contains a fragment-based system for generating slash commands for AI coding agents (Claude Code, OpenCode) with TDD focus.
 
 ## Architecture
 
 ### Fragment System
 - **Sources** (`src/sources/*.md`): Command templates with INCLUDE directives only
 - **Fragments** (`src/fragments/*.md`): Reusable content blocks
-- **Local commands** (`.opencode/commands/`): Generated commands for local development
+- **Local commands** (`.claude/commands/`, `.opencode/commands/`): Generated commands for local development
 - **Dynamic generation**: CLI generates commands on-the-fly with optional feature flags (e.g., `beads`)
 
 ### Key Principles
@@ -24,7 +24,7 @@ This repository contains a fragment-based system for generating AI agent slash c
 ### Contributor Commands
 Source files prefixed with underscore (`_*.md`) are "contributor commands":
 - **Excluded** from npm package distribution (consumers never see them)
-- **Included** in this repo's `.opencode/commands/` for maintainers
+- **Included** in this repo's local commands for maintainers
 - Underscore prefix is stripped from output filename (`_foo.md` → `foo.md`)
 - Not listed in README command list
 - Use `--include-contrib-commands` internal flag to include them
@@ -45,7 +45,7 @@ pnpm vitest run -u  # Update snapshots
 Pre-commit hook automatically:
 1. Builds (includes markdownlint --fix)
 2. Runs tests
-3. Stages generated files (README.md, .opencode/commands/)
+3. Stages generated files (README.md, generated commands)
 
 This ensures artifacts are always in sync with sources.
 
@@ -54,7 +54,7 @@ This ensures artifacts are always in sync with sources.
 2. Comment blocks are removed from output
 3. markdownlint --fix corrects formatting (list numbering, spacing)
 4. README.md automatically updated (with do-not-edit warning prepended)
-5. .opencode/commands/ generated with beads flag enabled
+5. Local commands generated with beads flag enabled
 
 ### Making Changes
 
@@ -92,10 +92,10 @@ With feature flag:
 - Incremental development approach
 
 ### Agent Compatibility
-- **Default target**: OpenCode (`.opencode/commands/`, `.config/opencode/commands/`)
-- **Claude Code**: Use `--agent=claude` to generate for `.claude/commands/`
-- **Both agents**: Use `--agent=both` to generate for both simultaneously
-- `allowed-tools:` frontmatter is **Claude Code only** – stripped automatically for OpenCode
+- **Supported agents**: Claude Code and OpenCode
+- Use `--agent=claude` for `.claude/commands/`, `--agent=opencode` for `.opencode/commands/`
+- Use `--agent=both` to generate for both simultaneously
+- `allowed-tools:` frontmatter is **Claude Code only** — stripped automatically for OpenCode
 
 ### Security & Safety
 - **Never** use wildcard patterns like `Bash(git:*)` or `allowed-tools: *`
@@ -146,7 +146,7 @@ Only certain commit types trigger npm releases. Use the right prefix to avoid un
 | `test:` | None | Test additions/changes |
 | `ci:` | None | GitHub Actions, workflows |
 
-**Rule of thumb**: If the change doesn't affect what users get from `agent-instructions`, use `docs:` or `chore:`.
+**Rule of thumb**: If the change doesn't affect what users get from `claude-instructions`, use `docs:` or `chore:`.
 
 ### File Organization
 ```
@@ -154,8 +154,10 @@ src/
   sources/       # Command templates (INCLUDE directives only)
   fragments/     # Reusable content blocks
   README.md      # Source for generated README.md
+.claude/
+  commands/      # Generated commands (Claude Code)
 .opencode/
-  commands/      # Generated commands for local development
+  commands/      # Generated commands (OpenCode)
 scripts/         # Build and test scripts
 example-conversations/  # Example TDD sessions for README
 ```

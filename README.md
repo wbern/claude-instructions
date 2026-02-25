@@ -31,11 +31,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
        "\       "      \X/      "       /"
 ```
 
-**TDD workflow commands for OpenCode CLI.**
+**TDD workflow commands for AI coding agents (Claude Code, OpenCode).**
 
 > "TDD helps you to pay attention to the right issues at the right time so you can make your designs cleaner, you can refine your designs as you learn." — Kent Beck
 
-OpenCode supports [custom slash commands](https://opencode.ai/docs/commands/)-type `/foo` and Claude receives the contents of `foo.md` as instructions (from `.opencode/commands/` in your repo or `~/.opencode/commands/` in your home directory). This repo provides ready-made commands for Test-Driven Development workflows.
+AI coding agents like [Claude Code](https://docs.anthropic.com/en/docs/claude-code/slash-commands) and [OpenCode](https://opencode.ai/docs/commands/) support custom slash commands — type `/foo` and the agent receives the contents of `foo.md` as instructions. This repo provides ready-made commands for Test-Driven Development workflows.
 
 Custom commands are just a glorified copy-paste mechanism—but that simplicity is what makes them effective for establishing consistent development practices.
 
@@ -60,7 +60,7 @@ The interactive installer lets you choose:
 - **Feature flags**: Enable optional integrations like [Beads MCP](https://github.com/steveyegge/beads)
 - **Scope**: User-level (global) or project-level installation
 
-After installation, restart OpenCode if it's currently running.
+After installation, restart your agent if it's currently running.
 
 ### Adding to Your Repository
 
@@ -105,11 +105,13 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 
 ## Customizing Commands
 
-You can inject project-specific instructions into generated commands by adding a `<agent-commands-template>` block to your `AGENT.md` file.
+You can inject project-specific instructions into generated commands by adding a template block to your `CLAUDE.md` or `AGENTS.md` file.
+
+Both `<claude-commands-template>` and `<agent-commands-template>` tags are supported — use whichever fits your project.
 
 ### Basic Usage
 
-Add this to your project's `AGENT.md`:
+Add this to your project's `CLAUDE.md` (or `AGENTS.md`):
 
 ```markdown
 # My Project

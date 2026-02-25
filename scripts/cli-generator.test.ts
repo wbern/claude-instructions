@@ -39,6 +39,7 @@ import {
   getScopeOptions,
   getSkillsPath,
   SCOPES,
+  stripClaudeOnlyFrontmatter,
 } from "./cli-generator.js";
 
 describe("generateToDirectory", () => {
@@ -1538,6 +1539,51 @@ describe("getSkillsPath", () => {
     expect(result).toContain(".config");
     expect(result).toContain("opencode");
     expect(result).toContain("skills");
+  });
+});
+
+describe("stripClaudeOnlyFrontmatter", () => {
+  it("should strip single-line allowed-tools from frontmatter", () => {
+    const content = `---
+description: Test command
+allowed-tools: Bash(git diff:*), Bash(git status:*)
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).not.toContain("allowed-tools");
+    expect(result).toContain("description: Test command");
+    expect(result).toContain("# Content");
+  });
+
+  it("should strip multiline allowed-tools from frontmatter", () => {
+    const content = `---
+description: Test command
+allowed-tools:
+  - Bash(git diff:*)
+  - Bash(git status:*)
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).not.toContain("allowed-tools");
+    expect(result).not.toContain("Bash(git diff:*)");
+    expect(result).toContain("description: Test command");
+  });
+
+  it("should not strip non-Claude keys", () => {
+    const content = `---
+description: Test command
+name: test
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).toContain("description: Test command");
+    expect(result).toContain("name: test");
+  });
+
+  it("should return content unchanged when no frontmatter", () => {
+    const content = "# Just content\nNo frontmatter here.";
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).toBe(content);
   });
 });
 
