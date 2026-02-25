@@ -25,7 +25,7 @@ describe("Template Interpolation E2E", { timeout: 30000 }, () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "claude-instructions-test-"),
+      path.join(os.tmpdir(), "agent-instructions-test-"),
     );
   });
 
@@ -338,7 +338,7 @@ describe("Template Injection Conflict Detection E2E", () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "claude-instructions-template-conflict-"),
+      path.join(os.tmpdir(), "agent-instructions-template-conflict-"),
     );
   });
 
@@ -564,10 +564,10 @@ describe("Postinstall Workflow E2E", () => {
         version: "1.0.0",
         scripts: {
           postinstall:
-            "claude-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
+            "agent-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
         },
         devDependencies: {
-          "@wbern/claude-instructions": `file:${path.join(tempDir, tarball!)}`,
+          "@wbern/agent-instructions": `file:${path.join(tempDir, tarball!)}`,
         },
       };
       await fs.writeJson(path.join(projectDir, "package.json"), packageJson);

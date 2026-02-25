@@ -428,7 +428,7 @@ describe("CLI", () => {
     await main();
 
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining("claude-instructions --scope=project"),
+      expect.stringContaining("agent-instructions --scope=project"),
     );
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("--prefix=my-"));
     expect(outro).toHaveBeenCalledWith(

@@ -27,7 +27,7 @@ describe("CLI Integration", () => {
 
   beforeEach(() => {
     tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "claude-instructions-test-"),
+      path.join(os.tmpdir(), "agent-instructions-test-"),
     );
   });
 
@@ -56,7 +56,10 @@ describe("CLI Integration", () => {
 
   it("should have package.json with correct bin entry", () => {
     const pkgJson = fs.readJsonSync(path.join(PROJECT_ROOT, "package.json"));
-    expect(pkgJson.bin).toBe("./bin/cli.js");
+    expect(pkgJson.bin).toEqual({
+      "agent-instructions": "./bin/cli.js",
+      "claude-instructions": "./bin/cli.js",
+    });
   });
 
   it("should have package.json with files array including bin and src", () => {

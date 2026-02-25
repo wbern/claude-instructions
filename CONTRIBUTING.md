@@ -5,7 +5,7 @@ Thanks for your interest in contributing!
 ## Ways to Contribute
 
 ### Report Issues or Suggest Ideas
-The easiest way to contribute is to [open a GitHub issue](https://github.com/wbern/claude-instructions/issues). Bug reports, feature requests, and command ideas are all welcome.
+The easiest way to contribute is to [open a GitHub issue](https://github.com/wbern/agent-instructions/issues). Bug reports, feature requests, and command ideas are all welcome.
 
 ### Submit Code Changes
 To contribute code:

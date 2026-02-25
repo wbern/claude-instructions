@@ -93,7 +93,7 @@ export const CLI_OPTIONS: CliOption[] = [
 ];
 
 export function generateHelpText(): string {
-  const lines = ["Usage: claude-instructions [options]", "", "Options:"];
+  const lines = ["Usage: agent-instructions [options]", "", "Options:"];
 
   for (const opt of CLI_OPTIONS) {
     const suffix =

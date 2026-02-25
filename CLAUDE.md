@@ -3,7 +3,7 @@
 > **Note:** This file contains instructions for managing THIS repository.
 > Users installing the commands should NOT copy this file - it's for maintainers only.
 
-**GitHub URL:** `https://github.com/wbern/claude-instructions` (NOT KenDev-AB)
+**GitHub URL:** `https://github.com/wbern/agent-instructions` (NOT KenDev-AB)
 
 This repository contains a fragment-based system for generating slash commands for AI coding agents (Claude Code, OpenCode) with TDD focus.
 
@@ -146,7 +146,7 @@ Only certain commit types trigger npm releases. Use the right prefix to avoid un
 | `test:` | None | Test additions/changes |
 | `ci:` | None | GitHub Actions, workflows |
 
-**Rule of thumb**: If the change doesn't affect what users get from `claude-instructions`, use `docs:` or `chore:`.
+**Rule of thumb**: If the change doesn't affect what users get from `agent-instructions`, use `docs:` or `chore:`.
 
 ### File Organization
 ```

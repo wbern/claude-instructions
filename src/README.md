@@ -1,14 +1,14 @@
-# @wbern/claude-instructions
+# @wbern/agent-instructions
 
-[![npm version](https://img.shields.io/npm/v/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
-[![npm downloads](https://img.shields.io/npm/dm/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
-[![CI](https://github.com/wbern/claude-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/wbern/claude-instructions/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/wbern/claude-instructions/graph/badge.svg)](https://codecov.io/gh/wbern/claude-instructions)
+[![npm version](https://img.shields.io/npm/v/@wbern/agent-instructions)](https://www.npmjs.com/package/@wbern/agent-instructions)
+[![npm downloads](https://img.shields.io/npm/dm/@wbern/agent-instructions)](https://www.npmjs.com/package/@wbern/agent-instructions)
+[![CI](https://github.com/wbern/agent-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/wbern/agent-instructions/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/wbern/agent-instructions/graph/badge.svg)](https://codecov.io/gh/wbern/agent-instructions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
-[![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
+[![Contributors](https://img.shields.io/github/contributors/wbern/agent-instructions)](https://github.com/wbern/agent-instructions/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/agent-instructions/pulls)
 <!-- docs COMMANDS_BADGE -->
 <!-- /docs -->
 
@@ -44,11 +44,11 @@ Also included are commands for commits, PRs, code reviews, and other tasks that 
 ## Installation
 
 ```bash
-npx @wbern/claude-instructions    # npm
+npx @wbern/agent-instructions    # npm
 ```
 
 ```bash
-pnpm dlx @wbern/claude-instructions   # pnpm
+pnpm dlx @wbern/agent-instructions   # pnpm
 ```
 
 The interactive installer lets you choose:
@@ -63,7 +63,7 @@ After installation, restart your agent if it's currently running.
 To automatically regenerate commands when teammates install dependencies, add it as a dev dependency with a postinstall script:
 
 ```bash
-npm install --save-dev @wbern/claude-instructions
+npm install --save-dev @wbern/agent-instructions
 ```
 
 Then add a postinstall script to your `package.json`:
@@ -71,10 +71,10 @@ Then add a postinstall script to your `package.json`:
 ```json
 {
   "scripts": {
-    "postinstall": "claude-instructions --scope=project --overwrite"
+    "postinstall": "agent-instructions --scope=project --overwrite"
   },
   "devDependencies": {
-    "@wbern/claude-instructions": "^<!-- docs VERSION --><!-- /docs -->"
+    "@wbern/agent-instructions": "^<!-- docs VERSION --><!-- /docs -->"
   }
 }
 ```
@@ -109,7 +109,7 @@ Other instructions here...
 </agent-commands-template>
 ```
 
-When you run `claude-instructions`, the template content is appended to all generated commands.
+When you run `agent-instructions`, the template content is appended to all generated commands.
 
 ### Targeting Specific Commands
 
