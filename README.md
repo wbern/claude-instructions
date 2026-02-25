@@ -89,7 +89,7 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 
 | Option | Description |
 |--------|-------------|
-| `--scope=project` | Installation scope (project, user) |
+| `--scope=project` | Installation scope (project, user, or a custom path) |
 | `--prefix=my-` | Add prefix to command names |
 | `--commands=commit,red,green` | Install only specific commands |
 | `--skip-template-injection` | Skip injecting project CLAUDE.md customizations |

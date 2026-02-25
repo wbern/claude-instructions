@@ -13,7 +13,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--scope",
     key: "scope",
     type: "string",
-    description: "Installation scope (project, user)",
+    description: "Installation scope (project, user, or a custom path)",
     example: "--scope=project",
     requiredForNonInteractive: true,
   },

@@ -9,6 +9,19 @@ import { generateToDirectory } from "../cli-generator.js";
 const PROJECT_ROOT = path.join(import.meta.dirname, "../..");
 const BIN_PATH = path.join(PROJECT_ROOT, "bin", "cli.js");
 
+/**
+ * Execute a function with a temporary working directory, restoring original cwd afterward.
+ */
+async function withCwd<T>(dir: string, fn: () => Promise<T>): Promise<T> {
+  const originalCwd = process.cwd();
+  process.chdir(dir);
+  try {
+    return await fn();
+  } finally {
+    process.chdir(originalCwd);
+  }
+}
+
 describe("CLI Integration", () => {
   let tempDir: string;
 
@@ -168,15 +181,38 @@ describe("CLI Integration", () => {
     );
 
     // Second run with exact same command - should not show conflicts
-    const { checkExistingFiles } = await import("../cli-generator.js");
-    const existingFiles = await checkExistingFiles(outputDir, undefined, {
-      commands: ["code-review.md"],
-      commandPrefix: "my-",
-      allowedTools: allRequestedTools,
+    // Use withCwd to match the CLI's cwd (tempDir has no CLAUDE.md, so no template injection)
+    await withCwd(tempDir, async () => {
+      const { checkExistingFiles } = await import("../cli-generator.js");
+      const existingFiles = await checkExistingFiles(outputDir, undefined, {
+        commands: ["code-review.md"],
+        commandPrefix: "my-",
+        allowedTools: allRequestedTools,
+      });
+
+      expect(existingFiles).toHaveLength(1);
+      expect(existingFiles[0].isIdentical).toBe(true);
+    });
+  });
+
+  it("should generate to custom path when scope is an absolute path", async () => {
+    const customBase = path.join(tempDir, "custom-output");
+    const customCommandsDir = path.join(customBase, ".claude", "commands");
+    const customSkillsDir = path.join(customBase, ".claude", "skills");
+
+    await main({
+      scope: customBase,
+      commands: ["commit.md"],
+      skills: ["tdd.md"],
+      overwrite: true,
     });
 
-    expect(existingFiles).toHaveLength(1);
-    expect(existingFiles[0].isIdentical).toBe(true);
+    // Verify command was created in the custom path
+    expect(fs.existsSync(path.join(customCommandsDir, "commit.md"))).toBe(true);
+    // Verify skill was created in the custom path
+    expect(fs.existsSync(path.join(customSkillsDir, "tdd", "SKILL.md"))).toBe(
+      true,
+    );
   });
 
   it("should generate skill to .claude/skills/{name}/SKILL.md with proper frontmatter", async () => {

@@ -33,9 +33,22 @@ import {
 import { CLI_OPTIONS } from "./cli-options.js";
 import { isInteractiveTTY } from "./tty.js";
 
-// Schema for validating CLI scope
+// Schema for validating CLI scope - allows 'project', 'user', or a custom path
 const ScopeValues = Object.values(SCOPES) as [Scope, ...Scope[]];
-const ScopeSchema = v.picklist(ScopeValues);
+const ScopeSchema = v.union([
+  v.picklist(ScopeValues),
+  v.pipe(
+    v.string(),
+    v.regex(
+      /^[/~.]/,
+      'Custom scope must be a path starting with "/", "~", or "."',
+    ),
+  ),
+]);
+
+function isCustomPath(scope: string): boolean {
+  return scope !== SCOPES.PROJECT && scope !== SCOPES.USER;
+}
 
 // Schema for validating CLI flags
 const FlagValues = FLAG_OPTIONS.map((f) => f.value) as [string, ...string[]];
@@ -212,13 +225,14 @@ export interface CliArgs {
 export async function main(args?: CliArgs): Promise<void> {
   intro(BATMAN_LOGO);
 
-  let scope: Scope | symbol;
+  let scope: string | symbol;
   let commandPrefix: string | symbol;
   let selectedCommands: string[] | symbol | undefined;
   let selectedAllowedTools: string[] | symbol | undefined;
   let selectedFlags: string[] | symbol | undefined;
   let selectedSkills: string[] | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
+  let customOutputPath: string | undefined;
 
   if (args?.scope) {
     // Non-interactive mode (scope is the only required flag)
@@ -227,6 +241,15 @@ export async function main(args?: CliArgs): Promise<void> {
     selectedCommands = args.commands;
     selectedFlags = args.flags ? v.parse(FlagsSchema, args.flags) : undefined;
     selectedAllowedTools = args.allowedTools;
+
+    // If scope is a custom path, compute the output path
+    if (isCustomPath(scope as string)) {
+      customOutputPath = path.join(
+        scope as string,
+        DIRECTORIES.CLAUDE,
+        DIRECTORIES.COMMANDS,
+      );
+    }
 
     // Validate mutually exclusive flags in non-interactive mode
     if (selectedFlags) {
@@ -240,11 +263,15 @@ export async function main(args?: CliArgs): Promise<void> {
     }
 
     if (args.updateExisting) {
-      cachedExistingFiles = await checkExistingFiles(undefined, scope, {
-        commandPrefix: commandPrefix || "",
-        flags: selectedFlags,
-        includeContribCommands: args.includeContribCommands,
-      });
+      cachedExistingFiles = await checkExistingFiles(
+        customOutputPath,
+        scope as Scope,
+        {
+          commandPrefix: commandPrefix || "",
+          flags: selectedFlags,
+          includeContribCommands: args.includeContribCommands,
+        },
+      );
       selectedCommands = cachedExistingFiles.map((f) => f.filename);
 
       if (selectedCommands.length === 0) {
@@ -402,7 +429,7 @@ export async function main(args?: CliArgs): Promise<void> {
 
   const existingFiles =
     cachedExistingFiles ??
-    (await checkExistingFiles(undefined, scope as Scope, {
+    (await checkExistingFiles(customOutputPath, scope as Scope, {
       commandPrefix: commandPrefix as string,
       commands: selectedCommands as string[],
       allowedTools: selectedAllowedTools as string[] | undefined,
@@ -492,7 +519,7 @@ export async function main(args?: CliArgs): Promise<void> {
     }
   }
 
-  const result = await generateToDirectory(undefined, scope as Scope, {
+  const result = await generateToDirectory(customOutputPath, scope as Scope, {
     commandPrefix: commandPrefix as string,
     skipTemplateInjection: args?.skipTemplateInjection,
     commands: selectedCommands as string[],
@@ -506,7 +533,11 @@ export async function main(args?: CliArgs): Promise<void> {
   let skillsGenerated = 0;
   const skillsToGenerate = selectedSkills ?? args?.skills;
   if (skillsToGenerate && skillsToGenerate.length > 0) {
-    const skillsBasePath = scope === "project" ? process.cwd() : os.homedir();
+    const skillsBasePath = isCustomPath(scope as string)
+      ? (scope as string)
+      : scope === "project"
+        ? process.cwd()
+        : os.homedir();
     const skillsPath = path.join(skillsBasePath, DIRECTORIES.CLAUDE, "skills");
 
     const skillsResult = await generateSkillsToDirectory(
@@ -517,8 +548,9 @@ export async function main(args?: CliArgs): Promise<void> {
     skillsGenerated = skillsResult.skillsGenerated;
   }
 
-  const fullPath =
-    scope === "project"
+  const fullPath = isCustomPath(scope as string)
+    ? path.join(scope as string, DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS)
+    : scope === "project"
       ? `${process.cwd()}/.claude/commands`
       : `${os.homedir()}/.claude/commands`;
 

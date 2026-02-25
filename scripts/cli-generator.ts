@@ -181,6 +181,11 @@ export async function checkExistingFiles(
     allowedToolsSet = new Set(options.allowedTools);
   }
 
+  const templates = await loadTemplateBlocks(
+    scope,
+    options?.skipTemplateInjection,
+  );
+
   const baseDir = path.join(__dirname, "..");
 
   for (const file of files) {
@@ -216,6 +221,11 @@ export async function checkExistingFiles(
             `---\n${allowedToolsYaml}\n`,
           );
         }
+      }
+
+      if (templates.length > 0) {
+        const commandName = path.basename(outputFileName, ".md");
+        newContent = applyTemplateBlocks(newContent, commandName, templates);
       }
 
       existingFiles.push({
@@ -459,6 +469,48 @@ export function extractTemplateBlocks(content: string): TemplateBlock[] {
   return blocks;
 }
 
+/**
+ * Load template blocks from CLAUDE.md or AGENTS.md in the current working directory.
+ * Returns empty array for user scope to prevent project-specific instructions from leaking.
+ */
+async function loadTemplateBlocks(
+  scope?: Scope | string,
+  skipTemplateInjection?: boolean,
+): Promise<TemplateBlock[]> {
+  if (skipTemplateInjection || scope === SCOPES.USER) {
+    return [];
+  }
+  for (const filename of TEMPLATE_SOURCE_FILES) {
+    const candidatePath = path.join(process.cwd(), filename);
+    if (await fs.pathExists(candidatePath)) {
+      const content = await fs.readFile(candidatePath, "utf-8");
+      return extractTemplateBlocks(content);
+    }
+  }
+  return [];
+}
+
+/**
+ * Apply matching template blocks to command content, filtering by command name.
+ * Returns the content with markdown fixes applied if any templates matched.
+ */
+function applyTemplateBlocks(
+  content: string,
+  commandName: string,
+  templates: TemplateBlock[],
+): string {
+  let result = content;
+  let modified = false;
+  for (const template of templates) {
+    if (template.commands && !template.commands.includes(commandName)) {
+      continue;
+    }
+    result = `${result}\n\n${template.content}`;
+    modified = true;
+  }
+  return modified ? applyMarkdownFixes(result) : result;
+}
+
 export async function generateToDirectory(
   outputPath?: string,
   scope?: Scope,
@@ -527,47 +579,27 @@ export async function generateToDirectory(
     }
   }
 
+  const templates = await loadTemplateBlocks(
+    scope,
+    options?.skipTemplateInjection,
+  );
   let templateInjected = false;
 
-  // Skip template injection for user scope to prevent project-specific
-  // instructions from leaking into user-global commands
-  if (!options?.skipTemplateInjection && scope !== SCOPES.USER) {
-    let templateSourcePath: string | null = null;
-    for (const filename of TEMPLATE_SOURCE_FILES) {
-      const candidatePath = path.join(process.cwd(), filename);
-      if (await fs.pathExists(candidatePath)) {
-        templateSourcePath = candidatePath;
-        break;
+  if (templates.length > 0) {
+    for (const file of files) {
+      const outputFileName = stripContribPrefix(file);
+      const commandName = path.basename(outputFileName, ".md");
+      const actualFileName = options?.commandPrefix
+        ? options.commandPrefix + outputFileName
+        : outputFileName;
+      const filePath = path.join(destinationPath, actualFileName);
+      const content = await fs.readFile(filePath, "utf-8");
+      const result = applyTemplateBlocks(content, commandName, templates);
+      if (result !== content) {
+        await fs.writeFile(filePath, result);
       }
     }
-
-    if (templateSourcePath) {
-      const sourceContent = await fs.readFile(templateSourcePath, "utf-8");
-      const templates = extractTemplateBlocks(sourceContent);
-      if (templates.length > 0) {
-        for (const file of files) {
-          const outputFileName = stripContribPrefix(file);
-          const commandName = path.basename(outputFileName, ".md");
-          const actualFileName = options?.commandPrefix
-            ? options.commandPrefix + outputFileName
-            : outputFileName;
-          const filePath = path.join(destinationPath, actualFileName);
-          let content = await fs.readFile(filePath, "utf-8");
-          let modified = false;
-          for (const template of templates) {
-            if (template.commands && !template.commands.includes(commandName)) {
-              continue;
-            }
-            content = `${content}\n\n${template.content}`;
-            modified = true;
-          }
-          if (modified) {
-            await fs.writeFile(filePath, applyMarkdownFixes(content));
-          }
-        }
-        templateInjected = true;
-      }
-    }
+    templateInjected = true;
   }
 
   return {
