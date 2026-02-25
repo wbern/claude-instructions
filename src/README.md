@@ -88,13 +88,13 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 
 ## Customizing Commands
 
-You can inject project-specific instructions into generated commands by adding a template block to your `CLAUDE.md` or `AGENTS.md` file.
+You can inject project-specific instructions into generated commands by adding a template block to your `AGENTS.md` or `CLAUDE.md` file.
 
 Both `<claude-commands-template>` and `<agent-commands-template>` tags are supported — use whichever fits your project.
 
 ### Basic Usage
 
-Add this to your project's `CLAUDE.md` (or `AGENTS.md`):
+Add this to your project's `AGENTS.md` (or `CLAUDE.md`):
 
 ```markdown
 # My Project
@@ -128,10 +128,10 @@ This injects the content only into `commit.md` and `ask.md`.
 
 ### File Priority
 
-The generator looks for template blocks in this order:
+The generator checks the agent-native file first:
 
-1. `CLAUDE.md` (checked first)
-2. `AGENTS.md` (fallback)
+- **OpenCode** (`--agent=opencode`): `AGENTS.md` first, then `CLAUDE.md`
+- **Claude Code** (`--agent=claude`): `CLAUDE.md` first, then `AGENTS.md`
 
 Only the first file found is used.
 

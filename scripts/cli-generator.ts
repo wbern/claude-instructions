@@ -197,6 +197,7 @@ export async function checkExistingFiles(
   const templates = await loadTemplateBlocks(
     scope,
     options?.skipTemplateInjection,
+    options?.agent,
   );
 
   const baseDir = path.join(__dirname, "..");
@@ -556,11 +557,17 @@ export function extractTemplateBlocks(content: string): TemplateBlock[] {
 async function loadTemplateBlocks(
   scope?: Scope | string,
   skipTemplateInjection?: boolean,
+  agent?: Agent,
 ): Promise<TemplateBlock[]> {
   if (skipTemplateInjection || scope === SCOPES.USER) {
     return [];
   }
-  for (const filename of TEMPLATE_SOURCE_FILES) {
+  // Check agent-native file first: AGENTS.md for OpenCode, CLAUDE.md for Claude
+  const sourceFiles =
+    agent === AGENTS.OPENCODE
+      ? ([...TEMPLATE_SOURCE_FILES].reverse() as string[])
+      : (TEMPLATE_SOURCE_FILES as readonly string[]);
+  for (const filename of sourceFiles) {
     const candidatePath = path.join(process.cwd(), filename);
     if (await fs.pathExists(candidatePath)) {
       const content = await fs.readFile(candidatePath, "utf-8");
@@ -671,6 +678,7 @@ export async function generateToDirectory(
   const templates = await loadTemplateBlocks(
     scope,
     options?.skipTemplateInjection,
+    options?.agent,
   );
   let templateInjected = false;
 
