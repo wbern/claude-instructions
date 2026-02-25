@@ -1503,7 +1503,7 @@ Use Beads to track this task.`;
     // Should call expandContent with the source content and flags
     expect(expandContent).toHaveBeenCalledWith(sourceContent, {
       flags: ["beads"],
-      baseDir: expect.stringContaining("agent-instructions"),
+      baseDir: expect.stringContaining("claude-instructions"),
     });
 
     // Should write expanded content

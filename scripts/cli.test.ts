@@ -242,6 +242,28 @@ describe("CLI", () => {
     expect(generateToDirectory).not.toHaveBeenCalled();
   });
 
+  it("should list agents alphabetically with no pre-selection bias", async () => {
+    const { select } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks();
+
+    await main();
+
+    // First select call is agent selection
+    const agentCall = vi.mocked(select).mock.calls[0];
+    const agentOpts = agentCall[0] as {
+      initialValue?: string;
+      options: Array<{ value: string; label: string }>;
+    };
+    // No pre-selected default
+    expect(agentOpts.initialValue).toBeUndefined();
+    // Claude Code listed before OpenCode (alphabetical — no bias toward either)
+    const labels = agentOpts.options.map((o) => o.label);
+    expect(labels[0]).toBe("Claude Code");
+    expect(labels[1]).toBe("OpenCode");
+  });
+
   it("should exit gracefully when user cancels with Ctrl+C on scope", async () => {
     const { generateToDirectory } = await import("./cli-generator.js");
     const { main } = await import("./cli.js");

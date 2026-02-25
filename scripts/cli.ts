@@ -49,8 +49,12 @@ const ScopeSchema = v.union([
   ),
 ]);
 
-function isCustomPath(scope: string): boolean {
-  return scope !== SCOPES.PROJECT && scope !== SCOPES.USER;
+function isCustomPath(scope: string | symbol | undefined): boolean {
+  return (
+    typeof scope === "string" &&
+    scope !== SCOPES.PROJECT &&
+    scope !== SCOPES.USER
+  );
 }
 
 // Schema for validating CLI flags
@@ -308,16 +312,16 @@ export async function main(args?: CliArgs): Promise<void> {
       message: "Select target agent",
       options: [
         {
-          value: AGENTS.OPENCODE,
-          label: "OpenCode",
-          hint: ".opencode/commands/",
-        },
-        {
           value: AGENTS.CLAUDE,
           label: "Claude Code",
           hint: ".claude/commands/",
         },
-        { value: AGENTS.BOTH, label: "Both", hint: ".opencode/ and .claude/" },
+        {
+          value: AGENTS.OPENCODE,
+          label: "OpenCode",
+          hint: ".opencode/commands/",
+        },
+        { value: AGENTS.BOTH, label: "Both", hint: ".claude/ and .opencode/" },
       ],
     });
 
