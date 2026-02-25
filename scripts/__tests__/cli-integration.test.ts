@@ -206,11 +206,33 @@ describe("CLI Integration", () => {
       commands: ["commit.md"],
       skills: ["tdd.md"],
       overwrite: true,
+      agent: "claude",
     });
 
     // Verify command was created in the custom path
     expect(fs.existsSync(path.join(customCommandsDir, "commit.md"))).toBe(true);
     // Verify skill was created in the custom path
+    expect(fs.existsSync(path.join(customSkillsDir, "tdd", "SKILL.md"))).toBe(
+      true,
+    );
+  });
+
+  it("should generate to .opencode in custom path when agent is opencode", async () => {
+    const customBase = path.join(tempDir, "custom-output-oc");
+    const customCommandsDir = path.join(customBase, ".opencode", "commands");
+    const customSkillsDir = path.join(customBase, ".opencode", "skills");
+
+    await main({
+      scope: customBase,
+      commands: ["commit.md"],
+      skills: ["tdd.md"],
+      overwrite: true,
+      agent: "opencode",
+    });
+
+    // Verify command was created in .opencode path
+    expect(fs.existsSync(path.join(customCommandsDir, "commit.md"))).toBe(true);
+    // Verify skill was created in .opencode path
     expect(fs.existsSync(path.join(customSkillsDir, "tdd", "SKILL.md"))).toBe(
       true,
     );

@@ -206,6 +206,22 @@ describe("CLI", () => {
     expect(generateToDirectory).toHaveBeenCalled();
   });
 
+  it("should sum file counts from both agents when agent is both", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(generateToDirectory).mockResolvedValue({
+      success: true,
+      filesGenerated: 7,
+    } as never);
+
+    await main({ scope: "project", agent: "both" });
+
+    // Should report 14 (7 per agent x 2 agents), not 7
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining("14"));
+  });
+
   it("should show .claude/skills/ hint in skills prompt when agent is claude", async () => {
     const { groupMultiselect } = await import("@clack/prompts");
     const { main } = await import("./cli.js");

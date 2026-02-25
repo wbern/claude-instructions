@@ -57,6 +57,10 @@ function isCustomPath(scope: string | symbol | undefined): boolean {
   );
 }
 
+function getAgentDir(agent: Agent): string {
+  return agent === AGENTS.CLAUDE ? DIRECTORIES.CLAUDE : DIRECTORIES.OPENCODE;
+}
+
 // Schema for validating CLI flags
 const FlagValues = FLAG_OPTIONS.map((f) => f.value) as [string, ...string[]];
 const FlagsSchema = v.array(v.picklist(FlagValues));
@@ -262,7 +266,7 @@ export async function main(args?: CliArgs): Promise<void> {
     if (isCustomPath(scope as string)) {
       customOutputPath = path.join(
         scope as string,
-        DIRECTORIES.CLAUDE,
+        getAgentDir(selectedAgent),
         DIRECTORIES.COMMANDS,
       );
     }
@@ -574,21 +578,24 @@ export async function main(args?: CliArgs): Promise<void> {
 
   let totalFilesGenerated = 0;
   for (const agentTarget of agentsToGenerate) {
-    const agentResult = await generateToDirectory(
-      customOutputPath,
-      scope as Scope,
-      {
-        commandPrefix: commandPrefix as string,
-        skipTemplateInjection: args?.skipTemplateInjection,
-        commands: selectedCommands as string[],
-        skipFiles,
-        allowedTools: selectedAllowedTools as string[] | undefined,
-        flags: selectedFlags as string[] | undefined,
-        includeContribCommands: args?.includeContribCommands,
-        agent: agentTarget,
-      },
-    );
-    totalFilesGenerated = agentResult.filesGenerated;
+    const outputPath = isCustomPath(scope as string)
+      ? path.join(
+          scope as string,
+          getAgentDir(agentTarget),
+          DIRECTORIES.COMMANDS,
+        )
+      : undefined;
+    const agentResult = await generateToDirectory(outputPath, scope as Scope, {
+      commandPrefix: commandPrefix as string,
+      skipTemplateInjection: args?.skipTemplateInjection,
+      commands: selectedCommands as string[],
+      skipFiles,
+      allowedTools: selectedAllowedTools as string[] | undefined,
+      flags: selectedFlags as string[] | undefined,
+      includeContribCommands: args?.includeContribCommands,
+      agent: agentTarget,
+    });
+    totalFilesGenerated += agentResult.filesGenerated;
   }
   const result = { filesGenerated: totalFilesGenerated };
 
@@ -597,25 +604,29 @@ export async function main(args?: CliArgs): Promise<void> {
   const skillsToGenerate = selectedSkills ?? args?.skills;
   if (skillsToGenerate && skillsToGenerate.length > 0) {
     for (const agentTarget of agentsToGenerate) {
+      const agentDir =
+        agentTarget === AGENTS.CLAUDE
+          ? DIRECTORIES.CLAUDE
+          : DIRECTORIES.OPENCODE;
       const skillsPath = isCustomPath(scope as string)
-        ? path.join(scope as string, DIRECTORIES.CLAUDE, "skills")
+        ? path.join(scope as string, agentDir, "skills")
         : getSkillsPath(scope as string, agentTarget);
       const skillsResult = await generateSkillsToDirectory(
         skillsPath,
         skillsToGenerate,
         { flags: selectedFlags as string[] | undefined },
       );
-      skillsGenerated = skillsResult.skillsGenerated;
+      skillsGenerated += skillsResult.skillsGenerated;
     }
   }
 
   // Primary path for display message (first agent target)
   const primaryAgent = agentsToGenerate[0];
-  const agentDir = primaryAgent === AGENTS.CLAUDE ? ".claude" : ".opencode";
+  const primaryAgentDir = getAgentDir(primaryAgent);
   const fullPath = isCustomPath(scope as string)
-    ? path.join(scope as string, DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS)
+    ? path.join(scope as string, primaryAgentDir, DIRECTORIES.COMMANDS)
     : scope === "project"
-      ? `${process.cwd()}/${agentDir}/commands`
+      ? `${process.cwd()}/${primaryAgentDir}/commands`
       : primaryAgent === AGENTS.CLAUDE
         ? `${os.homedir()}/.claude/commands`
         : `${os.homedir()}/.config/opencode/commands`;
