@@ -18,6 +18,8 @@ import * as v from "valibot";
 const pc = process.env.FORCE_COLOR ? picocolors.createColors(true) : picocolors;
 
 import {
+  AGENTS,
+  type Agent,
   checkExistingFiles,
   DIRECTORIES,
   type ExistingFile,
@@ -27,6 +29,7 @@ import {
   getCommandsGroupedByCategory,
   getRequestedToolsOptions,
   getScopeOptions,
+  getSkillsPath,
   SCOPES,
   type Scope,
 } from "./cli-generator.js";
@@ -53,6 +56,10 @@ function isCustomPath(scope: string): boolean {
 // Schema for validating CLI flags
 const FlagValues = FLAG_OPTIONS.map((f) => f.value) as [string, ...string[]];
 const FlagsSchema = v.array(v.picklist(FlagValues));
+
+// Schema for validating CLI agent
+const AgentValues = Object.values(AGENTS) as [Agent, ...Agent[]];
+const AgentSchema = v.picklist(AgentValues);
 
 type LineInfo = {
   text: string;
@@ -220,6 +227,7 @@ export interface CliArgs {
   allowedTools?: string[];
   includeContribCommands?: boolean;
   skills?: string[];
+  agent?: string;
 }
 
 export async function main(args?: CliArgs): Promise<void> {
@@ -233,6 +241,7 @@ export async function main(args?: CliArgs): Promise<void> {
   let selectedSkills: string[] | undefined;
   let cachedExistingFiles: ExistingFile[] | undefined;
   let customOutputPath: string | undefined;
+  let selectedAgent: Agent = AGENTS.OPENCODE;
 
   if (args?.scope) {
     // Non-interactive mode (scope is the only required flag)
@@ -241,6 +250,9 @@ export async function main(args?: CliArgs): Promise<void> {
     selectedCommands = args.commands;
     selectedFlags = args.flags ? v.parse(FlagsSchema, args.flags) : undefined;
     selectedAllowedTools = args.allowedTools;
+    selectedAgent = args.agent
+      ? v.parse(AgentSchema, args.agent)
+      : AGENTS.OPENCODE;
 
     // If scope is a custom path, compute the output path
     if (isCustomPath(scope as string)) {
@@ -291,12 +303,38 @@ export async function main(args?: CliArgs): Promise<void> {
       return;
     }
 
-    // Interactive mode: scope first, then flags
+    // Interactive mode: agent target first, then scope, then flags
+    const agentChoice = await select({
+      message: "Select target agent",
+      options: [
+        {
+          value: AGENTS.OPENCODE,
+          label: "OpenCode",
+          hint: ".opencode/commands/",
+        },
+        {
+          value: AGENTS.CLAUDE,
+          label: "Claude Code",
+          hint: ".claude/commands/",
+        },
+        { value: AGENTS.BOTH, label: "Both", hint: ".opencode/ and .claude/" },
+      ],
+    });
+
+    if (isCancel(agentChoice)) {
+      return;
+    }
+
+    selectedAgent = agentChoice as Agent;
+
     const terminalWidth = process.stdout.columns || 80;
     const uiOverhead = 25; // checkbox, label, padding
     scope = await select({
       message: "Select installation scope",
-      options: getScopeOptions(terminalWidth - uiOverhead),
+      options: getScopeOptions(
+        terminalWidth - uiOverhead,
+        selectedAgent === AGENTS.BOTH ? AGENTS.OPENCODE : selectedAgent,
+      ),
     });
 
     if (isCancel(scope)) {
@@ -407,10 +445,14 @@ export async function main(args?: CliArgs): Promise<void> {
     }
 
     // Skills selection - allow users to generate selected commands as skills
+    const skillsHint =
+      selectedAgent === AGENTS.CLAUDE
+        ? "Generate as skill in .claude/skills/"
+        : "Generate as skill in .opencode/skills/";
     const commandsForSkills = (selectedCommands as string[]).map((cmd) => ({
       value: cmd,
       label: cmd.replace(/\.md$/, ""),
-      hint: "Generate as skill in .claude/skills/",
+      hint: skillsHint,
     }));
     const selectedSkillsResult = await groupMultiselect({
       message: "Select commands to also generate as skills (optional)",
@@ -435,6 +477,7 @@ export async function main(args?: CliArgs): Promise<void> {
       allowedTools: selectedAllowedTools as string[] | undefined,
       flags: selectedFlags as string[] | undefined,
       includeContribCommands: args?.includeContribCommands,
+      agent: selectedAgent,
     }));
 
   const skipFiles: string[] = [];
@@ -519,40 +562,59 @@ export async function main(args?: CliArgs): Promise<void> {
     }
   }
 
-  const result = await generateToDirectory(customOutputPath, scope as Scope, {
-    commandPrefix: commandPrefix as string,
-    skipTemplateInjection: args?.skipTemplateInjection,
-    commands: selectedCommands as string[],
-    skipFiles,
-    allowedTools: selectedAllowedTools as string[] | undefined,
-    flags: selectedFlags as string[] | undefined,
-    includeContribCommands: args?.includeContribCommands,
-  });
+  // For "both" agent, generate to OpenCode first then Claude
+  const agentsToGenerate: Agent[] =
+    selectedAgent === AGENTS.BOTH
+      ? [AGENTS.OPENCODE, AGENTS.CLAUDE]
+      : [selectedAgent];
+
+  let totalFilesGenerated = 0;
+  for (const agentTarget of agentsToGenerate) {
+    const agentResult = await generateToDirectory(
+      customOutputPath,
+      scope as Scope,
+      {
+        commandPrefix: commandPrefix as string,
+        skipTemplateInjection: args?.skipTemplateInjection,
+        commands: selectedCommands as string[],
+        skipFiles,
+        allowedTools: selectedAllowedTools as string[] | undefined,
+        flags: selectedFlags as string[] | undefined,
+        includeContribCommands: args?.includeContribCommands,
+        agent: agentTarget,
+      },
+    );
+    totalFilesGenerated = agentResult.filesGenerated;
+  }
+  const result = { filesGenerated: totalFilesGenerated };
 
   // Generate skills (from interactive selection or --skills CLI option)
   let skillsGenerated = 0;
   const skillsToGenerate = selectedSkills ?? args?.skills;
   if (skillsToGenerate && skillsToGenerate.length > 0) {
-    const skillsBasePath = isCustomPath(scope as string)
-      ? (scope as string)
-      : scope === "project"
-        ? process.cwd()
-        : os.homedir();
-    const skillsPath = path.join(skillsBasePath, DIRECTORIES.CLAUDE, "skills");
-
-    const skillsResult = await generateSkillsToDirectory(
-      skillsPath,
-      skillsToGenerate,
-      { flags: selectedFlags as string[] | undefined },
-    );
-    skillsGenerated = skillsResult.skillsGenerated;
+    for (const agentTarget of agentsToGenerate) {
+      const skillsPath = isCustomPath(scope as string)
+        ? path.join(scope as string, DIRECTORIES.CLAUDE, "skills")
+        : getSkillsPath(scope as string, agentTarget);
+      const skillsResult = await generateSkillsToDirectory(
+        skillsPath,
+        skillsToGenerate,
+        { flags: selectedFlags as string[] | undefined },
+      );
+      skillsGenerated = skillsResult.skillsGenerated;
+    }
   }
 
+  // Primary path for display message (first agent target)
+  const primaryAgent = agentsToGenerate[0];
+  const agentDir = primaryAgent === AGENTS.CLAUDE ? ".claude" : ".opencode";
   const fullPath = isCustomPath(scope as string)
     ? path.join(scope as string, DIRECTORIES.CLAUDE, DIRECTORIES.COMMANDS)
     : scope === "project"
-      ? `${process.cwd()}/.claude/commands`
-      : `${os.homedir()}/.claude/commands`;
+      ? `${process.cwd()}/${agentDir}/commands`
+      : primaryAgent === AGENTS.CLAUDE
+        ? `${os.homedir()}/.claude/commands`
+        : `${os.homedir()}/.config/opencode/commands`;
 
   // Build automation command for interactive mode
   const isInteractiveMode = !args?.scope;
@@ -560,6 +622,7 @@ export async function main(args?: CliArgs): Promise<void> {
   if (isInteractiveMode) {
     const parts = ["claude-instructions"];
     parts.push(`--scope=${scope as string}`);
+    parts.push(`--agent=${selectedAgent}`);
     if (commandPrefix) {
       parts.push(`--prefix=${commandPrefix as string}`);
     }
@@ -589,10 +652,17 @@ To automate this setup:
       ? `\nInstalled ${skillsGenerated} skills to ${fullPath.replace("/commands", "/skills")}`
       : "";
 
+  const agentRestartNote =
+    selectedAgent === AGENTS.CLAUDE
+      ? "If Claude Code is already running, restart it to pick up the new commands."
+      : selectedAgent === AGENTS.BOTH
+        ? "Restart your agent (OpenCode or Claude Code) to pick up the new commands."
+        : "If OpenCode is already running, restart it to pick up the new commands.";
+
   outro(
     `Installed ${result.filesGenerated} commands to ${fullPath}${skillsMessage}
 
-If Claude Code is already running, restart it to pick up the new commands.
+${agentRestartNote}
 
 Try it out:
 

@@ -27,7 +27,7 @@ describe("CLI Integration", () => {
 
   beforeEach(() => {
     tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "claude-instructions-test-"),
+      path.join(os.tmpdir(), "agent-instructions-test-"),
     );
   });
 
@@ -149,7 +149,7 @@ describe("CLI Integration", () => {
 
   it("should produce identical output when re-running with same allowed-tools via CLI", async () => {
     // This test simulates the exact user scenario:
-    // 1. Run CLI with --allowed-tools
+    // 1. Run CLI with --allowed-tools (using --agent=claude to test allowed-tools injection)
     // 2. Copy the "reuse" command and run it again
     // 3. Files should be identical (no conflicts)
     const outputDir = path.join(tempDir, ".claude", "commands");
@@ -164,8 +164,8 @@ describe("CLI Integration", () => {
 
     const allowedToolsArg = `--allowed-tools="${allRequestedTools.join(",")}"`;
 
-    // First run - generate files
-    const firstCmd = `node ${BIN_PATH} --commands=code-review.md --prefix=my- ${allowedToolsArg} --scope=project --overwrite`;
+    // First run - generate files using --agent=claude so allowed-tools is injected
+    const firstCmd = `node ${BIN_PATH} --commands=code-review.md --prefix=my- ${allowedToolsArg} --scope=project --agent=claude --overwrite`;
     execSync(firstCmd, {
       cwd: tempDir,
       stdio: "pipe",
@@ -188,6 +188,7 @@ describe("CLI Integration", () => {
         commands: ["code-review.md"],
         commandPrefix: "my-",
         allowedTools: allRequestedTools,
+        agent: "claude" as const,
       });
 
       expect(existingFiles).toHaveLength(1);
@@ -238,9 +239,9 @@ describe("CLI Integration", () => {
   });
 
   it("should generate skills via CLI --skills option", async () => {
-    const skillsDir = path.join(tempDir, ".claude", "skills");
+    const skillsDir = path.join(tempDir, ".opencode", "skills");
 
-    // Run CLI with --skills option
+    // Run CLI with --skills option (default agent is opencode)
     execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
       cwd: tempDir,
       stdio: "pipe",
@@ -256,8 +257,9 @@ describe("CLI Integration", () => {
 
   it("should handle full user-scope command with all options combined", async () => {
     // This tests the exact CLI command a user might run with all options
-    const commandsDir = path.join(tempDir, ".claude", "commands");
-    const skillsDir = path.join(tempDir, ".claude", "skills");
+    // Using --agent=opencode (default) so commands go to .config/opencode/commands/
+    const commandsDir = path.join(tempDir, ".config", "opencode", "commands");
+    const skillsDir = path.join(tempDir, ".config", "opencode", "skills");
 
     const commands = [
       "spike.md",
@@ -326,12 +328,14 @@ describe("CLI Integration", () => {
     const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
     expect(fs.existsSync(skillFile)).toBe(true);
 
-    // Verify code-review has the allowed-tools (it has _requested-tools in frontmatter)
-    const codeReviewContent = fs.readFileSync(
-      path.join(commandsDir, "code-review.md"),
-      "utf-8",
-    );
-    expect(codeReviewContent).toContain("Bash(git diff:*)");
+    // Verify code-review was generated (OpenCode agent: no allowed-tools header, but file exists)
+    const codeReviewFile = path.join(commandsDir, "code-review.md");
+    expect(fs.existsSync(codeReviewFile)).toBe(true);
+    const codeReviewContent = fs.readFileSync(codeReviewFile, "utf-8");
+    // OpenCode agent does NOT inject allowed-tools; verify the file is a valid markdown command
+    expect(codeReviewContent).toMatch(/^---/);
+    // allowed-tools should NOT be present for OpenCode target
+    expect(codeReviewContent).not.toContain("allowed-tools:");
 
     // Verify beads flag content is injected (create-issues uses beads)
     const createIssuesContent = fs.readFileSync(

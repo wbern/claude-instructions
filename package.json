@@ -1,7 +1,10 @@
 {
   "name": "@wbern/claude-instructions",
   "version": "2.11.0",
-  "description": "TDD workflow commands for Claude Code CLI",
+  "description": "TDD workflow commands for AI coding agents (Claude Code, OpenCode)",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "bin": "./bin/cli.js",
   "files": [
@@ -17,6 +20,7 @@
     "url": "https://github.com/wbern/claude-instructions/issues"
   },
   "keywords": [
+    "opencode",
     "claude",
     "claude-code",
     "tdd",
@@ -27,9 +31,9 @@
   "author": "wbern",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .claude/commands/*.md",
+    "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .opencode/commands/*.md",
     "build:readme": "tsx scripts/build.ts",
-    "build:commands": "pnpm build:cli && rm -f .claude/commands/*.md && rm -rf .claude/skills && node bin/cli.js --scope=project --flags=beads,no-plan-files --skills=tdd.md --include-contrib-commands --overwrite",
+    "build:commands": "pnpm build:cli && rm -f .opencode/commands/*.md && rm -rf .opencode/skills && node bin/cli.js --scope=project --agent=opencode --flags=beads,no-plan-files --skills=tdd.md --include-contrib-commands --overwrite",
     "build:cli": "tsup",
     "test:manual": "pnpm build:cli && TMPDIR=$(mktemp -d) && pnpm pack --pack-destination $TMPDIR && cd $TMPDIR && tar -xzf *.tgz && cd package && pnpm i && node bin/cli.js",
     "test:quick-manual": "pnpm build:cli && node bin/cli.js",
