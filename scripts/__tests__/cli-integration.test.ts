@@ -27,7 +27,7 @@ describe("CLI Integration", () => {
 
   beforeEach(() => {
     tempDir = fs.mkdtempSync(
-      path.join(os.tmpdir(), "agent-instructions-test-"),
+      path.join(os.tmpdir(), "claude-instructions-test-"),
     );
   });
 

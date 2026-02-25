@@ -710,7 +710,7 @@ export interface GenerateSkillsResult {
 }
 
 /**
- * Generates skills to .claude/skills/{skill-name}/SKILL.md format.
+ * Generates skills to {agent-dir}/skills/{skill-name}/SKILL.md format.
  * Skills use the Agent Skills standard with name and description in frontmatter.
  */
 export async function generateSkillsToDirectory(

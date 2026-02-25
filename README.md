@@ -93,13 +93,13 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 | `--agent=opencode` | Target agent (opencode, claude, both) |
 | `--prefix=my-` | Add prefix to command names |
 | `--commands=commit,red,green` | Install only specific commands |
-| `--skip-template-injection` | Skip injecting project CLAUDE.md customizations |
+| `--skip-template-injection` | Skip injecting project template customizations |
 | `--update-existing` | Only update already-installed commands |
 | `--overwrite` | Overwrite conflicting files without prompting |
 | `--skip-on-conflict` | Skip conflicting files without prompting |
 | `--flags=beads,github` | Enable feature flags (beads, github, gitlab, etc.) |
 | `--allowed-tools=Bash(git diff:*),Bash(git status:*)` | Pre-approve tools for commands (non-interactive mode) |
-| `--skills=tdd,commit` | Generate selected commands as skills (.claude/skills/) |
+| `--skills=tdd,commit` | Generate selected commands as skills |
 | `--help, -h` | Show help message |
 | `--version, -v` | Show version number |
 

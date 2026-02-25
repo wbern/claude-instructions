@@ -628,10 +628,7 @@ export async function main(args?: CliArgs): Promise<void> {
   const skillsToGenerate = selectedSkills ?? args?.skills;
   if (skillsToGenerate && skillsToGenerate.length > 0) {
     for (const agentTarget of agentsToGenerate) {
-      const agentDir =
-        agentTarget === AGENTS.CLAUDE
-          ? DIRECTORIES.CLAUDE
-          : DIRECTORIES.OPENCODE;
+      const agentDir = getAgentDir(agentTarget);
       const skillsPath = isCustomPath(scope as string)
         ? path.join(scope as string, agentDir, "skills")
         : getSkillsPath(scope as string, agentTarget);

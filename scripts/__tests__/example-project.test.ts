@@ -25,7 +25,7 @@ describe("Template Interpolation E2E", { timeout: 30000 }, () => {
 
   beforeEach(async () => {
     tempDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "agent-instructions-test-"),
+      path.join(os.tmpdir(), "claude-instructions-test-"),
     );
   });
 

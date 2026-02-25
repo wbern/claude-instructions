@@ -42,7 +42,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skip-template-injection",
     key: "skipTemplateInjection",
     type: "boolean",
-    description: "Skip injecting project CLAUDE.md customizations",
+    description: "Skip injecting project template customizations",
   },
   {
     flag: "--update-existing",
@@ -87,7 +87,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skills",
     key: "skills",
     type: "array",
-    description: "Generate selected commands as skills (.claude/skills/)",
+    description: "Generate selected commands as skills",
     example: "--skills=tdd,commit",
   },
 ];
