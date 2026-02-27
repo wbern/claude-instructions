@@ -1,22 +1,30 @@
 {
-  "name": "@wbern/claude-instructions",
+  "name": "@wbern/agent-instructions",
   "version": "2.11.0",
-  "description": "TDD workflow commands for Claude Code CLI",
+  "description": "TDD workflow commands for AI coding agents (Claude Code, OpenCode)",
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
-  "bin": "./bin/cli.js",
+  "bin": {
+    "agent-instructions": "./bin/cli.js",
+    "claude-instructions": "./bin/cli.js"
+  },
   "files": [
     "bin",
     "src"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wbern/claude-instructions.git"
+    "url": "git+https://github.com/wbern/agent-instructions.git"
   },
-  "homepage": "https://github.com/wbern/claude-instructions#readme",
+  "homepage": "https://github.com/wbern/agent-instructions#readme",
   "bugs": {
-    "url": "https://github.com/wbern/claude-instructions/issues"
+    "url": "https://github.com/wbern/agent-instructions/issues"
   },
   "keywords": [
+    "agent-instructions",
+    "opencode",
     "claude",
     "claude-code",
     "tdd",
@@ -27,13 +35,14 @@
   "author": "wbern",
   "license": "MIT",
   "scripts": {
-    "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .claude/commands/*.md",
+    "build": "pnpm build:readme && pnpm build:commands && pnpm exec markdownlint --fix .claude/commands/*.md .opencode/commands/*.md",
     "build:readme": "tsx scripts/build.ts",
-    "build:commands": "pnpm build:cli && rm -f .claude/commands/*.md && rm -rf .claude/skills && node bin/cli.js --scope=project --flags=beads,no-plan-files --skills=tdd.md --include-contrib-commands --overwrite",
+    "build:commands": "pnpm build:cli && rm -f .claude/commands/*.md && rm -rf .claude/skills && rm -f .opencode/commands/*.md && rm -rf .opencode/skills && node bin/cli.js --scope=project --agent=both --flags=beads,no-plan-files --skills=tdd.md --include-contrib-commands --overwrite",
     "build:cli": "tsup",
     "test:manual": "pnpm build:cli && TMPDIR=$(mktemp -d) && pnpm pack --pack-destination $TMPDIR && cd $TMPDIR && tar -xzf *.tgz && cd package && pnpm i && node bin/cli.js",
     "test:quick-manual": "pnpm build:cli && node bin/cli.js",
     "generate": "tsx scripts/cli-generator.ts",
+    "pretest": "pnpm build:cli",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

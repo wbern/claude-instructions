@@ -66,6 +66,55 @@ Run tests after each change.
     ]);
   });
 
+  it("should extract template block from agent-commands-template tag", () => {
+    const content = `# Project Instructions
+
+<agent-commands-template>
+## OpenCode Context
+This project uses OpenCode.
+</agent-commands-template>`;
+
+    const result = extractTemplateBlocks(content);
+
+    expect(result).toEqual([
+      {
+        content: "## OpenCode Context\nThis project uses OpenCode.",
+      },
+    ]);
+  });
+
+  it("should extract commands filter from agent-commands-template with commands attribute", () => {
+    const content = `<agent-commands-template commands="commit,pr">
+## Deploy rules
+</agent-commands-template>`;
+
+    const result = extractTemplateBlocks(content);
+
+    expect(result).toEqual([
+      {
+        content: "## Deploy rules",
+        commands: ["commit", "pr"],
+      },
+    ]);
+  });
+
+  it("should extract blocks from both tag names in the same file", () => {
+    const content = `<claude-commands-template>
+## From Claude tag
+</claude-commands-template>
+
+<agent-commands-template>
+## From Agent tag
+</agent-commands-template>`;
+
+    const result = extractTemplateBlocks(content);
+
+    expect(result).toEqual([
+      { content: "## From Claude tag" },
+      { content: "## From Agent tag" },
+    ]);
+  });
+
   it("should return empty array when no template blocks found", () => {
     const content = `# Project Instructions
 

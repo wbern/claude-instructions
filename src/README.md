@@ -1,14 +1,14 @@
-# @wbern/claude-instructions
+# @wbern/agent-instructions
 
-[![npm version](https://img.shields.io/npm/v/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
-[![npm downloads](https://img.shields.io/npm/dm/@wbern/claude-instructions)](https://www.npmjs.com/package/@wbern/claude-instructions)
-[![CI](https://github.com/wbern/claude-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/wbern/claude-instructions/actions/workflows/release.yml)
-[![codecov](https://codecov.io/gh/wbern/claude-instructions/graph/badge.svg)](https://codecov.io/gh/wbern/claude-instructions)
+[![npm version](https://img.shields.io/npm/v/@wbern/agent-instructions)](https://www.npmjs.com/package/@wbern/agent-instructions)
+[![npm downloads](https://img.shields.io/npm/dm/@wbern/agent-instructions)](https://www.npmjs.com/package/@wbern/agent-instructions)
+[![CI](https://github.com/wbern/agent-instructions/actions/workflows/release.yml/badge.svg)](https://github.com/wbern/agent-instructions/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/wbern/agent-instructions/graph/badge.svg)](https://codecov.io/gh/wbern/agent-instructions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [![Made with Claude Code](https://img.shields.io/badge/Made%20with-Claude%20Code-blueviolet)](https://claude.ai/code)
-[![Contributors](https://img.shields.io/github/contributors/wbern/claude-instructions)](https://github.com/wbern/claude-instructions/graphs/contributors)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/claude-instructions/pulls)
+[![Contributors](https://img.shields.io/github/contributors/wbern/agent-instructions)](https://github.com/wbern/agent-instructions/graphs/contributors)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](https://github.com/wbern/agent-instructions/pulls)
 <!-- docs COMMANDS_BADGE -->
 <!-- /docs -->
 
@@ -27,11 +27,11 @@ XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
        "\       "      \X/      "       /"
 ```
 
-**TDD workflow commands for Claude Code CLI.**
+**TDD workflow commands for AI coding agents (Claude Code, OpenCode).**
 
 > "TDD helps you to pay attention to the right issues at the right time so you can make your designs cleaner, you can refine your designs as you learn." — Kent Beck
 
-Claude Code supports [custom slash commands](https://docs.anthropic.com/en/docs/claude-code/slash-commands)—type `/foo` and Claude receives the contents of `foo.md` as instructions (from `.claude/commands/` in your repo or `~/.claude/commands/` in your home directory). This repo provides ready-made commands for Test-Driven Development workflows.
+AI coding agents like [Claude Code](https://docs.anthropic.com/en/docs/claude-code/slash-commands) and [OpenCode](https://opencode.ai/docs/commands/) support custom slash commands — type `/foo` and the agent receives the contents of `foo.md` as instructions. This repo provides ready-made commands for Test-Driven Development workflows.
 
 Custom commands are just a glorified copy-paste mechanism—but that simplicity is what makes them effective for establishing consistent development practices.
 
@@ -44,11 +44,11 @@ Also included are commands for commits, PRs, code reviews, and other tasks that 
 ## Installation
 
 ```bash
-npx @wbern/claude-instructions    # npm
+npx @wbern/agent-instructions    # npm
 ```
 
 ```bash
-pnpm dlx @wbern/claude-instructions   # pnpm
+pnpm dlx @wbern/agent-instructions   # pnpm
 ```
 
 The interactive installer lets you choose:
@@ -56,14 +56,14 @@ The interactive installer lets you choose:
 - **Feature flags**: Enable optional integrations like [Beads MCP](https://github.com/steveyegge/beads)
 - **Scope**: User-level (global) or project-level installation
 
-After installation, restart Claude Code if it's currently running.
+After installation, restart your agent if it's currently running.
 
 ### Adding to Your Repository
 
 To automatically regenerate commands when teammates install dependencies, add it as a dev dependency with a postinstall script:
 
 ```bash
-npm install --save-dev @wbern/claude-instructions
+npm install --save-dev @wbern/agent-instructions
 ```
 
 Then add a postinstall script to your `package.json`:
@@ -71,10 +71,10 @@ Then add a postinstall script to your `package.json`:
 ```json
 {
   "scripts": {
-    "postinstall": "claude-instructions --scope=project --overwrite"
+    "postinstall": "agent-instructions --scope=project --agent=both --overwrite"
   },
   "devDependencies": {
-    "@wbern/claude-instructions": "^<!-- docs VERSION --><!-- /docs -->"
+    "@wbern/agent-instructions": "^<!-- docs VERSION --><!-- /docs -->"
   }
 }
 ```
@@ -88,47 +88,50 @@ This ensures commands are regenerated whenever anyone runs `npm install`, `pnpm 
 
 ## Customizing Commands
 
-You can inject project-specific instructions into generated commands by adding a `<claude-commands-template>` block to your `CLAUDE.md` or `AGENTS.md` file.
+You can inject project-specific instructions into generated commands by adding a template block to your `AGENTS.md` or `CLAUDE.md` file.
+
+Both `<claude-commands-template>` and `<agent-commands-template>` tags are supported — use whichever fits your project.
 
 ### Basic Usage
 
-Add this to your project's `CLAUDE.md`:
+Add this to your project's `AGENTS.md` (or `CLAUDE.md`):
 
 ```markdown
 # My Project
 
 Other instructions here...
 
-<claude-commands-template>
+<agent-commands-template>
 ## Project-Specific Rules
 
 - Always use pnpm instead of npm
 - Run tests with `pnpm test`
-</claude-commands-template>
+</agent-commands-template>
 ```
 
-When you run `claude-instructions`, the template content is appended to all generated commands.
+When you run `agent-instructions`, the template content is appended to all generated commands.
 
 ### Targeting Specific Commands
 
 Use the `commands` attribute to inject content only into specific commands:
 
 ```markdown
-<claude-commands-template commands="commit,ask">
+<agent-commands-template commands="commit,ask">
 ## Git Conventions
 
 - Use conventional commits format
 - Reference issue numbers in commits
-</claude-commands-template>
+</agent-commands-template>
 ```
 
 This injects the content only into `commit.md` and `ask.md`.
 
 ### File Priority
 
-The generator looks for template blocks in this order:
-1. `CLAUDE.md` (checked first)
-2. `AGENTS.md` (fallback)
+The generator checks the agent-native file first:
+
+- **OpenCode** (`--agent=opencode`): `AGENTS.md` first, then `CLAUDE.md`
+- **Claude Code** (`--agent=claude`): `CLAUDE.md` first, then `AGENTS.md`
 
 Only the first file found is used.
 
@@ -270,23 +273,6 @@ The commands enforce TDD discipline: you can't refactor with failing tests, can'
 <!-- docs EXAMPLE_CONVERSATIONS -->
 <!-- /docs -->
 
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, build system, and fragment management.
-
-## Credits
-
-TDD workflow instructions adapted from [TDD Guard](https://github.com/nizos/tdd-guard) by Nizar.
-
-FIRST principles and test quality criteria from [TDD Manifesto](https://tddmanifesto.com/).
-
-Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
-
-## Related Projects
-
-- [citypaul/.dotfiles](https://github.com/citypaul/.dotfiles) - Claude Code configuration with TDD workflows and custom commands
-- [nizos/tdd-guard](https://github.com/nizos/tdd-guard) - Original TDD Guard instructions for Claude
-
 ## Transparency: @wbern's Usage Stats (Jan 20 - Feb 3, 2025)
 
 | Command | Usage |
@@ -308,3 +294,20 @@ Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
 | /tdd-review | 1% |
 | /create-adr | 1% |
 | Other | 1% |
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow, build system, and fragment management.
+
+## Credits
+
+TDD workflow instructions adapted from [TDD Guard](https://github.com/nizos/tdd-guard) by Nizar.
+
+FIRST principles and test quality criteria from [TDD Manifesto](https://tddmanifesto.com/).
+
+Example kata from [Cyber-Dojo](https://cyber-dojo.org/).
+
+## Related Projects
+
+- [citypaul/.dotfiles](https://github.com/citypaul/.dotfiles) - Claude Code configuration with TDD workflows and custom commands
+- [nizos/tdd-guard](https://github.com/nizos/tdd-guard) - Original TDD Guard instructions for Claude

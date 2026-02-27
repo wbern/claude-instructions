@@ -18,6 +18,13 @@ export const CLI_OPTIONS: CliOption[] = [
     requiredForNonInteractive: true,
   },
   {
+    flag: "--agent",
+    key: "agent",
+    type: "string",
+    description: "Target agent (opencode, claude, both)",
+    example: "--agent=opencode",
+  },
+  {
     flag: "--prefix",
     key: "prefix",
     type: "string",
@@ -35,7 +42,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skip-template-injection",
     key: "skipTemplateInjection",
     type: "boolean",
-    description: "Skip injecting project CLAUDE.md customizations",
+    description: "Skip injecting project template customizations",
   },
   {
     flag: "--update-existing",
@@ -80,13 +87,13 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skills",
     key: "skills",
     type: "array",
-    description: "Generate selected commands as skills (.claude/skills/)",
+    description: "Generate selected commands as skills",
     example: "--skills=tdd,commit",
   },
 ];
 
 export function generateHelpText(): string {
-  const lines = ["Usage: claude-instructions [options]", "", "Options:"];
+  const lines = ["Usage: agent-instructions [options]", "", "Options:"];
 
   for (const opt of CLI_OPTIONS) {
     const suffix =
