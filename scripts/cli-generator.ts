@@ -194,6 +194,12 @@ export async function checkExistingFiles(
     allowedToolsSet = new Set(options.allowedTools);
   }
 
+  const templates = await loadTemplateBlocks(
+    scope,
+    options?.skipTemplateInjection,
+    options?.agent,
+  );
+
   const baseDir = path.join(__dirname, "..");
 
   for (const file of files) {
@@ -229,6 +235,11 @@ export async function checkExistingFiles(
             `---\n${allowedToolsYaml}\n`,
           );
         }
+      }
+
+      if (templates.length > 0) {
+        const commandName = path.basename(outputFileName, ".md");
+        newContent = applyTemplateBlocks(newContent, commandName, templates);
       }
 
       existingFiles.push({
@@ -448,38 +459,22 @@ function transformFrontmatter(
 }
 
 /**
- * Strip Claude Code-specific frontmatter keys for OpenCode compatibility.
- * OpenCode supports: description, agent, model, subtask.
- * Claude Code-only keys (e.g. allowed-tools) are removed.
+ * Strip frontmatter keys matching a predicate, including multiline values.
  */
-export function stripClaudeOnlyFrontmatter(content: string): string {
-  return transformFrontmatter(content, (lines) =>
-    lines.filter(
-      (line) =>
-        !CLAUDE_ONLY_FRONTMATTER_KEYS.some((key) => line.startsWith(`${key}:`)),
-    ),
-  );
-}
-
-/**
- * Strips underscore-prefixed metadata from YAML frontmatter.
- * These are internal properties (e.g., _hint, _category, _order, _requested-tools)
- * that should not appear in generated output.
- */
-export function stripInternalMetadata(content: string): string {
+function stripFrontmatterKeys(
+  content: string,
+  isTargetKey: (line: string) => boolean,
+): string {
   return transformFrontmatter(content, (lines) => {
     const filteredLines: string[] = [];
     let skipMultiline = false;
 
     for (const line of lines) {
-      // Check if this is a top-level underscore property (includes hyphens like _requested-tools)
-      if (/^_[\w-]+:/.test(line)) {
-        // Check if it's a multiline value (ends with nothing after colon or has array indicator)
-        skipMultiline = line.endsWith(":") || /^_[\w-]+:\s*$/.test(line);
+      if (isTargetKey(line)) {
+        skipMultiline = line.endsWith(":") || /:\s*$/.test(line);
         continue;
       }
 
-      // Skip continuation lines of multiline values (indented lines)
       if (skipMultiline && /^\s+/.test(line)) {
         continue;
       }
@@ -490,6 +485,26 @@ export function stripInternalMetadata(content: string): string {
 
     return filteredLines;
   });
+}
+
+/**
+ * Strip Claude Code-specific frontmatter keys for OpenCode compatibility.
+ * OpenCode supports: description, agent, model, subtask.
+ * Claude Code-only keys (e.g. allowed-tools) are removed.
+ */
+export function stripClaudeOnlyFrontmatter(content: string): string {
+  return stripFrontmatterKeys(content, (line) =>
+    CLAUDE_ONLY_FRONTMATTER_KEYS.some((key) => line.startsWith(`${key}:`)),
+  );
+}
+
+/**
+ * Strips underscore-prefixed metadata from YAML frontmatter.
+ * These are internal properties (e.g., _hint, _category, _order, _requested-tools)
+ * that should not appear in generated output.
+ */
+export function stripInternalMetadata(content: string): string {
+  return stripFrontmatterKeys(content, (line) => /^_[\w-]+:/.test(line));
 }
 
 /**
@@ -507,9 +522,13 @@ export function applyMarkdownFixes(content: string): string {
 export function extractTemplateBlocks(content: string): TemplateBlock[] {
   const blocks: TemplateBlock[] = [];
 
+  const tagPattern = "(?:claude|agent)-commands-template";
+
   // Match templates with commands attribute
-  const withCommandsRegex =
-    /<claude-commands-template\s+commands="([^"]+)">([\s\S]*?)<\/claude-commands-template>/g;
+  const withCommandsRegex = new RegExp(
+    `<${tagPattern}\\s+commands="([^"]+)">([\\s\\S]*?)<\\/${tagPattern}>`,
+    "g",
+  );
   for (const match of content.matchAll(withCommandsRegex)) {
     blocks.push({
       content: match[2].trim(),
@@ -518,8 +537,10 @@ export function extractTemplateBlocks(content: string): TemplateBlock[] {
   }
 
   // Match templates without commands attribute
-  const withoutCommandsRegex =
-    /<claude-commands-template>([\s\S]*?)<\/claude-commands-template>/g;
+  const withoutCommandsRegex = new RegExp(
+    `<${tagPattern}>([\\s\\S]*?)<\\/${tagPattern}>`,
+    "g",
+  );
   for (const match of content.matchAll(withoutCommandsRegex)) {
     blocks.push({
       content: match[1].trim(),
@@ -527,6 +548,54 @@ export function extractTemplateBlocks(content: string): TemplateBlock[] {
   }
 
   return blocks;
+}
+
+/**
+ * Load template blocks from CLAUDE.md or AGENTS.md in the current working directory.
+ * Returns empty array for user scope to prevent project-specific instructions from leaking.
+ */
+async function loadTemplateBlocks(
+  scope?: Scope | string,
+  skipTemplateInjection?: boolean,
+  agent?: Agent,
+): Promise<TemplateBlock[]> {
+  if (skipTemplateInjection || scope === SCOPES.USER) {
+    return [];
+  }
+  // Check agent-native file first: AGENTS.md for OpenCode, CLAUDE.md for Claude
+  const sourceFiles =
+    agent === AGENTS.OPENCODE
+      ? ([...TEMPLATE_SOURCE_FILES].reverse() as string[])
+      : (TEMPLATE_SOURCE_FILES as readonly string[]);
+  for (const filename of sourceFiles) {
+    const candidatePath = path.join(process.cwd(), filename);
+    if (await fs.pathExists(candidatePath)) {
+      const content = await fs.readFile(candidatePath, "utf-8");
+      return extractTemplateBlocks(content);
+    }
+  }
+  return [];
+}
+
+/**
+ * Apply matching template blocks to command content, filtering by command name.
+ * Returns the content with markdown fixes applied if any templates matched.
+ */
+function applyTemplateBlocks(
+  content: string,
+  commandName: string,
+  templates: TemplateBlock[],
+): string {
+  let result = content;
+  let modified = false;
+  for (const template of templates) {
+    if (template.commands && !template.commands.includes(commandName)) {
+      continue;
+    }
+    result = `${result}\n\n${template.content}`;
+    modified = true;
+  }
+  return modified ? applyMarkdownFixes(result) : result;
 }
 
 export async function generateToDirectory(
@@ -606,47 +675,28 @@ export async function generateToDirectory(
     }
   }
 
+  const templates = await loadTemplateBlocks(
+    scope,
+    options?.skipTemplateInjection,
+    options?.agent,
+  );
   let templateInjected = false;
 
-  // Skip template injection for user scope to prevent project-specific
-  // instructions from leaking into user-global commands
-  if (!options?.skipTemplateInjection && scope !== SCOPES.USER) {
-    let templateSourcePath: string | null = null;
-    for (const filename of TEMPLATE_SOURCE_FILES) {
-      const candidatePath = path.join(process.cwd(), filename);
-      if (await fs.pathExists(candidatePath)) {
-        templateSourcePath = candidatePath;
-        break;
+  if (templates.length > 0) {
+    for (const file of files) {
+      const outputFileName = stripContribPrefix(file);
+      const commandName = path.basename(outputFileName, ".md");
+      const actualFileName = options?.commandPrefix
+        ? options.commandPrefix + outputFileName
+        : outputFileName;
+      const filePath = path.join(destinationPath, actualFileName);
+      const content = await fs.readFile(filePath, "utf-8");
+      const result = applyTemplateBlocks(content, commandName, templates);
+      if (result !== content) {
+        await fs.writeFile(filePath, result);
       }
     }
-
-    if (templateSourcePath) {
-      const sourceContent = await fs.readFile(templateSourcePath, "utf-8");
-      const templates = extractTemplateBlocks(sourceContent);
-      if (templates.length > 0) {
-        for (const file of files) {
-          const outputFileName = stripContribPrefix(file);
-          const commandName = path.basename(outputFileName, ".md");
-          const actualFileName = options?.commandPrefix
-            ? options.commandPrefix + outputFileName
-            : outputFileName;
-          const filePath = path.join(destinationPath, actualFileName);
-          let content = await fs.readFile(filePath, "utf-8");
-          let modified = false;
-          for (const template of templates) {
-            if (template.commands && !template.commands.includes(commandName)) {
-              continue;
-            }
-            content = `${content}\n\n${template.content}`;
-            modified = true;
-          }
-          if (modified) {
-            await fs.writeFile(filePath, applyMarkdownFixes(content));
-          }
-        }
-        templateInjected = true;
-      }
-    }
+    templateInjected = true;
   }
 
   return {
@@ -668,7 +718,7 @@ export interface GenerateSkillsResult {
 }
 
 /**
- * Generates skills to .claude/skills/{skill-name}/SKILL.md format.
+ * Generates skills to {agent-dir}/skills/{skill-name}/SKILL.md format.
  * Skills use the Agent Skills standard with name and description in frontmatter.
  */
 export async function generateSkillsToDirectory(

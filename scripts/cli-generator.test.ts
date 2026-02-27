@@ -39,6 +39,7 @@ import {
   getScopeOptions,
   getSkillsPath,
   SCOPES,
+  stripClaudeOnlyFrontmatter,
 } from "./cli-generator.js";
 
 describe("generateToDirectory", () => {
@@ -1448,6 +1449,71 @@ Just content, no frontmatter.`;
     expect(writtenContent).toContain("description: ");
     expect(writtenContent).toContain("# Test Skill");
   });
+
+  it("should generate multiple skills in a single call", async () => {
+    const sources: Record<string, string> = {
+      "red.md": `---
+description: Write a failing test
+---
+
+# Red Phase`,
+      "green.md": `---
+description: Make it pass
+---
+
+# Green Phase`,
+    };
+
+    vi.mocked(fs.readFile).mockImplementation(((filePath: string) =>
+      Promise.resolve(
+        sources[
+          Object.keys(sources).find((key) => filePath.endsWith(key)) ?? ""
+        ] ?? "",
+      )) as typeof fs.readFile);
+
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    const result = await generateSkillsToDirectory(MOCK_OUTPUT_PATH, [
+      "red.md",
+      "green.md",
+    ]);
+
+    expect(result.success).toBe(true);
+    expect(result.skillsGenerated).toBe(2);
+    expect(fs.ensureDir).toHaveBeenCalledWith(expect.stringContaining("/red"));
+    expect(fs.ensureDir).toHaveBeenCalledWith(
+      expect.stringContaining("/green"),
+    );
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
+
+    const firstContent = vi.mocked(fs.writeFile).mock.calls[0][1] as string;
+    expect(firstContent).toContain("name: red");
+    expect(firstContent).toContain("description: Write a failing test");
+
+    const secondContent = vi.mocked(fs.writeFile).mock.calls[1][1] as string;
+    expect(secondContent).toContain("name: green");
+    expect(secondContent).toContain("description: Make it pass");
+  });
+
+  it("should pass feature flags to fragment expander", async () => {
+    const { expandContent } = await import("./fragment-expander.js");
+    const sourceContent = `---
+description: Test skill
+---
+
+# Skill Content`;
+
+    vi.mocked(fs.readFile).mockResolvedValue(sourceContent as never);
+
+    const { generateSkillsToDirectory } = await import("./cli-generator.js");
+    await generateSkillsToDirectory(MOCK_OUTPUT_PATH, ["test.md"], {
+      flags: ["beads", "github"],
+    });
+
+    expect(expandContent).toHaveBeenCalledWith(
+      sourceContent,
+      expect.objectContaining({ flags: ["beads", "github"] }),
+    );
+  });
 });
 
 describe("generateToDirectory with flags option", () => {
@@ -1503,7 +1569,7 @@ Use Beads to track this task.`;
     // Should call expandContent with the source content and flags
     expect(expandContent).toHaveBeenCalledWith(sourceContent, {
       flags: ["beads"],
-      baseDir: expect.stringContaining("agent-instructions"),
+      baseDir: expect.stringContaining("claude-instructions"),
     });
 
     // Should write expanded content
@@ -1538,6 +1604,51 @@ describe("getSkillsPath", () => {
     expect(result).toContain(".config");
     expect(result).toContain("opencode");
     expect(result).toContain("skills");
+  });
+});
+
+describe("stripClaudeOnlyFrontmatter", () => {
+  it("should strip single-line allowed-tools from frontmatter", () => {
+    const content = `---
+description: Test command
+allowed-tools: Bash(git diff:*), Bash(git status:*)
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).not.toContain("allowed-tools");
+    expect(result).toContain("description: Test command");
+    expect(result).toContain("# Content");
+  });
+
+  it("should strip multiline allowed-tools from frontmatter", () => {
+    const content = `---
+description: Test command
+allowed-tools:
+  - Bash(git diff:*)
+  - Bash(git status:*)
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).not.toContain("allowed-tools");
+    expect(result).not.toContain("Bash(git diff:*)");
+    expect(result).toContain("description: Test command");
+  });
+
+  it("should not strip non-Claude keys", () => {
+    const content = `---
+description: Test command
+name: test
+---
+# Content`;
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).toContain("description: Test command");
+    expect(result).toContain("name: test");
+  });
+
+  it("should return content unchanged when no frontmatter", () => {
+    const content = "# Just content\nNo frontmatter here.";
+    const result = stripClaudeOnlyFrontmatter(content);
+    expect(result).toBe(content);
   });
 });
 

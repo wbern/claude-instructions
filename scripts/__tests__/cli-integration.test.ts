@@ -9,6 +9,19 @@ import { generateToDirectory } from "../cli-generator.js";
 const PROJECT_ROOT = path.join(import.meta.dirname, "../..");
 const BIN_PATH = path.join(PROJECT_ROOT, "bin", "cli.js");
 
+/**
+ * Execute a function with a temporary working directory, restoring original cwd afterward.
+ */
+async function withCwd<T>(dir: string, fn: () => Promise<T>): Promise<T> {
+  const originalCwd = process.cwd();
+  process.chdir(dir);
+  try {
+    return await fn();
+  } finally {
+    process.chdir(originalCwd);
+  }
+}
+
 describe("CLI Integration", () => {
   let tempDir: string;
 
@@ -43,7 +56,10 @@ describe("CLI Integration", () => {
 
   it("should have package.json with correct bin entry", () => {
     const pkgJson = fs.readJsonSync(path.join(PROJECT_ROOT, "package.json"));
-    expect(pkgJson.bin).toBe("./bin/cli.js");
+    expect(pkgJson.bin).toEqual({
+      "agent-instructions": "./bin/cli.js",
+      "claude-instructions": "./bin/cli.js",
+    });
   });
 
   it("should have package.json with files array including bin and src", () => {
@@ -168,16 +184,61 @@ describe("CLI Integration", () => {
     );
 
     // Second run with exact same command - should not show conflicts
-    const { checkExistingFiles } = await import("../cli-generator.js");
-    const existingFiles = await checkExistingFiles(outputDir, undefined, {
-      commands: ["code-review.md"],
-      commandPrefix: "my-",
-      allowedTools: allRequestedTools,
-      agent: "claude" as const,
+    // Use withCwd to match the CLI's cwd (tempDir has no CLAUDE.md, so no template injection)
+    await withCwd(tempDir, async () => {
+      const { checkExistingFiles } = await import("../cli-generator.js");
+      const existingFiles = await checkExistingFiles(outputDir, undefined, {
+        commands: ["code-review.md"],
+        commandPrefix: "my-",
+        allowedTools: allRequestedTools,
+        agent: "claude" as const,
+      });
+
+      expect(existingFiles).toHaveLength(1);
+      expect(existingFiles[0].isIdentical).toBe(true);
+    });
+  });
+
+  it("should generate to custom path when scope is an absolute path", async () => {
+    const customBase = path.join(tempDir, "custom-output");
+    const customCommandsDir = path.join(customBase, ".claude", "commands");
+    const customSkillsDir = path.join(customBase, ".claude", "skills");
+
+    await main({
+      scope: customBase,
+      commands: ["commit.md"],
+      skills: ["tdd.md"],
+      overwrite: true,
+      agent: "claude",
     });
 
-    expect(existingFiles).toHaveLength(1);
-    expect(existingFiles[0].isIdentical).toBe(true);
+    // Verify command was created in the custom path
+    expect(fs.existsSync(path.join(customCommandsDir, "commit.md"))).toBe(true);
+    // Verify skill was created in the custom path
+    expect(fs.existsSync(path.join(customSkillsDir, "tdd", "SKILL.md"))).toBe(
+      true,
+    );
+  });
+
+  it("should generate to .opencode in custom path when agent is opencode", async () => {
+    const customBase = path.join(tempDir, "custom-output-oc");
+    const customCommandsDir = path.join(customBase, ".opencode", "commands");
+    const customSkillsDir = path.join(customBase, ".opencode", "skills");
+
+    await main({
+      scope: customBase,
+      commands: ["commit.md"],
+      skills: ["tdd.md"],
+      overwrite: true,
+      agent: "opencode",
+    });
+
+    // Verify command was created in .opencode path
+    expect(fs.existsSync(path.join(customCommandsDir, "commit.md"))).toBe(true);
+    // Verify skill was created in .opencode path
+    expect(fs.existsSync(path.join(customSkillsDir, "tdd", "SKILL.md"))).toBe(
+      true,
+    );
   });
 
   it("should generate skill to .claude/skills/{name}/SKILL.md with proper frontmatter", async () => {
@@ -202,110 +263,118 @@ describe("CLI Integration", () => {
     expect(content).toMatch(/\ndescription: /);
   });
 
-  it("should generate skills via CLI --skills option", async () => {
-    const skillsDir = path.join(tempDir, ".opencode", "skills");
+  it(
+    "should generate skills via CLI --skills option",
+    { timeout: 30000 },
+    async () => {
+      const skillsDir = path.join(tempDir, ".opencode", "skills");
 
-    // Run CLI with --skills option (default agent is opencode)
-    execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
-      cwd: tempDir,
-      stdio: "pipe",
-    });
+      // Run CLI with --skills option (default agent is opencode)
+      execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
+        cwd: tempDir,
+        stdio: "pipe",
+      });
 
-    // Skill should be generated
-    const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
-    expect(fs.existsSync(skillFile)).toBe(true);
+      // Skill should be generated
+      const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
+      expect(fs.existsSync(skillFile)).toBe(true);
 
-    const content = fs.readFileSync(skillFile, "utf-8");
-    expect(content).toMatch(/\nname: tdd\n/);
-  });
+      const content = fs.readFileSync(skillFile, "utf-8");
+      expect(content).toMatch(/\nname: tdd\n/);
+    },
+  );
 
-  it("should handle full user-scope command with all options combined", async () => {
-    // This tests the exact CLI command a user might run with all options
-    // Using --agent=opencode (default) so commands go to .config/opencode/commands/
-    const commandsDir = path.join(tempDir, ".config", "opencode", "commands");
-    const skillsDir = path.join(tempDir, ".config", "opencode", "skills");
+  it(
+    "should handle full user-scope command with all options combined",
+    { timeout: 30000 },
+    async () => {
+      // This tests the exact CLI command a user might run with all options
+      // Using --agent=opencode (default) so commands go to .config/opencode/commands/
+      const commandsDir = path.join(tempDir, ".config", "opencode", "commands");
+      const skillsDir = path.join(tempDir, ".config", "opencode", "skills");
 
-    const commands = [
-      "spike.md",
-      "tdd.md",
-      "red.md",
-      "green.md",
-      "refactor.md",
-      "cycle.md",
-      "simplify.md",
-      "tdd-review.md",
-      "issue.md",
-      "create-issues.md",
-      "commit.md",
-      "busycommit.md",
-      "pr.md",
-      "summarize.md",
-      "gap.md",
-      "forever.md",
-      "code-review.md",
-      "polish.md",
-      "worktree-add.md",
-      "worktree-cleanup.md",
-      "beepboop.md",
-      "add-command.md",
-      "kata.md",
-      "create-adr.md",
-      "research.md",
-      "commitlint-checklist-nodejs.md",
-      "upgrade-deps.md",
-    ];
+      const commands = [
+        "spike.md",
+        "tdd.md",
+        "red.md",
+        "green.md",
+        "refactor.md",
+        "cycle.md",
+        "simplify.md",
+        "tdd-review.md",
+        "issue.md",
+        "create-issues.md",
+        "commit.md",
+        "busycommit.md",
+        "pr.md",
+        "summarize.md",
+        "gap.md",
+        "forever.md",
+        "code-review.md",
+        "polish.md",
+        "worktree-add.md",
+        "worktree-cleanup.md",
+        "beepboop.md",
+        "add-command.md",
+        "kata.md",
+        "create-adr.md",
+        "research.md",
+        "commitlint-checklist-nodejs.md",
+        "upgrade-deps.md",
+      ];
 
-    const allowedTools = [
-      "Bash(git diff:*)",
-      "Bash(git status:*)",
-      "Bash(git log:*)",
-      "Bash(git rev-parse:*)",
-      "Bash(git merge-base:*)",
-      "Bash(git branch:*)",
-      "WebFetch(domain:raw.githubusercontent.com)",
-      "WebFetch(domain:api.github.com)",
-    ];
+      const allowedTools = [
+        "Bash(git diff:*)",
+        "Bash(git status:*)",
+        "Bash(git log:*)",
+        "Bash(git rev-parse:*)",
+        "Bash(git merge-base:*)",
+        "Bash(git branch:*)",
+        "WebFetch(domain:raw.githubusercontent.com)",
+        "WebFetch(domain:api.github.com)",
+      ];
 
-    const cmd = [
-      `node ${BIN_PATH}`,
-      "--scope=user",
-      "--flags=gh-cli,no-plan-files,beads",
-      `--commands=${commands.join(",")}`,
-      `--allowed-tools="${allowedTools.join(",")}"`,
-      "--skills=tdd.md",
-      "--overwrite",
-    ].join(" ");
+      const cmd = [
+        `node ${BIN_PATH}`,
+        "--scope=user",
+        "--flags=gh-cli,no-plan-files,beads",
+        `--commands=${commands.join(",")}`,
+        `--allowed-tools="${allowedTools.join(",")}"`,
+        "--skills=tdd.md",
+        "--overwrite",
+      ].join(" ");
 
-    // Override HOME to use tempDir so user-scope writes to our temp directory
-    execSync(cmd, {
-      cwd: tempDir,
-      stdio: "pipe",
-      env: { ...process.env, HOME: tempDir },
-    });
+      // Override HOME to use tempDir so user-scope writes to our temp directory
+      execSync(cmd, {
+        cwd: tempDir,
+        stdio: "pipe",
+        env: { ...process.env, HOME: tempDir },
+      });
 
-    // Verify commands were generated
-    expect(fs.existsSync(commandsDir)).toBe(true);
-    const generatedCommands = fs.readdirSync(commandsDir);
-    expect(generatedCommands.length).toBe(commands.length);
+      // Verify commands were generated
+      expect(fs.existsSync(commandsDir)).toBe(true);
+      const generatedCommands = fs.readdirSync(commandsDir);
+      expect(generatedCommands.length).toBe(commands.length);
 
-    // Verify skill was generated
-    const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
-    expect(fs.existsSync(skillFile)).toBe(true);
+      // Verify skill was generated
+      const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
+      expect(fs.existsSync(skillFile)).toBe(true);
 
-    // Verify code-review was generated (OpenCode agent: no allowed-tools header, but file exists)
-    const codeReviewFile = path.join(commandsDir, "code-review.md");
-    expect(fs.existsSync(codeReviewFile)).toBe(true);
-    const codeReviewContent = fs.readFileSync(codeReviewFile, "utf-8");
-    // OpenCode agent does NOT inject allowed-tools; verify the file is a valid markdown command
-    expect(codeReviewContent).toMatch(/^---/);
-    // allowed-tools should NOT be present for OpenCode target
-    expect(codeReviewContent).not.toContain("allowed-tools:");
+      // Verify code-review was generated (OpenCode agent: no allowed-tools header, but file exists)
+      const codeReviewFile = path.join(commandsDir, "code-review.md");
+      expect(fs.existsSync(codeReviewFile)).toBe(true);
+      const codeReviewContent = fs.readFileSync(codeReviewFile, "utf-8");
+      // OpenCode agent does NOT inject allowed-tools; verify the file is a valid markdown command
+      expect(codeReviewContent).toMatch(/^---/);
+      // allowed-tools should NOT be present for OpenCode target
+      expect(codeReviewContent).not.toContain("allowed-tools:");
 
-    // Verify beads flag content is injected (create-issues uses beads)
-    const createIssuesContent = fs.readFileSync(
-      path.join(commandsDir, "create-issues.md"),
-      "utf-8",
-    );
-    expect(createIssuesContent).toContain("beads"); // beads flag should inject content
-  });
+      // Verify beads flag content is injected (create-issues uses beads)
+      const createIssuesContent = fs.readFileSync(
+        path.join(commandsDir, "create-issues.md"),
+        "utf-8",
+      );
+      expect(createIssuesContent).toContain("beads"); // beads flag should inject content
+    },
+  );
 });

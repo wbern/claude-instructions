@@ -333,6 +333,63 @@ ${sensitiveProjectInstructions}
   });
 });
 
+describe("Template Injection Conflict Detection E2E", () => {
+  let tempDir: string;
+
+  beforeEach(async () => {
+    tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "agent-instructions-template-conflict-"),
+    );
+  });
+
+  afterEach(async () => {
+    if (tempDir && (await fs.pathExists(tempDir))) {
+      await fs.remove(tempDir);
+    }
+  });
+
+  it("should detect files as identical when re-generating with same template", async () => {
+    // Arrange: Create CLAUDE.md with template content
+    const customInstructions =
+      "## Custom Project Rules\n\nAlways use TypeScript strict mode.";
+    const claudeMdContent = `# Project Instructions
+
+<claude-commands-template>
+${customInstructions}
+</claude-commands-template>
+`;
+    await fs.writeFile(path.join(tempDir, "CLAUDE.md"), claudeMdContent);
+
+    await withCwd(tempDir, async () => {
+      const { checkExistingFiles } = await import("../cli-generator.js");
+      const outputDir = path.join(tempDir, ".claude", "commands");
+
+      // Act: Generate commands (which injects template content)
+      await generateToDirectory(outputDir, undefined, {
+        flags: [],
+        commands: ["commit.md"],
+      });
+
+      // Verify template was injected into generated file
+      const generatedContent = await fs.readFile(
+        path.join(outputDir, "commit.md"),
+        "utf-8",
+      );
+      expect(generatedContent).toContain(customInstructions);
+
+      // Act: Check for conflicts with same options
+      const existingFiles = await checkExistingFiles(outputDir, undefined, {
+        flags: [],
+        commands: ["commit.md"],
+      });
+
+      // Assert: File should be detected as identical since same template applies
+      expect(existingFiles).toHaveLength(1);
+      expect(existingFiles[0].isIdentical).toBe(true);
+    });
+  });
+});
+
 describe("Allowed Tools Conflict Detection E2E", () => {
   let tempDir: string;
 
@@ -507,10 +564,10 @@ describe("Postinstall Workflow E2E", () => {
         version: "1.0.0",
         scripts: {
           postinstall:
-            "claude-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
+            "agent-instructions --scope=project --agent=opencode --prefix= --skip-template-injection",
         },
         devDependencies: {
-          "@wbern/claude-instructions": `file:${path.join(tempDir, tarball!)}`,
+          "@wbern/agent-instructions": `file:${path.join(tempDir, tarball!)}`,
         },
       };
       await fs.writeJson(path.join(projectDir, "package.json"), packageJson);

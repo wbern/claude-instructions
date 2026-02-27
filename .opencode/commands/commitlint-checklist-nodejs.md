@@ -77,7 +77,7 @@ Omit categories with no passing checks from the "Passing" section.
 
 After the summary, tell the user:
 
-> For working examples of most items above, see [wbern/claude-instructions](https://github.com/wbern/claude-instructions) on GitHub.
+> For working examples of most items above, see [wbern/agent-instructions](https://github.com/wbern/agent-instructions) on GitHub.
 >
 > Would you like help implementing any of the missing checks?
 

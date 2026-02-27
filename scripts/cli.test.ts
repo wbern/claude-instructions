@@ -58,7 +58,11 @@ vi.mock("./cli-generator.js", () => ({
     .mockResolvedValue({ success: true, skillsGenerated: 1 }),
   checkForConflicts: vi.fn().mockResolvedValue([]),
   checkExistingFiles: vi.fn().mockResolvedValue([]),
-  DIRECTORIES: { CLAUDE: ".claude", OPENCODE: ".opencode" },
+  DIRECTORIES: {
+    CLAUDE: ".claude",
+    OPENCODE: ".opencode",
+    COMMANDS: "commands",
+  },
   AGENTS: { CLAUDE: "claude", OPENCODE: "opencode", BOTH: "both" },
   getSkillsPath: vi.fn().mockReturnValue("/mock/path/.opencode/skills"),
   getCommandsGroupedByCategory: vi.fn().mockResolvedValue({
@@ -195,15 +199,38 @@ describe("CLI", () => {
   });
 
   it("should pass OPENCODE to getScopeOptions when agent is BOTH", async () => {
-    const { generateToDirectory } = await import("./cli-generator.js");
+    const { generateToDirectory, getScopeOptions } = await import(
+      "./cli-generator.js"
+    );
     const { main } = await import("./cli.js");
 
     await setupInteractiveMocks({ agent: "both" });
 
     await main();
 
-    // With agent=both, generateToDirectory is called for each sub-agent
-    expect(generateToDirectory).toHaveBeenCalled();
+    // getScopeOptions should receive "opencode" when agent is "both" (not "both" itself)
+    expect(getScopeOptions).toHaveBeenCalledWith(
+      expect.any(Number),
+      "opencode",
+    );
+    // generateToDirectory should be called twice (once per agent)
+    expect(generateToDirectory).toHaveBeenCalledTimes(2);
+  });
+
+  it("should sum file counts from both agents when agent is both", async () => {
+    const { outro } = await import("@clack/prompts");
+    const { generateToDirectory } = await import("./cli-generator.js");
+    const { main } = await import("./cli.js");
+
+    vi.mocked(generateToDirectory).mockResolvedValue({
+      success: true,
+      filesGenerated: 7,
+    } as never);
+
+    await main({ scope: "project", agent: "both" });
+
+    // Should report 14 (7 per agent x 2 agents), not 7
+    expect(outro).toHaveBeenCalledWith(expect.stringContaining("14"));
   });
 
   it("should show .claude/skills/ hint in skills prompt when agent is claude", async () => {
@@ -240,6 +267,28 @@ describe("CLI", () => {
     await main();
 
     expect(generateToDirectory).not.toHaveBeenCalled();
+  });
+
+  it("should list agents alphabetically with no pre-selection bias", async () => {
+    const { select } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await setupInteractiveMocks();
+
+    await main();
+
+    // First select call is agent selection
+    const agentCall = vi.mocked(select).mock.calls[0];
+    const agentOpts = agentCall[0] as {
+      initialValue?: string;
+      options: Array<{ value: string; label: string }>;
+    };
+    // No pre-selected default
+    expect(agentOpts.initialValue).toBeUndefined();
+    // Claude Code listed before OpenCode (alphabetical — no bias toward either)
+    const labels = agentOpts.options.map((o) => o.label);
+    expect(labels[0]).toBe("Claude Code");
+    expect(labels[1]).toBe("OpenCode");
   });
 
   it("should exit gracefully when user cancels with Ctrl+C on scope", async () => {
@@ -379,7 +428,7 @@ describe("CLI", () => {
     await main();
 
     expect(outro).toHaveBeenCalledWith(
-      expect.stringContaining("claude-instructions --scope=project"),
+      expect.stringContaining("agent-instructions --scope=project"),
     );
     expect(outro).toHaveBeenCalledWith(expect.stringContaining("--prefix=my-"));
     expect(outro).toHaveBeenCalledWith(
@@ -510,6 +559,26 @@ describe("CLI", () => {
       expect.stringContaining(".opencode/skills"),
       ["tdd.md"],
       expect.any(Object),
+    );
+  });
+
+  it("should warn when --agent is omitted in non-interactive mode", async () => {
+    const { log } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await main({ scope: "project" });
+
+    expect(log.warn).toHaveBeenCalledWith(expect.stringContaining("--agent"));
+  });
+
+  it("should NOT warn when --agent is explicitly provided in non-interactive mode", async () => {
+    const { log } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    await main({ scope: "project", agent: "opencode" });
+
+    expect(log.warn).not.toHaveBeenCalledWith(
+      expect.stringContaining("--agent"),
     );
   });
 
@@ -1357,6 +1426,161 @@ NEW LAST`;
     );
     // Should NOT generate any files
     expect(generateToDirectory).not.toHaveBeenCalled();
+  });
+
+  it("should check both agent dirs when updateExisting with agent=both in non-interactive mode", async () => {
+    const { checkExistingFiles, generateToDirectory } = await import(
+      "./cli-generator.js"
+    );
+    const { main } = await import("./cli.js");
+
+    // First call returns opencode files, second returns claude files
+    vi.mocked(checkExistingFiles)
+      .mockResolvedValueOnce([
+        {
+          filename: "red.md",
+          existingContent: "# Red",
+          newContent: "# Red v2",
+          isIdentical: false,
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          filename: "commit.md",
+          existingContent: "# Commit",
+          newContent: "# Commit v2",
+          isIdentical: false,
+        },
+      ]);
+
+    await main({
+      scope: "/tmp/custom-path",
+      prefix: "",
+      agent: "both",
+      updateExisting: true,
+      overwrite: true,
+    });
+
+    // checkExistingFiles should be called twice (once per agent) with custom paths
+    expect(checkExistingFiles).toHaveBeenCalledTimes(2);
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      expect.stringContaining(".opencode/commands"),
+      "/tmp/custom-path",
+      expect.objectContaining({ agent: "opencode" }),
+    );
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      expect.stringContaining(".claude/commands"),
+      "/tmp/custom-path",
+      expect.objectContaining({ agent: "claude" }),
+    );
+    // generateToDirectory receives merged commands from both agent dirs
+    expect(generateToDirectory).toHaveBeenCalledWith(
+      expect.stringContaining(".opencode/commands"),
+      "/tmp/custom-path",
+      expect.objectContaining({
+        commands: expect.arrayContaining(["red.md", "commit.md"]),
+      }),
+    );
+  });
+
+  it("should check both agent dirs when updateExisting with agent=both in interactive mode", async () => {
+    const { checkExistingFiles, getCommandsGroupedByCategory } = await import(
+      "./cli-generator.js"
+    );
+    const { select, text, groupMultiselect } = await import("@clack/prompts");
+    const { main } = await import("./cli.js");
+
+    // First call returns opencode files, second returns claude files
+    vi.mocked(checkExistingFiles)
+      .mockResolvedValueOnce([
+        {
+          filename: "red.md",
+          existingContent: "# Red",
+          newContent: "# Red v2",
+          isIdentical: false,
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          filename: "commit.md",
+          existingContent: "# Commit",
+          newContent: "# Commit v2",
+          isIdentical: false,
+        },
+      ]);
+
+    vi.mocked(getCommandsGroupedByCategory).mockResolvedValueOnce({
+      "TDD Cycle": [
+        { value: "red.md", label: "red.md", selectedByDefault: true },
+      ],
+      Workflow: [
+        { value: "commit.md", label: "commit.md", selectedByDefault: true },
+      ],
+    });
+
+    vi.mocked(select)
+      .mockResolvedValueOnce("both") // agent
+      .mockResolvedValueOnce("project"); // scope
+    vi.mocked(text).mockResolvedValueOnce(""); // prefix
+    vi.mocked(groupMultiselect)
+      .mockResolvedValueOnce([]) // flags
+      .mockResolvedValueOnce(["red.md", "commit.md"]) // commands
+      .mockResolvedValueOnce([]); // skills
+
+    await main({ updateExisting: true, overwrite: true });
+
+    // checkExistingFiles should be called twice (once per agent)
+    expect(checkExistingFiles).toHaveBeenCalledTimes(2);
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      undefined,
+      "project",
+      expect.objectContaining({ agent: "opencode" }),
+    );
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      undefined,
+      "project",
+      expect.objectContaining({ agent: "claude" }),
+    );
+  });
+
+  it("should check both agent dirs for conflict detection when agent=both with custom path", async () => {
+    const { checkExistingFiles, generateToDirectory } = await import(
+      "./cli-generator.js"
+    );
+    const { main } = await import("./cli.js");
+
+    // Mock checkExistingFiles for each agent call during conflict detection
+    vi.mocked(checkExistingFiles)
+      .mockResolvedValueOnce([
+        {
+          filename: "red.md",
+          existingContent: "# Red old",
+          newContent: "# Red new",
+          isIdentical: false,
+        },
+      ])
+      .mockResolvedValueOnce([]);
+
+    await main({
+      scope: "/tmp/custom-output",
+      agent: "both",
+      overwrite: true,
+    });
+
+    // checkExistingFiles called for each agent with custom paths
+    expect(checkExistingFiles).toHaveBeenCalledTimes(2);
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      expect.stringContaining(".opencode/commands"),
+      "/tmp/custom-output",
+      expect.objectContaining({ agent: "opencode" }),
+    );
+    expect(checkExistingFiles).toHaveBeenCalledWith(
+      expect.stringContaining(".claude/commands"),
+      "/tmp/custom-output",
+      expect.objectContaining({ agent: "claude" }),
+    );
+    // generateToDirectory called for each agent
+    expect(generateToDirectory).toHaveBeenCalledTimes(2);
   });
 
   it("should skip conflict prompts and overwrite when overwrite is true", async () => {

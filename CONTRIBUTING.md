@@ -5,7 +5,7 @@ Thanks for your interest in contributing!
 ## Ways to Contribute
 
 ### Report Issues or Suggest Ideas
-The easiest way to contribute is to [open a GitHub issue](https://github.com/wbern/claude-instructions/issues). Bug reports, feature requests, and command ideas are all welcome.
+The easiest way to contribute is to [open a GitHub issue](https://github.com/wbern/agent-instructions/issues). Bug reports, feature requests, and command ideas are all welcome.
 
 ### Submit Code Changes
 To contribute code:
@@ -42,12 +42,12 @@ pnpm build
 ```
 
 This generates:
-- `.claude/commands/` - Local commands for development
+- `.claude/commands/` and `.opencode/commands/` - Local commands for development
 - Updates README.md with command list
 
 ### 4. Test locally
 
-- Restart Claude Code to load updated commands
+- Restart your agent (Claude Code or OpenCode) to load updated commands
 - Test commands work correctly: `/red`, `/green`, etc.
 - Verify fragment inclusion is correct
 - Check README.md has correct command list
@@ -66,12 +66,12 @@ Ensures:
 
 **Commit source files and build artifacts:**
 ```bash
-git add src/ scripts/ .claude/commands/ package.json README.md
+git add src/ scripts/ .claude/commands/ .opencode/commands/ package.json README.md
 git commit -m "feat: update TDD fundamentals fragment"
 ```
 
 **Important workflow notes:**
-- **Build artifacts** (`.claude/commands/`) contain fully expanded content and ARE committed for easy distribution
+- **Build artifacts** (`.claude/commands/`, `.opencode/commands/`) contain fully expanded content and ARE committed for easy distribution
 - After editing sources/fragments, always run `pnpm build` before committing to regenerate artifacts
 - Source files should remain clean - the build process expands fragments into artifacts only
 
@@ -148,7 +148,7 @@ Flags are defined in `scripts/cli-generator.ts` (`FLAG_OPTIONS`). Examples: `bea
 
 ## Available Build Commands
 
-- `pnpm build` - Build README.md and copy commands to `.claude/commands/`
+- `pnpm build` - Build README.md and generate commands to `.claude/commands/` and `.opencode/commands/`
 - `pnpm test` - Run all tests including snapshot tests
 - `pnpm test:watch` - Run tests in watch mode
 - `pnpm generate` - Run interactive command generator

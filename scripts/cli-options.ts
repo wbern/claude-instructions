@@ -13,7 +13,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--scope",
     key: "scope",
     type: "string",
-    description: "Installation scope (project, user)",
+    description: "Installation scope (project, user, or a custom path)",
     example: "--scope=project",
     requiredForNonInteractive: true,
   },
@@ -42,7 +42,7 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skip-template-injection",
     key: "skipTemplateInjection",
     type: "boolean",
-    description: "Skip injecting project CLAUDE.md customizations",
+    description: "Skip injecting project template customizations",
   },
   {
     flag: "--update-existing",
@@ -87,13 +87,13 @@ export const CLI_OPTIONS: CliOption[] = [
     flag: "--skills",
     key: "skills",
     type: "array",
-    description: "Generate selected commands as skills (.claude/skills/)",
+    description: "Generate selected commands as skills",
     example: "--skills=tdd,commit",
   },
 ];
 
 export function generateHelpText(): string {
-  const lines = ["Usage: claude-instructions [options]", "", "Options:"];
+  const lines = ["Usage: agent-instructions [options]", "", "Options:"];
 
   for (const opt of CLI_OPTIONS) {
     const suffix =
