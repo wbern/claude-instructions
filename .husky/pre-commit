@@ -16,5 +16,7 @@ pnpm build
 pnpm test:coverage
 
 # Stage generated files
+# Only .claude/ is committed — .opencode/ is gitignored (generated at build time per machine)
 git add README.md
 git add .claude/commands/
+git add .claude/skills/
