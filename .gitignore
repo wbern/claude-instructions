@@ -19,9 +19,6 @@ bin/
 coverage/
 test-report.junit.xml
 
-# Generated commands (OpenCode) - generated at build time, not committed
-.opencode/
-
 # Local settings
 .claude/settings.local.json
 
