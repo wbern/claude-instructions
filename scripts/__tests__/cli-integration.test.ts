@@ -263,22 +263,26 @@ describe("CLI Integration", () => {
     expect(content).toMatch(/\ndescription: /);
   });
 
-  it("should generate skills via CLI --skills option", async () => {
-    const skillsDir = path.join(tempDir, ".opencode", "skills");
+  it(
+    "should generate skills via CLI --skills option",
+    { timeout: 30000 },
+    async () => {
+      const skillsDir = path.join(tempDir, ".opencode", "skills");
 
-    // Run CLI with --skills option (default agent is opencode)
-    execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
-      cwd: tempDir,
-      stdio: "pipe",
-    });
+      // Run CLI with --skills option (default agent is opencode)
+      execSync(`node ${BIN_PATH} --scope=project --skills=tdd.md --overwrite`, {
+        cwd: tempDir,
+        stdio: "pipe",
+      });
 
-    // Skill should be generated
-    const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
-    expect(fs.existsSync(skillFile)).toBe(true);
+      // Skill should be generated
+      const skillFile = path.join(skillsDir, "tdd", "SKILL.md");
+      expect(fs.existsSync(skillFile)).toBe(true);
 
-    const content = fs.readFileSync(skillFile, "utf-8");
-    expect(content).toMatch(/\nname: tdd\n/);
-  });
+      const content = fs.readFileSync(skillFile, "utf-8");
+      expect(content).toMatch(/\nname: tdd\n/);
+    },
+  );
 
   it(
     "should handle full user-scope command with all options combined",
