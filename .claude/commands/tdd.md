@@ -1,6 +1,6 @@
 ---
 description: Remind agent about TDD approach and continue conversation
-argument-hint: [optional-response-to-last-message]
+argument-hint: "[optional-response-to-last-message]"
 ---
 
 # TDD Reminder

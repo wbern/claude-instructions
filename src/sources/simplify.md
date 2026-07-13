@@ -1,6 +1,6 @@
 ---
 description: Reduce code complexity while keeping tests green
-argument-hint: [file, function, or area to simplify]
+argument-hint: "[file, function, or area to simplify]"
 _hint: Reduce complexity
 _category: Test-Driven Development
 _order: 16

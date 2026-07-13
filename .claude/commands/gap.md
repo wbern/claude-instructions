@@ -1,6 +1,6 @@
 ---
 description: Analyze conversation context for unaddressed items and gaps
-argument-hint: [optional additional info]
+argument-hint: "[optional additional info]"
 ---
 
 ## General Guidelines

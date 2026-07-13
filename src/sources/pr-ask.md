@@ -1,6 +1,6 @@
 ---
 description: Request team review and approval - for complex changes needing discussion
-argument-hint: [optional-pr-title-and-description]
+argument-hint: "[optional-pr-title-and-description]"
 _hint: Request review
 _category: Ship / Show / Ask
 _order: 3

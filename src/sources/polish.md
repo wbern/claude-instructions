@@ -1,6 +1,6 @@
 ---
 description: Review and address issues in existing code - fix problems or justify skipping
-argument-hint: [branch, PR#, file, or area to polish]
+argument-hint: "[branch, PR#, file, or area to polish]"
 _hint: Fix or skip issues
 _category: Workflow
 _order: 36

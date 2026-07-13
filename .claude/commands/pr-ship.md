@@ -1,6 +1,6 @@
 ---
 description: Ship code directly to main - for small, obvious changes that don't need review
-argument-hint: [optional-commit-message]
+argument-hint: "[optional-commit-message]"
 ---
 
 # Ship - Direct Merge to Main

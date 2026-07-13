@@ -1,6 +1,6 @@
 ---
 description: Creates a pull request using GitHub MCP
-argument-hint: [optional-pr-title-and-description]
+argument-hint: "[optional-pr-title-and-description]"
 ---
 
 # Create Pull Request

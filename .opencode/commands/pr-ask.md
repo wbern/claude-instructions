@@ -1,6 +1,6 @@
 ---
 description: Request team review and approval - for complex changes needing discussion
-argument-hint: [optional-pr-title-and-description]
+argument-hint: "[optional-pr-title-and-description]"
 ---
 
 # Ask - Request Review and Approval

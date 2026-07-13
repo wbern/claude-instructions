@@ -1,6 +1,6 @@
 ---
 description: Review test suite quality against FIRST principles and TDD anti-patterns
-argument-hint: [optional test file or directory path]
+argument-hint: "[optional test file or directory path]"
 ---
 
 ## General Guidelines

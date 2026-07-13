@@ -1,6 +1,6 @@
 ---
 description: Show code to team with auto-merge - for changes that should be visible but don't need approval
-argument-hint: [optional-pr-title-and-description]
+argument-hint: "[optional-pr-title-and-description]"
 ---
 
 # Show - Visible Merge with Optional Feedback

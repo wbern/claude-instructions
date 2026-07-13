@@ -1,6 +1,6 @@
 ---
 description: Summarize conversation progress and next steps
-argument-hint: [optional additional info]
+argument-hint: "[optional additional info]"
 ---
 
 ## General Guidelines
