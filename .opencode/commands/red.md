@@ -1,6 +1,6 @@
 ---
 description: Execute TDD Red Phase - write ONE failing test
-argument-hint: [optional additional info]
+argument-hint: "[optional additional info]"
 ---
 
 **User arguments:**

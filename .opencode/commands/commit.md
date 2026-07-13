@@ -1,6 +1,6 @@
 ---
 description: Create a git commit following project standards
-argument-hint: [optional-commit-description]
+argument-hint: "[optional-commit-description]"
 ---
 
 ## General Guidelines

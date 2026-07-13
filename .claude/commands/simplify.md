@@ -1,6 +1,6 @@
 ---
 description: Reduce code complexity while keeping tests green
-argument-hint: [file, function, or area to simplify]
+argument-hint: "[file, function, or area to simplify]"
 ---
 
 ## General Guidelines

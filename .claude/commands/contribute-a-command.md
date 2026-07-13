@@ -44,7 +44,7 @@ After creating, run `pnpm build` and `pnpm vitest run -u` to update snapshots.
 ```yaml
 ---
 description: Brief description for /help
-argument-hint: [optional-arg] or <required-arg> or (no arguments - interactive)
+argument-hint: "[optional-arg] or <required-arg> or (no arguments - interactive)"
 _hint: Short 2-3 word hint
 _category: Test-Driven Development | Planning | Workflow | Ship / Show / Ask | Utilities | [Something else]
 _order: 1-99

@@ -36,7 +36,7 @@ The `/add-command` command shows this guide for creating new slash commands. It 
 ---
 allowed-tools: Read, Glob, Grep, Bash(git status:*), Task
 description: Brief description of what this command does
-argument-hint: [required-arg] [optional-arg]
+argument-hint: "[required-arg] [optional-arg]"
 ---
 
 # Command Title

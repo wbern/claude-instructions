@@ -1,6 +1,6 @@
 ---
 description: Ship code directly to main - for small, obvious changes that don't need review
-argument-hint: [optional-commit-message]
+argument-hint: "[optional-commit-message]"
 _hint: Direct to main
 _category: Ship / Show / Ask
 _order: 1

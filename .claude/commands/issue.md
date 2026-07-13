@@ -1,6 +1,6 @@
 ---
 description: Analyze GitHub issue and create TDD implementation plan
-argument-hint: [optional-issue-number]
+argument-hint: "[optional-issue-number]"
 ---
 
 Analyze GitHub issue and create TDD implementation plan.
